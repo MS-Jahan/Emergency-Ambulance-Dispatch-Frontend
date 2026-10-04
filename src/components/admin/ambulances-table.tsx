@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Ambulance, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -22,14 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ListSkeleton } from '@/components/shared/skeletons'
 import {
@@ -45,11 +37,17 @@ import type { Ambulance as AmbulanceRow } from '@/types/api'
 const TYPES = ['BASIC', 'ICU', 'CARDIAC'] as const
 const STATUSES = ['AVAILABLE', 'ON_TRIP', 'MAINTENANCE'] as const
 
-function statusPill(status: string) {
-  if (status === 'AVAILABLE')
-    return 'bg-emerald-100 text-emerald-800 border-emerald-200'
-  if (status === 'ON_TRIP') return 'bg-blue-100 text-blue-800 border-blue-200'
-  return 'bg-amber-100 text-amber-800 border-amber-200'
+// Brand palette: teal available, amber on trip, red maintenance.
+const STATUS_PILL: Record<string, string> = {
+  AVAILABLE: 'bg-oxygen/10 text-oxygen border-oxygen/30',
+  ON_TRIP: 'bg-amber/10 text-amber-700 border-amber/30',
+  MAINTENANCE: 'bg-signal/10 text-signal border-signal/30',
+}
+
+const TYPE_PILL: Record<string, string> = {
+  BASIC: 'bg-ink/5 text-ink border-hairline',
+  ICU: 'bg-oxygen/10 text-oxygen border-oxygen/30',
+  CARDIAC: 'bg-signal/10 text-signal border-signal/30',
 }
 
 function AmbulanceForm({
@@ -175,6 +173,20 @@ export function AmbulancesTable() {
   const [creating, setCreating] = useState(false)
   const [editing, setEditing] = useState<AmbulanceRow | null>(null)
   const [deleting, setDeleting] = useState<AmbulanceRow | null>(null)
+  const [typeFilter, setTypeFilter] = useState('all')
+
+  const items = useMemo(
+    () => ambulances.data?.items ?? [],
+    [ambulances.data],
+  )
+  const total = ambulances.data?.meta.total ?? items.length
+  const rows = useMemo(
+    () =>
+      typeFilter === 'all'
+        ? items
+        : items.filter((a) => a.type === typeFilter),
+    [items, typeFilter],
+  )
 
   const doDelete = async () => {
     if (!deleting) return
@@ -189,80 +201,93 @@ export function AmbulancesTable() {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate">Fleet registry</p>
-        <Button
-          size="sm"
-          onClick={() => setCreating(true)}
-          className="bg-ink text-paper hover:bg-slate-800"
-        >
-          <Plus className="h-4 w-4 mr-1" /> Add ambulance
-        </Button>
+      <div className="flex items-center gap-2 flex-wrap justify-between">
+        <p className="text-sm text-slate">
+          Ambulances ({total} total)
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v ?? 'all')}>
+            <SelectTrigger className="w-32 bg-paper border-hairline" aria-label="Filter by type">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All types</SelectItem>
+              {TYPES.map((t) => (
+                <SelectItem key={t} value={t}>
+                  {t}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button
+            size="sm"
+            onClick={() => setCreating(true)}
+            className="bg-signal text-white hover:bg-signal/90"
+          >
+            <Plus className="h-4 w-4 mr-1" /> Add ambulance
+          </Button>
+        </div>
       </div>
 
       {ambulances.isLoading ? (
         <ListSkeleton rows={5} />
-      ) : (ambulances.data?.items.length ?? 0) === 0 ? (
+      ) : rows.length === 0 ? (
         <EmptyState
           icon={<Ambulance className="h-6 w-6 text-slate" />}
-          title="No ambulances"
-          description="Add the first unit to start dispatching."
+          title={typeFilter === 'all' ? 'No ambulances' : `No ${typeFilter} units`}
+          description={
+            typeFilter === 'all'
+              ? 'Add the first unit to start dispatching.'
+              : 'Try a different type filter.'
+          }
         />
       ) : (
-        <Card className="border border-hairline overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-hairline">
-                <TableHead>Plate</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Home hospital</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {ambulances.data!.items.map((a) => (
-                <TableRow key={a.id} className="border-hairline">
-                  <TableCell className="font-medium text-ink">
+        <ul className="space-y-2">
+          {rows.map((a) => (
+            <li key={a.id}>
+              <Card className="flex items-center justify-between gap-3 p-3 border border-hairline transition-colors hover:border-ink/30">
+                <div className="flex items-center gap-3 min-w-0 flex-wrap">
+                  <span className="font-mono text-sm font-bold text-ink">
                     {a.plateNumber}
-                  </TableCell>
-                  <TableCell className="text-slate">{a.type}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${statusPill(a.status)}`}
-                    >
-                      {a.status.replaceAll('_', ' ').toLowerCase()}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-slate">
-                    {a.homeHospital?.name ?? '—'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="inline-flex gap-1">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        aria-label={`Edit ${a.plateNumber}`}
-                        onClick={() => setEditing(a)}
-                      >
-                        <Pencil className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        aria-label={`Delete ${a.plateNumber}`}
-                        onClick={() => setDeleting(a)}
-                        className="text-signal"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </Button>
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Card>
+                  </span>
+                  <span
+                    className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${TYPE_PILL[a.type] ?? 'bg-gauze text-slate border-hairline'}`}
+                  >
+                    {a.type}
+                  </span>
+                  <span
+                    className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_PILL[a.status] ?? 'bg-gauze text-slate border-hairline'}`}
+                  >
+                    {a.status.replaceAll('_', ' ').toLowerCase()}
+                  </span>
+                  <span className="hidden text-xs text-slate sm:inline">
+                    {a.homeHospital?.name ?? 'No base'}
+                  </span>
+                </div>
+                <span className="inline-flex gap-1 flex-shrink-0">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label={`Edit ${a.plateNumber}`}
+                    onClick={() => setEditing(a)}
+                    className="text-slate hover:bg-gauze"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label={`Delete ${a.plateNumber}`}
+                    onClick={() => setDeleting(a)}
+                    className="text-signal hover:bg-signal/10"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </span>
+              </Card>
+            </li>
+          ))}
+        </ul>
       )}
 
       {creating && (
