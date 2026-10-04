@@ -10,6 +10,7 @@ import type {
   Hospital,
   Payment,
   PaginatedData,
+  RequestStatus,
   Role,
   User,
 } from '@/types/api'
@@ -193,6 +194,29 @@ export function useUpdateDriverLocation() {
   return useMutation({
     mutationFn: ({ lat, lng }: { lat: number; lng: number }) =>
       api.patch('/driver/location', { lat, lng }),
+  })
+}
+
+export function useMyAssignedRequests(page = 1, limit = 20) {
+  return useQuery({
+    queryKey: ['requests', 'assigned', page, limit],
+    queryFn: () =>
+      api.get<PaginatedData<EmergencyRequest>>(
+        `/requests/my-assigned?page=${page}&limit=${limit}`,
+      ),
+    refetchInterval: 5000,
+  })
+}
+
+export function useUpdateRequestStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: RequestStatus }) =>
+      api.patch(`/requests/${id}/status`, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['requests'] })
+    },
   })
 }
 
