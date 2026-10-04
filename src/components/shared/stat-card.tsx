@@ -15,9 +15,17 @@ const ACCENT_CLASS: Record<NonNullable<StatCardProps['accent']>, string> = {
   ink: 'bg-ink/5 text-ink',
 }
 
+// 8px left accent bar per the redesign spec — scan-friendly KPI rows.
+const ACCENT_BAR: Record<NonNullable<StatCardProps['accent']>, string> = {
+  signal: 'border-l-signal',
+  oxygen: 'border-l-oxygen',
+  amber: 'border-l-amber',
+  ink: 'border-l-ink',
+}
+
 export function StatCard({ label, value, hint, icon, accent = 'ink' }: StatCardProps) {
   return (
-    <Card className="p-5 border border-hairline">
+    <Card className={`p-5 border border-hairline border-l-8 ${ACCENT_BAR[accent]}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-sm text-slate">{label}</p>

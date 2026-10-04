@@ -11,14 +11,16 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { StatCard } from '@/components/shared/stat-card'
-import { StatusBadge } from '@/components/shared/status-badge'
+import { PriorityBadge } from '@/components/shared/priority-badge'
 import { StatusDonut, StatusDonutCard } from '@/components/shared/status-donut'
+import { RequestsAreaChart } from '@/components/admin/requests-area-chart'
 import { StatGridSkeleton, ListSkeleton } from '@/components/shared/skeletons'
 import { useAdminRequests, useDashboardStats } from '@/lib/hooks'
 
 export default function AdminDashboardPage() {
   const stats = useDashboardStats()
   const pending = useAdminRequests(1, 5, { status: 'PENDING' })
+  const recent = useAdminRequests(1, 200)
 
   return (
     <div className="space-y-6">
@@ -81,7 +83,10 @@ export default function AdminDashboardPage() {
         </div>
       ) : null}
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2">
+          <RequestsAreaChart items={recent.data?.items ?? []} />
+        </div>
         <StatusDonutCard>
           {stats.data ? (
             <StatusDonut
@@ -90,17 +95,7 @@ export default function AdminDashboardPage() {
                 {
                   label: 'Pending',
                   value: stats.data.requests.pending,
-                  color: '#F59E0B',
-                },
-                {
-                  label: 'Completed',
-                  value: stats.data.requests.completed,
-                  color: '#10B981',
-                },
-                {
-                  label: 'Cancelled',
-                  value: stats.data.requests.cancelled,
-                  color: '#EF4444',
+                  color: '#E9A21B',
                 },
                 {
                   label: 'In progress',
@@ -111,7 +106,17 @@ export default function AdminDashboardPage() {
                       stats.data.requests.completed -
                       stats.data.requests.cancelled,
                   ),
-                  color: '#2563EB',
+                  color: '#14B8A6',
+                },
+                {
+                  label: 'Completed',
+                  value: stats.data.requests.completed,
+                  color: '#0E8C86',
+                },
+                {
+                  label: 'Cancelled',
+                  value: stats.data.requests.cancelled,
+                  color: '#E0312B',
                 },
               ]}
             />
@@ -119,51 +124,55 @@ export default function AdminDashboardPage() {
             <div className="h-36 w-36 rounded-full bg-gauze animate-pulse" />
           )}
         </StatusDonutCard>
-
-        <Card className="p-5 border border-hairline">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-sm font-semibold text-ink">
-              Waiting for dispatch
-            </p>
-            <Link
-              href="/admin/dispatch"
-              className="text-xs font-medium text-oxygen hover:underline"
-            >
-              Open board →
-            </Link>
-          </div>
-          {pending.isLoading ? (
-            <ListSkeleton rows={3} />
-          ) : (pending.data?.items.length ?? 0) === 0 ? (
-            <p className="text-sm text-slate py-6 text-center">
-              Nothing pending. Queue is clear.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {pending.data!.items.map((r) => (
-                <li key={r.id}>
-                  <Link
-                    href={`/dashboard/requests/${r.id}`}
-                    className="flex items-center justify-between gap-3 rounded-lg border border-hairline p-3 hover:bg-gauze/50 transition-colors"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm text-ink truncate">
-                        {r.pickupAddress || 'Pickup location'}
-                      </p>
-                      <p className="text-xs text-slate">
-                        {new Date(r.requestedAt).toLocaleString()}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <StatusBadge status={r.status} />
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
       </div>
+
+      <Card className="p-5 border border-hairline">
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm font-semibold text-ink">
+            Waiting for dispatch
+          </p>
+          <Link
+            href="/admin/dispatch"
+            className="text-xs font-medium text-oxygen hover:underline"
+          >
+            Open board →
+          </Link>
+        </div>
+        {pending.isLoading ? (
+          <ListSkeleton rows={3} />
+        ) : (pending.data?.items.length ?? 0) === 0 ? (
+          <p className="text-sm text-slate py-6 text-center">
+            Nothing pending. Queue is clear.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {pending.data!.items.map((r) => (
+              <li key={r.id}>
+                <Link
+                  href="/admin/dispatch"
+                  className="flex items-center justify-between gap-3 rounded-lg border border-hairline p-3 hover:bg-gauze/50 transition-colors"
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm text-ink truncate">
+                      {r.patient?.name ?? 'Patient'}
+                    </p>
+                    <p className="text-xs text-slate truncate">
+                      {r.pickupAddress || 'Pickup location'} ·{' '}
+                      {new Date(r.requestedAt).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <PriorityBadge priority={r.priority} />
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
     </div>
   )
 }
