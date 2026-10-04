@@ -6,6 +6,7 @@ import type {
   DashboardStats,
   DriverProfile,
   EmergencyRequest,
+  Feedback,
   Hospital,
   Payment,
   PaginatedData,
@@ -118,12 +119,18 @@ export function useMyRequests(page = 1, limit = 10) {
   })
 }
 
-export function useRequestDetail(id: string) {
+export function useRequestDetail(
+  id: string,
+  opts?: {
+    refetchInterval?: number | false | ((query: { state: { data?: EmergencyRequest } }) => number | false | undefined)
+  },
+) {
   return useQuery({
     queryKey: ['requests', id],
     queryFn: () =>
       api.get<{ data: EmergencyRequest }>(`/requests/${id}`).then((d) => d.data),
     enabled: !!id,
+    refetchInterval: opts?.refetchInterval as never,
   })
 }
 
@@ -227,5 +234,26 @@ export function useHospitals() {
         items: [],
         meta: { page: 1, limit: 100, total: 0, totalPages: 0 },
       })),
+  })
+}
+
+// Feedback
+export function useRequestFeedback(requestId: string) {
+  return useQuery({
+    queryKey: ['feedback', requestId],
+    queryFn: () => api.get<Feedback[]>(`/feedback/request/${requestId}`),
+    enabled: !!requestId,
+  })
+}
+
+export function useSubmitFeedback() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { requestId: string; rating: number; comment?: string }) =>
+      api.post<Feedback>('/feedback', data),
+    onSuccess: (_data, vars) => {
+      queryClient.invalidateQueries({ queryKey: ['feedback', vars.requestId] })
+    },
   })
 }
