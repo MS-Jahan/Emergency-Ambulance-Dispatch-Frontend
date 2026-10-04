@@ -1,182 +1,65 @@
 'use client'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Ambulance, Loader2, RadioTower } from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { useEffect, useState } from 'react'
+import { RadioTower } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { PriorityBadge } from '@/components/shared/priority-badge'
-import { StatusBadge } from '@/components/shared/status-badge'
+import { RequestRow } from '@/components/admin/request-row'
+import { RequestDetailSheet } from '@/components/admin/request-detail-sheet'
 import { CardSkeleton } from '@/components/shared/skeletons'
 import { EmptyState } from '@/components/shared/empty-state'
-import {
-  useAdminRequests,
-  useAssignAmbulance,
-  useNearbyAmbulances,
-} from '@/lib/hooks'
-import { ApiError } from '@/lib/api'
+import { useAdminRequests } from '@/lib/hooks'
 import type { EmergencyRequest } from '@/types/api'
 
-const ACTIVE: EmergencyRequest['status'][] = [
+const IN_PROGRESS: EmergencyRequest['status'][] = [
   'ASSIGNED',
   'EN_ROUTE_PICKUP',
   'PICKED_UP',
   'EN_ROUTE_HOSPITAL',
 ]
 
-function AssignDialog({
-  request,
-  onClose,
-}: {
-  request: EmergencyRequest
-  onClose: () => void
-}) {
-  const nearby = useNearbyAmbulances(
-    { lat: request.pickupLat, lng: request.pickupLng, radiusKm: 10 },
-    { enabled: !!request.pickupLat && !!request.pickupLng },
-  )
-  const assign = useAssignAmbulance()
-  const [ambulanceId, setAmbulanceId] = useState<string | null>(null)
+const CLOSED: EmergencyRequest['status'][] = ['COMPLETED', 'CANCELLED']
 
-  const confirm = async () => {
-    if (!ambulanceId) return
-    try {
-      await assign.mutateAsync({ requestId: request.id, ambulanceId })
-      toast.success('Ambulance assigned')
-      onClose()
-    } catch (err) {
-      toast.error(err instanceof ApiError ? err.message : 'Assign failed')
-    }
-  }
-
-  return (
-    <Dialog open onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Assign ambulance</DialogTitle>
-          <DialogDescription>
-            Available units within 10 km of {request.pickupAddress || 'pickup'}
-          </DialogDescription>
-        </DialogHeader>
-
-        {nearby.isLoading ? (
-          <CardSkeleton />
-        ) : (nearby.data?.length ?? 0) === 0 ? (
-          <EmptyState
-            icon={<Ambulance className="h-6 w-6 text-slate" />}
-            title="No units nearby"
-            description="No available ambulances within 10 km. Widen coverage or wait."
-          />
-        ) : (
-          <ul className="space-y-2 max-h-72 overflow-y-auto">
-            {nearby.data!.map((a) => (
-              <li key={a.id}>
-                <button
-                  type="button"
-                  onClick={() => setAmbulanceId(a.id)}
-                  className={`w-full flex items-center justify-between gap-3 rounded-lg border p-3 text-left transition-colors ${
-                    ambulanceId === a.id
-                      ? 'border-oxygen bg-oxygen/5'
-                      : 'border-hairline hover:bg-gauze/50'
-                  }`}
-                >
-                  <span className="min-w-0">
-                    <span className="block text-sm text-ink">
-                      {a.type} · {a.plateNumber}
-                    </span>
-                    <span className="block text-xs text-slate">
-                      {a.homeHospital?.name ?? 'Base'} — {a.distanceKm} km away
-                    </span>
-                  </span>
-                  <span
-                    className={`h-4 w-4 rounded-full border-2 flex-shrink-0 ${
-                      ambulanceId === a.id
-                        ? 'border-oxygen bg-oxygen'
-                        : 'border-slate/40'
-                    }`}
-                  />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={confirm}
-            disabled={!ambulanceId || assign.isPending}
-            className="bg-ink text-paper hover:bg-slate-800"
-          >
-            {assign.isPending && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            Assign unit
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+interface Column {
+  title: string
+  dot: string
+  rows: EmergencyRequest[]
 }
 
-function RequestCard({
-  r,
-  onAssign,
-}: {
-  r: EmergencyRequest
-  onAssign: (r: EmergencyRequest) => void
-}) {
-  return (
-    <Card className="p-3 border border-hairline space-y-2">
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <StatusBadge status={r.status} />
-          <PriorityBadge priority={r.priority} />
-        </div>
-        <Link
-          href={`/dashboard/requests/${r.id}`}
-          className="text-xs font-medium text-oxygen hover:underline"
-        >
-          Details →
-        </Link>
-      </div>
-      <p className="text-sm text-ink truncate">{r.pickupAddress || 'Pickup'}</p>
-      <p className="text-xs text-slate">
-        {new Date(r.requestedAt).toLocaleTimeString()}
-      </p>
-      {r.status === 'PENDING' && (
-        <Button
-          size="sm"
-          variant="outline"
-          className="w-full border-oxygen text-oxygen hover:bg-oxygen hover:text-white"
-          onClick={() => onAssign(r)}
-        >
-          Assign
-        </Button>
-      )}
-    </Card>
-  )
-}
-
+/**
+ * Live dispatch board: three columns (pending / in progress / closed),
+ * 5s polling, click a card for the dispatch detail sheet.
+ */
 export default function DispatchBoardPage() {
   const board = useAdminRequests(1, 100, undefined, { refetchInterval: 5000 })
-  const [assigning, setAssigning] = useState<EmergencyRequest | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+
+  // Parent-owned clock: RequestRow re-renders its wait label on this tick
+  // without owning timers itself.
+  const [now, setNow] = useState(() => Date.now())
+  useEffect(() => {
+    const timer = setInterval(() => setNow(Date.now()), 30_000)
+    return () => clearInterval(timer)
+  }, [])
 
   const items = board.data?.items ?? []
-  const pending = items.filter((r) => r.status === 'PENDING')
-  const active = items.filter((r) => ACTIVE.includes(r.status))
-  const closed = items.filter(
-    (r) => r.status === 'COMPLETED' || r.status === 'CANCELLED',
-  )
+  const columns: Column[] = [
+    {
+      title: 'Pending',
+      dot: 'bg-amber',
+      rows: items.filter((r) => r.status === 'PENDING'),
+    },
+    {
+      title: 'In Progress',
+      dot: 'bg-oxygen',
+      rows: items.filter((r) => IN_PROGRESS.includes(r.status)),
+    },
+    {
+      title: 'Completed',
+      dot: 'bg-slate-300',
+      rows: items.filter((r) => CLOSED.includes(r.status)),
+    },
+  ]
+  const selected = selectedId ? items.find((r) => r.id === selectedId) : undefined
 
   return (
     <div className="space-y-5">
@@ -189,7 +72,7 @@ export default function DispatchBoardPage() {
         </div>
         <span className="inline-flex items-center gap-1.5 text-xs text-slate">
           <RadioTower className="h-3.5 w-3.5 text-signal" />
-          {pending.length} waiting · {active.length} active
+          {columns[0].rows.length} waiting · {columns[1].rows.length} active
         </span>
       </div>
 
@@ -207,40 +90,41 @@ export default function DispatchBoardPage() {
         />
       ) : (
         <div className="grid gap-4 lg:grid-cols-3 items-start">
-          {(
-            [
-              ['Waiting', pending, 'amber'],
-              ['On the road', active, 'oxygen'],
-              ['Closed', closed, 'gauze'],
-            ] as const
-          ).map(([title, rows]) => (
-            <section key={title} className="space-y-2">
-              <div className="flex items-center justify-between">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-slate">
-                  {title}
+          {columns.map((col) => (
+            <section
+              key={col.title}
+              aria-label={`${col.title} requests`}
+              className="flex flex-col min-w-0"
+            >
+              <div className="sticky top-0 z-10 flex items-center justify-between bg-gauze py-2">
+                <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink">
+                  <span className={`h-2 w-2 rounded-full ${col.dot}`} aria-hidden />
+                  {col.title} ({col.rows.length})
                 </h2>
-                <span className="text-xs text-slate tabular-nums">
-                  {rows.length}
-                </span>
               </div>
-              {rows.length === 0 ? (
-                <Card className="p-4 border border-dashed border-hairline">
-                  <p className="text-sm text-slate text-center">Empty</p>
-                </Card>
-              ) : (
-                <div className="space-y-2">
-                  {rows.map((r) => (
-                    <RequestCard key={r.id} r={r} onAssign={setAssigning} />
-                  ))}
-                </div>
-              )}
+              <div className="mt-1 max-h-[calc(100vh-16rem)] space-y-3 overflow-y-auto pr-1">
+                {col.rows.length === 0 ? (
+                  <Card className="p-4 border border-dashed border-hairline">
+                    <p className="text-sm text-slate text-center">Empty</p>
+                  </Card>
+                ) : (
+                  col.rows.map((r) => (
+                    <RequestRow
+                      key={r.id}
+                      request={r}
+                      now={now}
+                      onClick={() => setSelectedId(r.id)}
+                    />
+                  ))
+                )}
+              </div>
             </section>
           ))}
         </div>
       )}
 
-      {assigning && (
-        <AssignDialog request={assigning} onClose={() => setAssigning(null)} />
+      {selected && (
+        <RequestDetailSheet request={selected} onClose={() => setSelectedId(null)} />
       )}
     </div>
   )
