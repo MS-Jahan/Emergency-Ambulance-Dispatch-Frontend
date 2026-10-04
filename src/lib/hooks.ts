@@ -430,6 +430,26 @@ export function useAuditLogs(page = 1, requestId?: string) {
   })
 }
 
+// Stripe redirects back to /payment/* with the checkout session id; the
+// callback endpoints resolve the payment behind it. No auth required.
+// 'cancel' also expires the stripe session so the link can't be reused.
+export function usePaymentBySession(
+  sessionId?: string,
+  endpoint: 'success' | 'cancel' = 'success',
+) {
+  return useQuery({
+    queryKey: ['payments', 'session', endpoint, sessionId],
+    queryFn: () =>
+      api
+        .get<{ payment: Payment }>(
+          `/payments/callback/${endpoint}?sessionId=${sessionId}`,
+        )
+        .then((d) => d.payment),
+    enabled: !!sessionId,
+    retry: false,
+  })
+}
+
 // Public queries
 export function useHospitals() {
   return useQuery({
