@@ -237,6 +237,17 @@ export function useHospitals() {
   })
 }
 
+// Profile
+export function useUpdateProfile() {
+  const setUser = useAuth((s) => s.setUser)
+
+  return useMutation({
+    mutationFn: (data: { name?: string; phone?: string }) =>
+      api.patch<{ user: User }>('/users/me', data).then((d) => d.user),
+    onSuccess: (user) => setUser(user),
+  })
+}
+
 // Feedback
 export function useRequestFeedback(requestId: string) {
   return useQuery({
