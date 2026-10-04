@@ -4,5 +4,7 @@ find the instructions in ../ph-l2-b7-asnmnt-6 for backend (already done, may nee
 Make sure to documents everything in the docs folder. Every decisions and plans. The file names should be like <year>-<month>-<day>-file-name.md (no-spaces)
 like: 2026-09-21-file-name.md
 
+make sure to commit from time to time and avoid ai agent names in the commit messages or anywhere.
+
 ## Next.js version note
 This is Next.js 16 (breaking changes vs older versions). `middleware.ts` is now `proxy.ts`. Read `node_modules/next/dist/docs/` before using any Next API you are unsure about.
