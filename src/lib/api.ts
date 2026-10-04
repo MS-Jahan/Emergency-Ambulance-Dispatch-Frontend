@@ -1,5 +1,10 @@
-import { env } from '@/env'
 import type { ApiResponse } from '@/types/api'
+
+// Client calls stay same-origin: /api/proxy forwards to the backend with the
+// Bearer token from the HTTP-only cookie, /api/auth/* handles login/register/
+// refresh/logout and sets those cookies. Tokens never reach the browser.
+const PROXY_BASE = '/api/proxy'
+const AUTH_BASE = '/api/auth'
 
 export class ApiError extends Error {
   constructor(
@@ -16,7 +21,11 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
   if (!response.ok) {
     const apiError = data as { success: false; message: string; errors?: unknown }
-    throw new ApiError(response.status, apiError.message, apiError.errors as any)
+    throw new ApiError(
+      response.status,
+      apiError.message,
+      apiError.errors as Array<{ field?: string; message: string }> | undefined,
+    )
   }
 
   if (!data.success) {
@@ -28,7 +37,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 
 export const api = {
   async get<T>(path: string, opts?: RequestInit): Promise<T> {
-    const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}${path}`, {
+    const response = await fetch(`${PROXY_BASE}${path}`, {
       ...opts,
       method: 'GET',
       credentials: 'include',
@@ -37,7 +46,7 @@ export const api = {
   },
 
   async post<T>(path: string, body?: unknown, opts?: RequestInit): Promise<T> {
-    const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}${path}`, {
+    const response = await fetch(`${PROXY_BASE}${path}`, {
       ...opts,
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...opts?.headers },
@@ -48,7 +57,7 @@ export const api = {
   },
 
   async patch<T>(path: string, body?: unknown, opts?: RequestInit): Promise<T> {
-    const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}${path}`, {
+    const response = await fetch(`${PROXY_BASE}${path}`, {
       ...opts,
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', ...opts?.headers },
@@ -59,9 +68,20 @@ export const api = {
   },
 
   async delete<T>(path: string, opts?: RequestInit): Promise<T> {
-    const response = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}${path}`, {
+    const response = await fetch(`${PROXY_BASE}${path}`, {
       ...opts,
       method: 'DELETE',
+      credentials: 'include',
+    })
+    return handleResponse<T>(response)
+  },
+
+  /** Posts to a Next auth route handler (/api/auth/*) which sets session cookies. */
+  async authPost<T>(path: string, body?: unknown): Promise<T> {
+    const response = await fetch(`${AUTH_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
       credentials: 'include',
     })
     return handleResponse<T>(response)

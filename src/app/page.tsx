@@ -75,7 +75,7 @@ export default function Home() {
                 <div className="w-3 h-3 rounded-full bg-oxygen mt-1.5 flex-shrink-0"></div>
                 <div>
                   <p className="font-bold text-ink text-sm">En route to hospital</p>
-                  <p className="text-xs text-slate">You're safely in the ambulance</p>
+                  <p className="text-xs text-slate">You&apos;re safely in the ambulance</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -110,7 +110,7 @@ export default function Home() {
             <Card className="p-6 border border-hairline">
               <div className="text-3xl mb-4">💳</div>
               <h3 className="text-lg font-bold text-ink mb-2">Pay after arrival</h3>
-              <p className="text-slate text-sm">Pay online once you've safely arrived</p>
+              <p className="text-slate text-sm">Pay online once you&apos;ve safely arrived</p>
             </Card>
           </div>
         </div>
@@ -123,7 +123,7 @@ export default function Home() {
             Save a life
           </h2>
           <p className="text-paper/80 mb-8 text-lg">
-            Emergency ambulance dispatch is available 24/7. Anytime you need us, we're here.
+            Emergency ambulance dispatch is available 24/7. Anytime you need us, we&apos;re here.
           </p>
           <Link href="/register">
             <Button size="lg" className="bg-signal text-white hover:bg-red-600">

@@ -1,30 +1,35 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { useCallback } from 'react'
 import { api } from './api'
 import { useAuth } from './store'
 import type {
-  AuthResponse,
   DashboardStats,
   DriverProfile,
   EmergencyRequest,
   Hospital,
   Payment,
   PaginatedData,
+  Role,
   User,
 } from '@/types/api'
 
 // Auth queries
+export function roleHome(role: Role): string {
+  if (role === 'DRIVER') return '/driver'
+  if (role === 'ADMIN') return '/admin'
+  return '/dashboard'
+}
+
 export function useLogin() {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
 
   return useMutation({
     mutationFn: (data: { email: string; password: string }) =>
-      api.post<AuthResponse>('/auth/login', data),
+      api.authPost<{ user: User }>('/login', data),
     onSuccess: (data) => {
       setUser(data.user)
-      router.push('/dashboard')
+      router.push(roleHome(data.user.role))
     },
   })
 }
@@ -39,10 +44,10 @@ export function useRegister() {
       email: string
       password: string
       phone?: string
-    }) => api.post<AuthResponse>('/auth/register', data),
+    }) => api.authPost<{ user: User }>('/register', data),
     onSuccess: (data) => {
       setUser(data.user)
-      router.push('/dashboard')
+      router.push(roleHome(data.user.role))
     },
   })
 }
@@ -53,16 +58,10 @@ export function useDemoLogin() {
 
   return useMutation({
     mutationFn: (role: 'PATIENT' | 'DRIVER' | 'ADMIN') =>
-      api.post<AuthResponse>('/auth/demo', { role }),
+      api.authPost<{ user: User }>('/demo', { role }),
     onSuccess: (data) => {
       setUser(data.user)
-      router.push(
-        data.user.role === 'PATIENT'
-          ? '/dashboard'
-          : data.user.role === 'DRIVER'
-            ? '/driver'
-            : '/admin',
-      )
+      router.push(roleHome(data.user.role))
     },
   })
 }
@@ -73,8 +72,7 @@ export function useLogout() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (refreshToken?: string) =>
-      api.post('/auth/logout', { refreshToken }),
+    mutationFn: () => api.authPost('/logout'),
     onSuccess: () => {
       logout()
       queryClient.clear()
@@ -83,11 +81,12 @@ export function useLogout() {
   })
 }
 
-export function useMe() {
+export function useMe(opts?: { enabled?: boolean }) {
   return useQuery({
     queryKey: ['auth', 'me'],
     queryFn: () => api.get<{ user: User }>('/users/me').then((d) => d.user),
     retry: false,
+    enabled: opts?.enabled ?? true,
   })
 }
 
