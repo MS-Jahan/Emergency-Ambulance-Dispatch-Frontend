@@ -50,6 +50,11 @@ export interface Ambulance {
   homeHospital?: Hospital
 }
 
+// /ambulances/nearby returns each ambulance annotated with haversine distance.
+export interface NearbyAmbulance extends Ambulance {
+  distanceKm: number
+}
+
 export interface Hospital {
   id: string
   name: string

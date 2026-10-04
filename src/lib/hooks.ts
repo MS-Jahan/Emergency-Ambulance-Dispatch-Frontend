@@ -8,6 +8,7 @@ import type {
   EmergencyRequest,
   Feedback,
   Hospital,
+  NearbyAmbulance,
   Payment,
   PaginatedData,
   RequestStatus,
@@ -232,6 +233,12 @@ export function useAdminRequests(
   page = 1,
   limit = 10,
   filters?: { status?: string; priority?: string },
+  opts?: {
+    refetchInterval?:
+      | number
+      | false
+      | ((query: { state: { data?: PaginatedData<EmergencyRequest> } }) => number | false | undefined)
+  },
 ) {
   const params = new URLSearchParams({
     page: String(page),
@@ -246,6 +253,38 @@ export function useAdminRequests(
       api.get<PaginatedData<EmergencyRequest>>(
         `/requests?${params.toString()}`,
       ),
+    refetchInterval: opts?.refetchInterval as never,
+  })
+}
+
+export function useNearbyAmbulances(
+  coords: { lat: number; lng: number; radiusKm?: number },
+  opts?: { enabled?: boolean },
+) {
+  const params = new URLSearchParams({
+    lat: String(coords.lat),
+    lng: String(coords.lng),
+    ...(coords.radiusKm && { radiusKm: String(coords.radiusKm) }),
+  })
+  return useQuery({
+    queryKey: ['ambulances', 'nearby', coords.lat, coords.lng, coords.radiusKm ?? 10],
+    queryFn: () =>
+      api.get<{ items: NearbyAmbulance[] }>(`/ambulances/nearby?${params.toString()}`).then((d) => d.items),
+    enabled: opts?.enabled ?? true,
+  })
+}
+
+export function useAssignAmbulance() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ requestId, ambulanceId }: { requestId: string; ambulanceId: string }) =>
+      api.post<EmergencyRequest>(`/requests/${requestId}/assign`, { ambulanceId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'requests'] })
+      queryClient.invalidateQueries({ queryKey: ['requests'] })
+      queryClient.invalidateQueries({ queryKey: ['ambulances'] })
+    },
   })
 }
 
