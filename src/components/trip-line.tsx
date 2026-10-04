@@ -23,14 +23,16 @@ const STATUS_LABELS: Record<RequestStatus, string> = {
   CANCELLED: 'Cancelled',
 }
 
+/* Brand tokens — accents are static in both modes and flip with the theme,
+   unlike Tailwind's default -500 scale (bg-oxygen-500 is never generated). */
 const STATUS_COLORS: Record<RequestStatus, string> = {
-  PENDING: 'bg-amber-500',
-  ASSIGNED: 'bg-amber-500',
-  EN_ROUTE_PICKUP: 'bg-oxygen-500',
-  PICKED_UP: 'bg-oxygen-500',
-  EN_ROUTE_HOSPITAL: 'bg-oxygen-500',
-  COMPLETED: 'bg-green-500',
-  CANCELLED: 'bg-red-500',
+  PENDING: 'bg-amber',
+  ASSIGNED: 'bg-amber',
+  EN_ROUTE_PICKUP: 'bg-oxygen',
+  PICKED_UP: 'bg-oxygen',
+  EN_ROUTE_HOSPITAL: 'bg-oxygen',
+  COMPLETED: 'bg-oxygen',
+  CANCELLED: 'bg-signal',
 }
 
 interface TripLineProps {
@@ -49,10 +51,10 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
       <div
         className={cn('flex items-center gap-2', vertical && 'flex-col')}
       >
-        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white">
+        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-signal text-white">
           <span className="text-xs" aria-hidden>✕</span>
         </div>
-        <span className={cn('text-xs font-medium text-slate-500', !vertical && 'truncate')}>
+        <span className={cn('text-xs font-medium text-slate', !vertical && 'truncate')}>
           Cancelled
         </span>
       </div>
@@ -70,7 +72,7 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
       {STATUSES.map((s, idx) => {
         const isDone = idx < currentIndex
         const isCurrent = idx === currentIndex
-        const color = isDone || isCurrent ? STATUS_COLORS[s] : 'bg-slate-200 dark:bg-slate-700'
+        const color = isDone || isCurrent ? STATUS_COLORS[s] : 'bg-hairline'
 
         return (
           <div key={s} className={vertical ? 'w-full' : 'flex-1'}>
@@ -90,7 +92,7 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
                 <div
                   className={cn(
                     'flex-1 h-0.5 transition-colors',
-                    isDone || isCurrent ? 'bg-slate-400 dark:bg-slate-600' : 'bg-slate-200 dark:bg-slate-700',
+                    isDone || isCurrent ? 'bg-slate' : 'bg-hairline',
                     vertical && 'hidden',
                     compact && 'mx-0',
                   )}
@@ -102,9 +104,7 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
                 <span
                   className={cn(
                     'text-xs font-medium whitespace-nowrap',
-                    isDone || isCurrent
-                      ? 'text-ink dark:text-paper'
-                      : 'text-slate-400 dark:text-slate-600',
+                    isDone || isCurrent ? 'text-ink' : 'text-slate',
                   )}
                 >
                   {STATUS_LABELS[s]}
@@ -117,8 +117,8 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
 
       {isCompleted && (
         <div className="flex items-center gap-1 flex-1">
-          <Check className="w-4 h-4 text-green-600 dark:text-green-400" aria-hidden />
-          <span className="text-xs font-medium text-green-600 dark:text-green-400">Done</span>
+          <Check className="w-4 h-4 text-oxygen" aria-hidden />
+          <span className="text-xs font-medium text-oxygen">Done</span>
         </div>
       )}
     </div>

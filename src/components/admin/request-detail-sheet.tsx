@@ -31,16 +31,21 @@ interface RequestDetailSheetProps {
  * patient info, nearby units with one-click assign, reassign, cancel.
  */
 export function RequestDetailSheet({ request, onClose, onAction }: RequestDetailSheetProps) {
-  const nearby = useNearbyAmbulances(
-    { lat: request.pickupLat, lng: request.pickupLng, radiusKm: 10 },
-    { enabled: !!request.pickupLat && !!request.pickupLng && !request.ambulanceId },
-  )
-  const assign = useAssignAmbulance()
-  const cancel = useCancelRequest()
-
   const [reassigning, setReassigning] = useState(false)
   const [cancelling, setCancelling] = useState(false)
   const [reason, setReason] = useState('')
+
+  const nearby = useNearbyAmbulances(
+    { lat: request.pickupLat, lng: request.pickupLng, radiusKm: 10 },
+    {
+      enabled:
+        !!request.pickupLat &&
+        !!request.pickupLng &&
+        (!request.ambulanceId || reassigning),
+    },
+  )
+  const assign = useAssignAmbulance()
+  const cancel = useCancelRequest()
 
   // Escape closes; page scroll locked while open.
   useEffect(() => {

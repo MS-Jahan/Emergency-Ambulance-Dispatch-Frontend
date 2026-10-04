@@ -102,7 +102,7 @@ export default function DispatchBoardPage() {
               aria-label={`${col.title} requests`}
               className="flex flex-col min-w-0"
             >
-              <div className="sticky top-0 z-10 flex items-center justify-between bg-gauze py-2">
+              <div className="sticky top-14 z-20 flex items-center justify-between bg-gauze py-2">
                 <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink">
                   <span className={`h-2 w-2 rounded-full ${col.dot}`} aria-hidden />
                   {col.title} ({col.rows.length})

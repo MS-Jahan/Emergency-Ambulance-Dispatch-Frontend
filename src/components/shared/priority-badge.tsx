@@ -6,7 +6,8 @@ const PRIORITY_CONFIG: Record<
   { label: string; className: string }
 > = {
   CRITICAL: { label: 'Critical', className: 'bg-signal text-white border-signal' },
-  HIGH: { label: 'High', className: 'bg-amber text-ink border-amber' },
+  // Amber is static in both modes; keep dark text for AA contrast either way.
+  HIGH: { label: 'High', className: 'bg-amber text-[#0D1B2A] border-amber' },
   NORMAL: { label: 'Normal', className: 'bg-gauze text-slate border-hairline' },
 }
 

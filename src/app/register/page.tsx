@@ -31,6 +31,9 @@ const registerSchema = z
       .regex(/[a-zA-Z]/, 'Password must contain a letter')
       .regex(/[0-9]/, 'Password must contain a number'),
     confirmPassword: z.string(),
+    agreeTerms: z.literal(true, {
+      message: 'You must agree to the terms to continue',
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Passwords do not match',
@@ -182,6 +185,21 @@ export default function RegisterPage() {
               </p>
             )}
           </div>
+
+          <div className="flex items-start gap-2">
+            <input
+              id="agreeTerms"
+              type="checkbox"
+              {...register('agreeTerms')}
+              className="mt-0.5 h-4 w-4 accent-oxygen"
+            />
+            <Label htmlFor="agreeTerms" className="text-sm font-normal text-slate">
+              I agree to the terms of service
+            </Label>
+          </div>
+          {errors.agreeTerms && (
+            <p className="text-xs text-signal">{errors.agreeTerms.message}</p>
+          )}
 
           {registerMutation.error && (
             <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 rounded text-red-700 dark:text-red-300 text-sm">

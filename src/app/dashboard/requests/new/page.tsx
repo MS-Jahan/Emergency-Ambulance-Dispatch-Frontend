@@ -209,6 +209,7 @@ export default function NewRequestPage() {
                         selected
                           ? 'border-oxygen bg-oxygen/5'
                           : 'border-hairline hover:border-ink/30',
+                        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-oxygen has-[:focus-visible]:border-oxygen',
                       )}
                     >
                       <input
