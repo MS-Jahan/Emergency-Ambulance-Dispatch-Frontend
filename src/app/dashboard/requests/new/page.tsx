@@ -264,13 +264,13 @@ export default function NewRequestPage() {
         )}
 
         {/* Actions */}
-        <div className="flex justify-between mt-6 pt-4 border-t border-hairline">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between mt-6 pt-4 border-t border-hairline">
           <Button
             type="button"
             variant="outline"
             onClick={() => wizard.setStep((wizard.step - 1) as 1 | 2 | 3)}
             disabled={wizard.step === 1}
-            className="border-hairline text-ink hover:bg-gauze"
+            className="w-full sm:w-auto border-hairline text-ink hover:bg-gauze"
           >
             Back
           </Button>
@@ -279,7 +279,7 @@ export default function NewRequestPage() {
               type="button"
               onClick={() => wizard.setStep((wizard.step + 1) as 1 | 2 | 3)}
               disabled={!canNext}
-              className="bg-ink text-paper hover:bg-slate-800"
+              className="w-full sm:w-auto bg-ink text-paper hover:bg-slate-800"
             >
               Next
             </Button>
@@ -288,7 +288,7 @@ export default function NewRequestPage() {
               type="button"
               onClick={submit}
               disabled={createRequest.isPending}
-              className="bg-signal text-white hover:bg-signal/90"
+              className="w-full sm:w-auto bg-signal text-white hover:bg-signal/90"
             >
               {createRequest.isPending ? 'Submitting...' : 'Submit request'}
             </Button>

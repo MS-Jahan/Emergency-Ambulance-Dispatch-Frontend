@@ -1,6 +1,9 @@
 import { Activity, HeartPulse, Stethoscope } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 
+// Marketing content rarely changes — rebuild the static HTML hourly.
+export const revalidate = 3600
+
 const SERVICES = [
   {
     icon: <Stethoscope className="h-6 w-6 text-oxygen" />,

@@ -1,6 +1,10 @@
 import Link from 'next/link'
+
 import { PublicHeader } from '@/components/public/public-header'
 import { Button } from '@/components/ui/button'
+
+// Marketing content rarely changes — rebuild the static HTML hourly.
+export const revalidate = 3600
 
 const FAQS = [
   {

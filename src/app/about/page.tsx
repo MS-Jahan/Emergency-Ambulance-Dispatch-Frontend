@@ -1,7 +1,11 @@
 import Link from 'next/link'
+
 import { Clock3, HeartPulse, MapPin, Radio, Siren } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 import { Button } from '@/components/ui/button'
+
+// Marketing content rarely changes — rebuild the static HTML hourly.
+export const revalidate = 3600
 
 export default function AboutPage() {
   return (

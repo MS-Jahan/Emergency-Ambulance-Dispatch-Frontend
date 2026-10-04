@@ -74,50 +74,92 @@ function TripLine({ request }: { request: EmergencyRequest }) {
   const current = stepIndex(request)
 
   return (
-    <ol className="flex items-start">
-      {TRIP_STEPS.map((step, i) => {
-        const done = i < current
-        const active = i === current
-        return (
-          <li key={step.status} className="flex flex-1 flex-col items-center">
-            <div className="flex w-full items-center">
+    <>
+      {/* Vertical on phones — five steps side by side would crush the labels */}
+      <ol className="flex flex-col sm:hidden">
+        {TRIP_STEPS.map((step, i) => {
+          const done = i < current
+          const active = i === current
+          return (
+            <li key={step.status} className="flex gap-3">
+              <div className="flex flex-col items-center">
+                <span
+                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
+                    active
+                      ? 'bg-signal text-white ring-4 ring-signal/20'
+                      : done
+                        ? 'bg-signal text-white'
+                        : 'border border-hairline bg-gauze text-slate'
+                  }`}
+                >
+                  {done ? <Check className="h-3 w-3" /> : i + 1}
+                </span>
+                {i < TRIP_STEPS.length - 1 && (
+                  <span
+                    className={`w-0.5 flex-1 ${
+                      done ? 'bg-signal' : 'bg-hairline'
+                    }`}
+                  />
+                )}
+              </div>
               <span
-                className={`h-0.5 flex-1 ${
-                  i === 0 ? 'opacity-0' : done || active ? 'bg-signal' : 'bg-hairline'
-                }`}
-              />
-              <span
-                className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
-                  active
-                    ? 'bg-signal text-white ring-4 ring-signal/20'
-                    : done
-                      ? 'bg-signal text-white'
-                      : 'border border-hairline bg-gauze text-slate'
+                className={`pb-4 pt-1 text-xs leading-tight ${
+                  active ? 'font-semibold text-ink' : 'text-slate'
                 }`}
               >
-                {done ? <Check className="h-3 w-3" /> : i + 1}
+                {step.label}
               </span>
+            </li>
+          )
+        })}
+      </ol>
+
+      {/* Horizontal from sm up */}
+      <ol className="hidden sm:flex sm:items-start">
+        {TRIP_STEPS.map((step, i) => {
+          const done = i < current
+          const active = i === current
+          return (
+            <li key={step.status} className="flex flex-1 flex-col items-center">
+              <div className="flex w-full items-center">
+                <span
+                  className={`h-0.5 flex-1 ${
+                    i === 0 ? 'opacity-0' : done || active ? 'bg-signal' : 'bg-hairline'
+                  }`}
+                />
+                <span
+                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-[10px] font-bold ${
+                    active
+                      ? 'bg-signal text-white ring-4 ring-signal/20'
+                      : done
+                        ? 'bg-signal text-white'
+                        : 'border border-hairline bg-gauze text-slate'
+                  }`}
+                >
+                  {done ? <Check className="h-3 w-3" /> : i + 1}
+                </span>
+                <span
+                  className={`h-0.5 flex-1 ${
+                    i === TRIP_STEPS.length - 1
+                      ? 'opacity-0'
+                      : done
+                        ? 'bg-signal'
+                        : 'bg-hairline'
+                  }`}
+                />
+              </div>
               <span
-                className={`h-0.5 flex-1 ${
-                  i === TRIP_STEPS.length - 1
-                    ? 'opacity-0'
-                    : done
-                      ? 'bg-signal'
-                      : 'bg-hairline'
+                className={`mt-1.5 text-center text-[11px] leading-tight ${
+                  active ? 'font-semibold text-ink' : 'text-slate'
                 }`}
-              />
-            </div>
-            <span
-              className={`mt-1.5 text-center text-[11px] leading-tight ${
-                active ? 'font-semibold text-ink' : 'text-slate'
-              }`}
-            >
-              {step.label}
-            </span>
-          </li>
-        )
-      })}
-    </ol>
+              >
+                {step.label}
+              </span>
+            </li>
+          )
+        })}
+      </ol>
+    </>
   )
 }
 
