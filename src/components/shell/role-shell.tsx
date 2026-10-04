@@ -16,7 +16,13 @@ import {
 import { useAuth } from '@/lib/store'
 import { useLogout } from '@/lib/hooks'
 import type { User } from '@/types/api'
-import type { NavItem } from './nav-config'
+import { adminNav, driverNav, patientNav, type NavItem } from './nav-config'
+
+const NAV_BY_VARIANT = {
+  sidebar: patientNav,
+  minimal: driverNav,
+  rail: adminNav,
+} as const
 
 function Brand() {
   return (
@@ -142,12 +148,14 @@ function UserMenu({ user }: { user: User | null }) {
 }
 
 interface RoleShellProps {
-  nav: NavItem[]
-  variant: 'sidebar' | 'minimal' | 'rail'
+  variant: keyof typeof NAV_BY_VARIANT
   children: React.ReactNode
 }
 
-export function RoleShell({ nav, variant, children }: RoleShellProps) {
+// Nav item configs live in client land: icon components cannot cross the
+// server/client boundary as props.
+export function RoleShell({ variant, children }: RoleShellProps) {
+  const nav = NAV_BY_VARIANT[variant]
   const user = useAuth((s) => s.user)
   const [mobileOpen, setMobileOpen] = useState(false)
 

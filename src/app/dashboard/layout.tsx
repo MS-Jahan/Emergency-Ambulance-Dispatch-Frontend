@@ -1,5 +1,4 @@
 import { RoleShell } from '@/components/shell/role-shell'
-import { patientNav } from '@/components/shell/nav-config'
 
 export default function DashboardLayout({
   children,
@@ -7,7 +6,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <RoleShell nav={patientNav} variant="sidebar">
+    <RoleShell variant="sidebar">
       {children}
     </RoleShell>
   )
