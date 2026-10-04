@@ -74,7 +74,7 @@ export default function ProfilePage() {
   const theme = useUI((s) => s.theme)
   const setTheme = useUI((s) => s.setTheme)
 
-  // Apply immediately on toggle; global dark styling lands with the theme task.
+  // Apply immediately on toggle; flips brand tokens on patient/public pages.
   useEffect(() => {
     document.documentElement.dataset.theme = theme
   }, [theme])
@@ -172,7 +172,7 @@ export default function ProfilePage() {
           <Button
             type="submit"
             disabled={!isDirty || updateProfile.isPending}
-            className="h-12 w-full bg-ink text-paper hover:bg-slate-800"
+            className="h-12 w-full bg-ink text-paper hover:bg-ink/90"
           >
             {updateProfile.isPending ? 'Saving...' : 'Save changes'}
           </Button>

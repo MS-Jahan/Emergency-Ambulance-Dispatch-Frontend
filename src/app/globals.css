@@ -2,57 +2,61 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
+@custom-variant dark (&:is(.dark *, [data-theme="dark"] *));
 
-/* Dispatch color palette */
+/* Dispatch color palette.
+   Raw tokens flip under .dark (route-forced wrappers on admin/driver) and
+   html[data-theme="dark"] (profile toggle on patient pages). Accents
+   (signal/oxygen/amber) stay static in both modes so white-on-accent text
+   keeps its contrast. */
 :root {
   /* Gauze & paper */
-  --color-gauze: #F2F5F7;
-  --color-paper: #FFFFFF;
+  --gauze: #F2F5F7;
+  --paper: #FFFFFF;
 
   /* Triage ink & dark console */
-  --color-ink: #0D1B2A;
-  --color-console: #0A141F;
+  --ink: #0D1B2A;
+  --console: #0A141F;
 
   /* Signal red - emergency only */
-  --color-signal: #E0312B;
+  --signal: #E0312B;
 
   /* Oxygen teal - available, done, success */
-  --color-oxygen: #0E8C86;
+  --oxygen: #0E8C86;
 
   /* Amber - pending, assigned, warning */
-  --color-amber: #E9A21B;
+  --amber: #E9A21B;
 
   /* Slate - secondary, borders */
-  --color-slate: #5A6B7B;
-  --color-hairline: #D8DFE5;
+  --slate: #5A6B7B;
+  --hairline: #D8DFE5;
 
   /* Tailwind integration */
-  --background: var(--color-gauze);
-  --foreground: var(--color-ink);
-  --card: var(--color-paper);
-  --card-foreground: var(--color-ink);
-  --popover: var(--color-paper);
-  --popover-foreground: var(--color-ink);
-  --primary: var(--color-ink);
-  --primary-foreground: var(--color-paper);
-  --secondary: var(--color-slate);
-  --secondary-foreground: var(--color-paper);
-  --muted: var(--color-hairline);
-  --muted-foreground: var(--color-slate);
-  --accent: var(--color-signal);
-  --accent-foreground: var(--color-paper);
-  --destructive: var(--color-signal);
-  --border: var(--color-hairline);
-  --input: var(--color-paper);
-  --ring: var(--color-ink);
+  --background: var(--gauze);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--paper);
+  --secondary: var(--slate);
+  --secondary-foreground: var(--paper);
+  --muted: var(--hairline);
+  --muted-foreground: var(--slate);
+  --accent: var(--signal);
+  --accent-foreground: var(--paper);
+  --destructive: var(--signal);
+  --border: var(--hairline);
+  --input: var(--paper);
+  --ring: var(--ink);
 
   /* Chart colors */
-  --chart-1: var(--color-signal);
-  --chart-2: var(--color-oxygen);
-  --chart-3: var(--color-amber);
-  --chart-4: var(--color-slate);
-  --chart-5: var(--color-hairline);
+  --chart-1: var(--signal);
+  --chart-2: var(--oxygen);
+  --chart-3: var(--amber);
+  --chart-4: var(--slate);
+  --chart-5: var(--hairline);
 
   /* Typography */
   --font-sans: var(--font-grotesk, system-ui, -apple-system, sans-serif);
@@ -61,35 +65,54 @@
   --radius: 0.375rem;
 }
 
-.dark {
-  --background: var(--color-console);
-  --foreground: var(--color-paper);
-  --card: var(--color-ink);
-  --card-foreground: var(--color-paper);
-  --popover: var(--color-ink);
-  --popover-foreground: var(--color-paper);
-  --primary: var(--color-paper);
-  --primary-foreground: var(--color-console);
-  --secondary: var(--color-slate);
-  --secondary-foreground: var(--color-paper);
-  --muted: rgba(255, 255, 255, 0.2);
-  --muted-foreground: rgba(255, 255, 255, 0.6);
-  --accent: var(--color-signal);
-  --accent-foreground: var(--color-paper);
-  --destructive: var(--color-signal);
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.05);
-  --ring: var(--color-slate);
+.dark,
+[data-theme="dark"] {
+  /* Surfaces go dark; ink becomes the light text color. */
+  --gauze: #0A141F;
+  --paper: #101E30;
+  --ink: #E9F0F6;
+  --console: #060D15;
+  --slate: #93A7BA;
+  --hairline: rgba(255, 255, 255, 0.12);
+
+  --background: var(--gauze);
+  --foreground: var(--ink);
+  --card: var(--paper);
+  --card-foreground: var(--ink);
+  --popover: var(--paper);
+  --popover-foreground: var(--ink);
+  --primary: var(--paper);
+  --primary-foreground: var(--ink);
+  --secondary: rgba(255, 255, 255, 0.08);
+  --secondary-foreground: var(--ink);
+  --muted: rgba(255, 255, 255, 0.08);
+  --muted-foreground: var(--slate);
+  --accent: var(--signal);
+  --accent-foreground: var(--paper);
+  --destructive: var(--signal);
+  --border: var(--hairline);
+  --input: rgba(255, 255, 255, 0.06);
+  --ring: var(--oxygen);
 
   /* Chart colors stay consistent */
-  --chart-1: var(--color-signal);
-  --chart-2: var(--color-oxygen);
-  --chart-3: var(--color-amber);
-  --chart-4: var(--color-slate);
-  --chart-5: var(--color-hairline);
+  --chart-1: var(--signal);
+  --chart-2: var(--oxygen);
+  --chart-3: var(--amber);
+  --chart-4: var(--slate);
+  --chart-5: var(--hairline);
 }
 
 @theme inline {
+  /* Brand palette - indirection so utilities flip with the theme */
+  --color-gauze: var(--gauze);
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-console: var(--console);
+  --color-signal: var(--signal);
+  --color-oxygen: var(--oxygen);
+  --color-amber: var(--amber);
+  --color-slate: var(--slate);
+  --color-hairline: var(--hairline);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -159,6 +182,13 @@
 
   p {
     @apply leading-relaxed;
+  }
+
+  /* Sonner toasts follow the theme via its CSS variables. */
+  :root {
+    --normal-bg: var(--paper);
+    --normal-text: var(--ink);
+    --normal-border: var(--hairline);
   }
 
   /* Trip line animation */

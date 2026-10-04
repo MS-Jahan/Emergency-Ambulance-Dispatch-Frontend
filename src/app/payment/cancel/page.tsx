@@ -26,8 +26,8 @@ function CancelInner() {
         </p>
       )}
       <Button
-        render={<Link href="/dashboard/payments" />}
-        className="w-full bg-ink text-paper hover:bg-slate-800"
+        nativeButton={false} render={<Link href="/dashboard/payments" />}
+        className="w-full bg-ink text-paper hover:bg-ink/90"
       >
         Payment history
       </Button>

@@ -40,7 +40,7 @@ const STATUSES = ['AVAILABLE', 'ON_TRIP', 'MAINTENANCE'] as const
 // Brand palette: teal available, amber on trip, red maintenance.
 const STATUS_PILL: Record<string, string> = {
   AVAILABLE: 'bg-oxygen/10 text-oxygen border-oxygen/30',
-  ON_TRIP: 'bg-amber/10 text-amber-700 border-amber/30',
+  ON_TRIP: 'bg-amber/10 text-amber-700 dark:text-amber border-amber/30',
   MAINTENANCE: 'bg-signal/10 text-signal border-signal/30',
 }
 
@@ -156,7 +156,7 @@ function AmbulanceForm({
       <Button
         type="submit"
         disabled={pending || (!initial && plate.trim().length < 4)}
-        className="w-full bg-ink text-paper hover:bg-slate-800"
+        className="w-full bg-ink text-paper hover:bg-ink/90"
       >
         {pending ? 'Saving...' : submitLabel}
       </Button>

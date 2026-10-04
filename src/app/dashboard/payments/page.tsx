@@ -151,7 +151,7 @@ export default function PaymentsPage() {
                       size="sm"
                       onClick={() => payNow(payment.requestId)}
                       disabled={initiate.isPending}
-                      className="bg-ink text-paper hover:bg-slate-800"
+                      className="bg-ink text-paper hover:bg-ink/90"
                     >
                       {initiate.isPending ? 'Starting...' : 'Pay'}
                     </Button>

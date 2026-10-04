@@ -32,7 +32,7 @@ const ROLES: Role[] = ['PATIENT', 'DRIVER', 'ADMIN']
 // Brand palette per role.
 const ROLE_PILL: Record<Role, string> = {
   PATIENT: 'bg-oxygen/10 text-oxygen border-oxygen/30',
-  DRIVER: 'bg-amber/10 text-amber-700 border-amber/30',
+  DRIVER: 'bg-amber/10 text-amber-700 dark:text-amber border-amber/30',
   ADMIN: 'bg-ink/5 text-ink border-hairline',
 }
 
@@ -277,7 +277,7 @@ export function UsersTable() {
             <Button
               type="submit"
               disabled={createDriver.isPending || !driverFormValid}
-              className="w-full bg-ink text-paper hover:bg-slate-800"
+              className="w-full bg-ink text-paper hover:bg-ink/90"
             >
               {createDriver.isPending ? 'Creating...' : 'Create driver'}
             </Button>

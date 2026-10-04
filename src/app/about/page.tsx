@@ -78,7 +78,7 @@ export default function AboutPage() {
             </p>
           </div>
           <Button
-            render={<Link href="/register" />}
+            nativeButton={false} render={<Link href="/register" />}
             className="bg-signal text-white hover:bg-signal/90 shrink-0"
           >
             <Siren className="h-4 w-4 mr-1" /> Get started

@@ -52,7 +52,7 @@ function SuccessInner() {
       )}
 
       <Button
-        render={<Link href="/dashboard/payments" />}
+        nativeButton={false} render={<Link href="/dashboard/payments" />}
         variant="outline"
         className="w-full border-hairline text-ink hover:bg-gauze"
       >

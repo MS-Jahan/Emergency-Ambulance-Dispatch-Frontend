@@ -73,7 +73,7 @@ export default function FaqPage() {
             Question not covered here? Get in touch and we will answer.
           </p>
           <Button
-            render={<Link href="/contact" />}
+            nativeButton={false} render={<Link href="/contact" />}
             className="bg-signal text-white hover:bg-signal/90 shrink-0"
           >
             Contact us

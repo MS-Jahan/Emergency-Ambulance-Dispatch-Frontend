@@ -216,7 +216,7 @@ export function RoleShell({ variant, children }: RoleShellProps) {
         )}
 
         <main
-          className={`pb-20 lg:pb-8 ${
+          className={`min-w-0 flex-1 pb-20 lg:pb-8 ${
             variant === 'sidebar' ? 'lg:pl-60' : variant === 'rail' ? 'lg:pl-16' : ''
           }`}
         >

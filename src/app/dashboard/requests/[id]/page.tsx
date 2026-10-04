@@ -333,7 +333,7 @@ function FeedbackForm({ requestId }: { requestId: string }) {
         type="button"
         onClick={send}
         disabled={submit.isPending}
-        className="mt-3 bg-ink text-paper hover:bg-slate-800"
+        className="mt-3 bg-ink text-paper hover:bg-ink/90"
       >
         {submit.isPending ? 'Sending...' : 'Send feedback'}
       </Button>

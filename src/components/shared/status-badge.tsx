@@ -6,7 +6,7 @@ const STATUS_CONFIG: Record<
   RequestStatus,
   { label: string; className: string }
 > = {
-  PENDING: { label: 'Pending', className: 'bg-amber/10 text-amber-700 border-amber/30' },
+  PENDING: { label: 'Pending', className: 'bg-amber/10 text-amber-700 dark:text-amber border-amber/30' },
   ASSIGNED: { label: 'Assigned', className: 'bg-oxygen/10 text-oxygen border-oxygen/30' },
   EN_ROUTE_PICKUP: {
     label: 'En route to pickup',

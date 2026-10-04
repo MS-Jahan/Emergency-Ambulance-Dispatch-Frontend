@@ -135,7 +135,7 @@ function HospitalForm({
       <Button
         type="submit"
         disabled={pending || !valid}
-        className="w-full bg-ink text-paper hover:bg-slate-800"
+        className="w-full bg-ink text-paper hover:bg-ink/90"
       >
         {pending ? 'Saving...' : 'Create hospital'}
       </Button>

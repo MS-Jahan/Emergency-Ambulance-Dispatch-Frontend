@@ -63,7 +63,7 @@ export default function HospitalsPage() {
             />
             <div className="mt-4 flex justify-center">
               <Button
-                render={<Link href="/login" />}
+                nativeButton={false} render={<Link href="/login" />}
                 className="bg-signal text-white hover:bg-signal/90"
               >
                 <Siren className="h-4 w-4 mr-1" /> Sign in

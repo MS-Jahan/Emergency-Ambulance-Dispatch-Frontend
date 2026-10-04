@@ -30,7 +30,7 @@ export function PublicHeader() {
           ))}
         </nav>
         <Button
-          render={<Link href="/login" />}
+          nativeButton={false} render={<Link href="/login" />}
           size="sm"
           className="bg-signal text-white hover:bg-signal/90"
         >
