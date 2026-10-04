@@ -34,6 +34,7 @@ export function StatCard({ label, value, hint, icon, accent = 'ink' }: StatCardP
         </div>
         {icon && (
           <div
+            aria-hidden
             className={`flex items-center justify-center w-10 h-10 rounded-lg ${ACCENT_CLASS[accent]}`}
           >
             {icon}

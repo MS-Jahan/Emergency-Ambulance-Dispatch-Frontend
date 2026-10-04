@@ -46,13 +46,13 @@ function MiniTripLine({ status }: { status: EmergencyRequest['status'] }) {
                 className={cn(
                   'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold',
                   active
-                    ? 'bg-signal text-white ring-4 ring-signal/20 animate-pulse'
+                    ? 'bg-signal text-white ring-4 ring-signal/20 trip-dot-active'
                     : done
                       ? 'bg-signal text-white'
                       : 'border border-hairline bg-gauze text-slate',
                 )}
               >
-                {done ? <Check className="h-2.5 w-2.5" /> : i + 1}
+                {done ? <Check className="h-2.5 w-2.5" aria-hidden /> : i + 1}
               </span>
               <span
                 className={cn(

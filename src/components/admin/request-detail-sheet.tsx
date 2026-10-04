@@ -22,13 +22,15 @@ import type { EmergencyRequest } from '@/types/api'
 interface RequestDetailSheetProps {
   request: EmergencyRequest
   onClose: () => void
+  /** Fired after a successful mutation — the board pulses that row. */
+  onAction?: (id: string) => void
 }
 
 /**
  * Side sheet (40% desktop, full-width mobile) for dispatching one request:
  * patient info, nearby units with one-click assign, reassign, cancel.
  */
-export function RequestDetailSheet({ request, onClose }: RequestDetailSheetProps) {
+export function RequestDetailSheet({ request, onClose, onAction }: RequestDetailSheetProps) {
   const nearby = useNearbyAmbulances(
     { lat: request.pickupLat, lng: request.pickupLng, radiusKm: 10 },
     { enabled: !!request.pickupLat && !!request.pickupLng && !request.ambulanceId },
@@ -57,6 +59,7 @@ export function RequestDetailSheet({ request, onClose }: RequestDetailSheetProps
     try {
       await assign.mutateAsync({ requestId: request.id, ambulanceId })
       toast.success('Ambulance assigned')
+      onAction?.(request.id)
       setReassigning(false)
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : 'Assign failed')
@@ -67,6 +70,7 @@ export function RequestDetailSheet({ request, onClose }: RequestDetailSheetProps
     try {
       await cancel.mutateAsync({ id: request.id, reason: reason.trim() || 'Cancelled by dispatch' })
       toast.success('Request cancelled')
+      onAction?.(request.id)
       onClose()
     } catch (err) {
       toast.error(err instanceof ApiError ? err.message : 'Cancel failed')

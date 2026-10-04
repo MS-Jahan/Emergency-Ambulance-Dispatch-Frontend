@@ -50,7 +50,7 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
         className={cn('flex items-center gap-2', vertical && 'flex-col')}
       >
         <div className="flex items-center justify-center w-6 h-6 rounded-full bg-red-500 text-white">
-          <span className="text-xs">✕</span>
+          <span className="text-xs" aria-hidden>✕</span>
         </div>
         <span className={cn('text-xs font-medium text-slate-500', !vertical && 'truncate')}>
           Cancelled
@@ -77,6 +77,7 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
             <div className="flex items-center gap-1 min-h-fit">
               {/* Dot */}
               <div
+                aria-hidden
                 className={cn(
                   'flex-shrink-0 w-2 h-2 rounded-full transition-all',
                   color,
@@ -116,7 +117,7 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
 
       {isCompleted && (
         <div className="flex items-center gap-1 flex-1">
-          <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+          <Check className="w-4 h-4 text-green-600 dark:text-green-400" aria-hidden />
           <span className="text-xs font-medium text-green-600 dark:text-green-400">Done</span>
         </div>
       )}

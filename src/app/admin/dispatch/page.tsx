@@ -32,6 +32,12 @@ interface Column {
 export default function DispatchBoardPage() {
   const board = useAdminRequests(1, 100, undefined, { refetchInterval: 5000 })
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [pulseId, setPulseId] = useState<string | null>(null)
+
+  const pulseRow = (id: string) => {
+    setPulseId(id)
+    setTimeout(() => setPulseId((cur) => (cur === id ? null : cur)), 1000)
+  }
 
   // Parent-owned clock: RequestRow re-renders its wait label on this tick
   // without owning timers itself.
@@ -113,6 +119,7 @@ export default function DispatchBoardPage() {
                       key={r.id}
                       request={r}
                       now={now}
+                      pulsing={r.id === pulseId}
                       onClick={() => setSelectedId(r.id)}
                     />
                   ))
@@ -124,7 +131,11 @@ export default function DispatchBoardPage() {
       )}
 
       {selected && (
-        <RequestDetailSheet request={selected} onClose={() => setSelectedId(null)} />
+        <RequestDetailSheet
+          request={selected}
+          onClose={() => setSelectedId(null)}
+          onAction={pulseRow}
+        />
       )}
     </div>
   )

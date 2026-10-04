@@ -202,8 +202,23 @@
     }
   }
 
+  /* Spec: 3 cycles then stop — continuous motion is banned on dark mode. */
   .trip-dot-active {
-    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) 3;
+  }
+
+  /* Success feedback: brief flash on the row a dispatch action touched. */
+  @keyframes row-pulse {
+    0% {
+      background-color: color-mix(in oklab, var(--oxygen) 14%, transparent);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+
+  .row-pulse {
+    animation: row-pulse 900ms ease-out 1 both;
   }
 
   /* Entrance animation (see components/motion-card.tsx) */
@@ -223,7 +238,9 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .motion-card {
+    .motion-card,
+    .trip-dot-active,
+    .row-pulse {
       animation: none;
     }
   }

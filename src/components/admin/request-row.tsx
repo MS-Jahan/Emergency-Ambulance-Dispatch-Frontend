@@ -35,13 +35,15 @@ interface RequestRowProps {
   /** Parent-owned clock so this component stays pure. */
   now: number
   onClick: () => void
+  /** Flash once — set after a dispatch action touched this row. */
+  pulsing?: boolean
 }
 
 /**
  * Compact board card: priority + patient + address | wait time |
  * assigned unit footer. Whole card is one click target for the detail sheet.
  */
-export function RequestRow({ request, now, onClick }: RequestRowProps) {
+export function RequestRow({ request, now, onClick, pulsing }: RequestRowProps) {
   const terminal = TERMINAL.includes(request.status)
 
   return (
@@ -53,6 +55,7 @@ export function RequestRow({ request, now, onClick }: RequestRowProps) {
         'p-3 border border-hairline space-y-2 text-left cursor-pointer',
         'transition-all hover:border-ink/30 hover:shadow-sm hover:-translate-y-0.5',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxygen',
+        pulsing && 'row-pulse',
       )}
       onClick={onClick}
       onKeyDown={(e) => {
