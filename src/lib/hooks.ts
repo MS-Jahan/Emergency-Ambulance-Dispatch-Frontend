@@ -3,6 +3,9 @@ import { useRouter } from 'next/navigation'
 import { api } from './api'
 import { useAuth } from './store'
 import type {
+  AdminUser,
+  Ambulance,
+  AuditLog,
   DashboardStats,
   DriverProfile,
   EmergencyRequest,
@@ -285,6 +288,145 @@ export function useAssignAmbulance() {
       queryClient.invalidateQueries({ queryKey: ['requests'] })
       queryClient.invalidateQueries({ queryKey: ['ambulances'] })
     },
+  })
+}
+
+export function useAdminAmbulances(page = 1, limit = 50) {
+  return useQuery({
+    queryKey: ['ambulances', 'admin', page, limit],
+    queryFn: () =>
+      api.get<PaginatedData<Ambulance>>(`/ambulances?page=${page}&limit=${limit}`),
+  })
+}
+
+export function useCreateAmbulance() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: {
+      plateNumber: string
+      type: string
+      homeHospitalId?: string
+    }) => api.post<Ambulance>('/ambulances', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ambulances'] })
+    },
+  })
+}
+
+export function useUpdateAmbulance() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({
+      id,
+      ...data
+    }: {
+      id: string
+      type?: string
+      status?: string
+      homeHospitalId?: string | null
+    }) => api.patch<Ambulance>(`/ambulances/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ambulances'] })
+    },
+  })
+}
+
+export function useDeleteAmbulance() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/ambulances/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ambulances'] })
+    },
+  })
+}
+
+export function useCreateHospital() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: {
+      name: string
+      address: string
+      lat: number
+      lng: number
+      phone: string
+    }) => api.post<Hospital>('/hospitals', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['hospitals'] })
+    },
+  })
+}
+
+export function useDeleteHospital() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/hospitals/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['hospitals'] })
+    },
+  })
+}
+
+export function useAdminUsers(
+  page = 1,
+  filters?: { role?: string; q?: string },
+) {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: '50',
+    ...(filters?.role && { role: filters.role }),
+    ...(filters?.q && { q: filters.q }),
+  })
+  return useQuery({
+    queryKey: ['admin', 'users', page, filters],
+    queryFn: () => api.get<PaginatedData<AdminUser>>(`/admin/users?${params.toString()}`),
+  })
+}
+
+export function useUpdateUserRole() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, role }: { id: string; role: Role }) =>
+      api.patch<{ user: AdminUser }>(`/admin/users/${id}/role`, { role }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
+    },
+  })
+}
+
+export function useCreateDriver() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: {
+      name: string
+      email: string
+      password: string
+      phone: string
+      licenseNumber: string
+    }) => api.post('/admin/drivers', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] })
+    },
+  })
+}
+
+export function useAuditLogs(page = 1, requestId?: string) {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: '50',
+    ...(requestId && { requestId }),
+  })
+  return useQuery({
+    queryKey: ['admin', 'audit-logs', page, requestId],
+    queryFn: () =>
+      api.get<PaginatedData<AuditLog>>(`/admin/audit-logs?${params.toString()}`),
   })
 }
 

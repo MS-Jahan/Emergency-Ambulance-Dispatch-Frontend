@@ -29,12 +29,21 @@ export default function AdminDashboardPage() {
             Live fleet and request activity
           </p>
         </div>
-        <Button
-          render={<Link href="/admin/dispatch" />}
-          className="bg-signal text-white hover:bg-signal/90"
-        >
-          Dispatch board <ArrowRight className="h-4 w-4 ml-1" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            render={<Link href="/admin/resources" />}
+            variant="outline"
+            className="border-hairline text-ink"
+          >
+            Resources
+          </Button>
+          <Button
+            render={<Link href="/admin/dispatch" />}
+            className="bg-signal text-white hover:bg-signal/90"
+          >
+            Dispatch board <ArrowRight className="h-4 w-4 ml-1" />
+          </Button>
+        </div>
       </div>
 
       {stats.isLoading ? (

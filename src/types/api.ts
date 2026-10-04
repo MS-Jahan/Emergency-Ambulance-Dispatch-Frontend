@@ -150,3 +150,25 @@ export interface DashboardStats {
   requests: { total: number; pending: number; completed: number; cancelled: number }
   revenue: { paidTotal: number }
 }
+
+// Admin resource rows
+export interface AdminUser {
+  id: string
+  name: string
+  email: string
+  phone?: string | null
+  role: Role
+  isVerified: boolean
+  deletedAt?: string | null
+  createdAt: string
+}
+
+export interface AuditLog {
+  id: string
+  requestId: string
+  fromStatus?: RequestStatus | null
+  toStatus: RequestStatus
+  note?: string | null
+  createdAt: string
+  actor: { id: string; name: string; role: Role }
+}
