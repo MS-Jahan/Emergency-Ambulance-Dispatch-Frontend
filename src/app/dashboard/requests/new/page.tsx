@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { Crosshair, MapPin } from 'lucide-react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card } from '@/components/ui/card'
 import {
   Select,
   SelectContent,
@@ -16,10 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { MotionCard } from '@/components/motion-card'
+import { QuickActionButton } from '@/components/quick-action-button'
+import { RequestWizardStep } from '@/components/request-wizard-step'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { useCreateRequest, useHospitals } from '@/lib/hooks'
 import { useRequestWizard } from '@/lib/store'
 import { ApiError } from '@/lib/api'
+import { cn } from '@/lib/utils'
 import type { RequestPriority } from '@/types/api'
 
 const MapPicker = dynamic(() => import('@/components/request/map-picker'), {
@@ -29,7 +31,37 @@ const MapPicker = dynamic(() => import('@/components/request/map-picker'), {
   ),
 })
 
-const STEPS = ['Location', 'Details', 'Review'] as const
+const PRIORITY_OPTIONS: {
+  value: RequestPriority
+  label: string
+  note: string
+  dot: string
+}[] = [
+  {
+    value: 'CRITICAL',
+    label: 'Critical',
+    note: 'Life-threatening',
+    dot: 'bg-signal',
+  },
+  {
+    value: 'HIGH',
+    label: 'High',
+    note: 'Serious but stable',
+    dot: 'bg-amber',
+  },
+  {
+    value: 'NORMAL',
+    label: 'Normal',
+    note: 'Non-emergency',
+    dot: 'bg-oxygen',
+  },
+]
+
+const HEADINGS: Record<1 | 2 | 3, string> = {
+  1: 'Where are you?',
+  2: 'How urgent?',
+  3: 'Review & confirm',
+}
 
 export default function NewRequestPage() {
   const router = useRouter()
@@ -38,10 +70,14 @@ export default function NewRequestPage() {
   const createRequest = useCreateRequest()
   const [locating, setLocating] = useState(false)
 
-  const canNext =
-    wizard.step === 1
-      ? wizard.pickupLat != null && wizard.pickupLng != null
-      : true
+  const step = wizard.step as 1 | 2 | 3
+  const hasPin = wizard.pickupLat != null && wizard.pickupLng != null
+  const hospitalName = wizard.hospitalId
+    ? (hospitals.data?.items ?? []).find((h) => h.id === wizard.hospitalId)
+        ?.name ?? 'Selected hospital'
+    : null
+
+  const go = (n: 1 | 2 | 3) => wizard.setStep(n)
 
   const useMyLocation = () => {
     if (!navigator.geolocation) {
@@ -63,12 +99,13 @@ export default function NewRequestPage() {
   }
 
   const submit = async () => {
-    if (wizard.pickupLat == null || wizard.pickupLng == null) return
+    const { pickupLat, pickupLng } = wizard
+    if (pickupLat == null || pickupLng == null) return
     try {
       const request = await createRequest.mutateAsync({
         pickupAddress: wizard.pickupAddress,
-        pickupLat: wizard.pickupLat,
-        pickupLng: wizard.pickupLng,
+        pickupLat,
+        pickupLng,
         priority: wizard.priority,
         destinationHospitalId: wizard.hospitalId ?? undefined,
       })
@@ -82,219 +119,185 @@ export default function NewRequestPage() {
     }
   }
 
+  const footer = (
+    <div className="grid grid-cols-2 gap-3">
+      <QuickActionButton
+        label="Back"
+        variant="outline"
+        onClick={() => go((step - 1) as 1 | 2 | 3)}
+        disabled={step === 1 || createRequest.isPending}
+        className="sm:h-14"
+      />
+      {step < 3 ? (
+        <QuickActionButton
+          label={step === 1 ? 'Next' : 'Review'}
+          onClick={() => go((step + 1) as 1 | 2 | 3)}
+          disabled={step === 1 && !hasPin}
+        />
+      ) : (
+        <QuickActionButton
+          label={createRequest.isPending ? 'Submitting...' : 'Confirm'}
+          onClick={submit}
+          loading={createRequest.isPending}
+        />
+      )}
+    </div>
+  )
+
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ink">Request ambulance</h1>
-        <p className="text-sm text-slate mt-1">
-          Three quick steps — we dispatch the nearest available unit
-        </p>
-      </div>
-
-      {/* Stepper */}
-      <ol className="flex items-center gap-2">
-        {STEPS.map((label, i) => {
-          const n = i + 1
-          const active = wizard.step === n
-          const done = wizard.step > n
-          return (
-            <li key={label} className="flex items-center gap-2 flex-1">
-              <button
-                type="button"
-                onClick={() => done && wizard.setStep(n as 1 | 2 | 3)}
-                className={`flex items-center gap-2 ${done ? 'cursor-pointer' : 'cursor-default'}`}
-              >
-                <span
-                  className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-semibold ${
-                    active || done
-                      ? 'bg-signal text-white'
-                      : 'bg-gauze text-slate border border-hairline'
-                  }`}
-                >
-                  {n}
-                </span>
-                <span
-                  className={`text-sm ${active ? 'font-semibold text-ink' : 'text-slate'}`}
-                >
-                  {label}
-                </span>
-              </button>
-              {n < STEPS.length && (
-                <span
-                  className={`flex-1 h-px ${done ? 'bg-signal' : 'bg-hairline'}`}
-                />
-              )}
-            </li>
-          )
-        })}
-      </ol>
-
-      <Card className="p-6 border border-hairline">
-        {wizard.step === 1 && (
-          <div className="space-y-4">
-            <div>
-              <Label className="text-sm font-medium text-ink">
-                Pickup location
-              </Label>
-              <p className="text-xs text-slate mt-0.5 mb-2">
-                Tap the map to drop the pin, or use your current location
-              </p>
+    <div className="max-w-2xl mx-auto">
+      <MotionCard key={step} duration={300}>
+        <RequestWizardStep
+          stepNumber={step}
+          totalSteps={3}
+          heading={HEADINGS[step]}
+          footer={footer}
+        >
+          {step === 1 && (
+            <div className="space-y-4">
               <MapPicker
                 lat={wizard.pickupLat}
                 lng={wizard.pickupLng}
                 onPick={(lat, lng) => wizard.setPickupLocation(lat, lng)}
               />
-            </div>
 
-            <Button
-              type="button"
-              variant="outline"
-              onClick={useMyLocation}
-              disabled={locating}
-              className="border-hairline text-ink hover:bg-gauze"
-            >
-              <Crosshair className="w-4 h-4 mr-2" />
-              {locating ? 'Locating...' : 'Use my location'}
-            </Button>
-
-            <div>
-              <Label htmlFor="pickupAddress" className="text-sm font-medium text-ink">
-                Pickup address
-              </Label>
-              <Input
-                id="pickupAddress"
-                placeholder="House 12, Road 5, Dhanmondi, Dhaka"
-                value={wizard.pickupAddress}
-                onChange={(e) => wizard.setPickupAddress(e.target.value)}
-                className="mt-1 bg-paper border-hairline text-ink placeholder:text-slate-400"
-              />
-            </div>
-
-            {wizard.pickupLat != null && wizard.pickupLng != null && (
-              <p className="text-xs text-slate tabular-nums">
-                Pinned at {wizard.pickupLat.toFixed(5)},{' '}
-                {wizard.pickupLng.toFixed(5)}
-              </p>
-            )}
-          </div>
-        )}
-
-        {wizard.step === 2 && (
-          <div className="space-y-4">
-            <div>
-              <Label className="text-sm font-medium text-ink">Priority</Label>
-              <p className="text-xs text-slate mt-0.5 mb-2">
-                Higher priority dispatches first
-              </p>
-              <Select
-                value={wizard.priority}
-                onValueChange={(v) => wizard.setPriority(v as RequestPriority)}
+              <button
+                type="button"
+                onClick={useMyLocation}
+                disabled={locating}
+                className="inline-flex items-center gap-2 text-sm font-medium text-oxygen hover:underline disabled:opacity-60"
               >
-                <SelectTrigger className="w-full bg-paper border-hairline text-ink">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="NORMAL">Normal</SelectItem>
-                  <SelectItem value="HIGH">High</SelectItem>
-                  <SelectItem value="CRITICAL">Critical</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <Crosshair className="h-4 w-4" aria-hidden />
+                {locating ? 'Locating...' : 'Use my current location'}
+              </button>
 
-            <div>
-              <Label className="text-sm font-medium text-ink">
-                Destination hospital <span className="text-slate font-normal">(optional)</span>
-              </Label>
-              <p className="text-xs text-slate mt-0.5 mb-2">
-                Leave empty and choose later with the crew if unsure
-              </p>
-              <Select
-                value={wizard.hospitalId ?? 'none'}
-                onValueChange={(v) =>
-                  wizard.setHospitalId(v === 'none' ? null : v)
-                }
-              >
-                <SelectTrigger className="w-full bg-paper border-hairline text-ink">
-                  <SelectValue placeholder="No hospital selected" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">No hospital selected</SelectItem>
-                  {(hospitals.data?.items ?? []).map((hospital) => (
-                    <SelectItem key={hospital.id} value={hospital.id}>
-                      {hospital.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        )}
-
-        {wizard.step === 3 && (
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-signal flex-shrink-0" />
-                <p className="text-sm font-medium text-ink">
-                  {wizard.pickupAddress || 'No address given'}
-                </p>
+              <div className="space-y-1.5">
+                <Label htmlFor="pickupAddress" className="text-sm font-medium text-ink">
+                  Pickup address
+                </Label>
+                <Input
+                  id="pickupAddress"
+                  placeholder="House 12, Road 5, Dhanmondi, Dhaka"
+                  value={wizard.pickupAddress}
+                  onChange={(e) => wizard.setPickupAddress(e.target.value)}
+                  className="h-12 bg-paper border-hairline text-ink placeholder:text-slate-400"
+                />
               </div>
-              {wizard.pickupLat != null && wizard.pickupLng != null && (
-                <p className="text-xs text-slate tabular-nums ml-6">
-                  {wizard.pickupLat.toFixed(5)}, {wizard.pickupLng.toFixed(5)}
+
+              {hasPin && (
+                <p className="text-xs text-slate tabular-nums">
+                  Pinned at {wizard.pickupLat!.toFixed(5)},{' '}
+                  {wizard.pickupLng!.toFixed(5)}
                 </p>
               )}
-              <div className="ml-6">
-                <PriorityBadge priority={wizard.priority} />
+            </div>
+          )}
+
+          {step === 2 && (
+            <div className="space-y-6">
+              <fieldset className="space-y-2">
+                <legend className="text-sm font-medium text-ink mb-2">
+                  Priority
+                </legend>
+                {PRIORITY_OPTIONS.map((opt) => {
+                  const selected = wizard.priority === opt.value
+                  return (
+                    <label
+                      key={opt.value}
+                      className={cn(
+                        'flex h-14 cursor-pointer items-center gap-3 rounded-lg border-2 px-4 transition-colors',
+                        selected
+                          ? 'border-oxygen bg-oxygen/5'
+                          : 'border-hairline hover:border-ink/30',
+                      )}
+                    >
+                      <input
+                        type="radio"
+                        name="priority"
+                        value={opt.value}
+                        checked={selected}
+                        onChange={() => wizard.setPriority(opt.value)}
+                        className="sr-only"
+                      />
+                      <span className={cn('h-3 w-3 rounded-full shrink-0', opt.dot)} aria-hidden />
+                      <span className="min-w-0">
+                        <span className="block text-sm font-medium text-ink">{opt.label}</span>
+                        <span className="block text-xs text-slate">{opt.note}</span>
+                      </span>
+                    </label>
+                  )
+                })}
+              </fieldset>
+
+              <div className="space-y-1.5">
+                <Label className="text-sm font-medium text-ink">
+                  Destination hospital{' '}
+                  <span className="text-slate font-normal">(optional)</span>
+                </Label>
+                <Select
+                  value={wizard.hospitalId ?? 'none'}
+                  onValueChange={(v) =>
+                    wizard.setHospitalId(v === 'none' ? null : v)
+                  }
+                >
+                  <SelectTrigger className="w-full h-12 bg-paper border-hairline text-ink">
+                    <SelectValue placeholder="No hospital selected" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No hospital selected</SelectItem>
+                    {(hospitals.data?.items ?? []).map((hospital) => (
+                      <SelectItem key={hospital.id} value={hospital.id}>
+                        {hospital.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-slate">
+                  Unsure? Leave it empty and decide with the crew.
+                </p>
               </div>
-              <p className="text-sm text-slate ml-6">
-                Destination:{' '}
-                {wizard.hospitalId
-                  ? (hospitals.data?.items ?? []).find(
-                      (h) => h.id === wizard.hospitalId,
-                    )?.name ?? 'Selected hospital'
-                  : 'To be decided'}
+
+              <p className="text-xs text-slate">
+                Fare depends on ambulance type and distance — you pay only
+                after arrival.
               </p>
             </div>
-            <p className="text-xs text-slate border-t border-hairline pt-3">
-              Submitting alerts dispatch immediately. Payment happens after the
-              trip completes.
-            </p>
-          </div>
-        )}
-
-        {/* Actions */}
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-between mt-6 pt-4 border-t border-hairline">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => wizard.setStep((wizard.step - 1) as 1 | 2 | 3)}
-            disabled={wizard.step === 1}
-            className="w-full sm:w-auto border-hairline text-ink hover:bg-gauze"
-          >
-            Back
-          </Button>
-          {wizard.step < 3 ? (
-            <Button
-              type="button"
-              onClick={() => wizard.setStep((wizard.step + 1) as 1 | 2 | 3)}
-              disabled={!canNext}
-              className="w-full sm:w-auto bg-ink text-paper hover:bg-slate-800"
-            >
-              Next
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={submit}
-              disabled={createRequest.isPending}
-              className="w-full sm:w-auto bg-signal text-white hover:bg-signal/90"
-            >
-              {createRequest.isPending ? 'Submitting...' : 'Submit request'}
-            </Button>
           )}
-        </div>
-      </Card>
+
+          {step === 3 && (
+            <div className="space-y-5">
+              <div className="flex gap-4">
+                {/* Map thumbnail */}
+                <div className="flex h-[200px] w-[200px] shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-hairline bg-gauze text-slate">
+                  <MapPin className="h-6 w-6 text-signal" aria-hidden />
+                  {hasPin && (
+                    <span className="px-2 text-center text-[10px] tabular-nums">
+                      {wizard.pickupLat!.toFixed(4)}, {wizard.pickupLng!.toFixed(4)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="min-w-0 space-y-2">
+                  <p className="font-semibold text-ink line-clamp-2">
+                    {wizard.pickupAddress || 'No address given'}
+                  </p>
+                  <PriorityBadge priority={wizard.priority} />
+                  <p className="text-sm text-slate">
+                    Destination: {hospitalName ?? 'To be decided'}
+                  </p>
+                </div>
+              </div>
+
+              <p className="border-t border-hairline pt-4 text-sm text-slate">
+                Submitting alerts dispatch immediately.{' '}
+                <span className="font-medium text-ink">
+                  Pay after arrival.
+                </span>
+              </p>
+            </div>
+          )}
+        </RequestWizardStep>
+      </MotionCard>
     </div>
   )
 }
