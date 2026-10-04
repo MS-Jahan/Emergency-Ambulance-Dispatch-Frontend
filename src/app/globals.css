@@ -175,4 +175,26 @@
   .trip-dot-active {
     animation: pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
+
+  /* Entrance animation (see components/motion-card.tsx) */
+  @keyframes motion-card-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .motion-card {
+    animation: motion-card-in 400ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .motion-card {
+      animation: none;
+    }
+  }
 }
