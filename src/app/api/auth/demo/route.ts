@@ -1,22 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { backendFetch } from '@/lib/backend'
 import { setAuthCookies } from '@/lib/auth-cookies'
+import { demoAccount } from '@/lib/demo-accounts'
 
 // Backend has no /auth/demo endpoint; the Next route maps role -> seeded demo
 // credentials and calls /auth/login. Env overrides let deploys re-point at a
 // reseeded backend without code changes.
 const DEMO_CREDENTIALS: Record<string, { email: string; password: string }> = {
   PATIENT: {
-    email: process.env.DEMO_PATIENT_EMAIL ?? 'patient@dispatch.demo',
-    password: process.env.DEMO_PATIENT_PASSWORD ?? 'Demo123!',
+    email: process.env.DEMO_PATIENT_EMAIL ?? demoAccount('PATIENT').email,
+    password: process.env.DEMO_PATIENT_PASSWORD ?? demoAccount('PATIENT').password,
   },
   DRIVER: {
-    email: process.env.DEMO_DRIVER_EMAIL ?? 'driver@dispatch.demo',
-    password: process.env.DEMO_DRIVER_PASSWORD ?? 'Demo123!',
+    email: process.env.DEMO_DRIVER_EMAIL ?? demoAccount('DRIVER').email,
+    password: process.env.DEMO_DRIVER_PASSWORD ?? demoAccount('DRIVER').password,
   },
   ADMIN: {
-    email: process.env.DEMO_ADMIN_EMAIL ?? 'admin@dispatch.demo',
-    password: process.env.DEMO_ADMIN_PASSWORD ?? 'Admin123!',
+    email: process.env.DEMO_ADMIN_EMAIL ?? demoAccount('ADMIN').email,
+    password: process.env.DEMO_ADMIN_PASSWORD ?? demoAccount('ADMIN').password,
   },
 }
 

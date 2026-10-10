@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { FieldError } from '@/components/shared/field-error'
 import { AuthLayout } from '@/components/auth/auth-layout'
 import { useLogin, useDemoLogin, usePublicCapabilities } from '@/lib/hooks'
+import { DEMO_ACCOUNTS } from '@/lib/demo-accounts'
 import { cn } from '@/lib/utils'
 
 const loginSchema = z.object({
@@ -48,6 +49,7 @@ export function LoginForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -172,6 +174,39 @@ export function LoginForm() {
               </button>
             ))}
           </div>
+
+          <details className="group rounded-2xl border border-hairline bg-gauze px-4 py-3 text-sm">
+            <summary className="cursor-pointer select-none font-bold text-ink marker:text-brand focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand">
+              Demo account credentials
+            </summary>
+            <p className="mt-2 text-slate">
+              Public test accounts with sample data. Use them here, or press a role above.
+            </p>
+            <ul className="mt-3 space-y-3">
+              {DEMO_ACCOUNTS.map((a) => (
+                <li
+                  key={a.role}
+                  className="flex flex-wrap items-center justify-between gap-2 border-t border-hairline pt-3 first:border-t-0 first:pt-0"
+                >
+                  <div className="min-w-0">
+                    <p className="font-bold text-ink">{a.label}</p>
+                    <p className="break-all font-mono text-xs text-slate">{a.email}</p>
+                    <p className="font-mono text-xs text-slate">{a.password}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setValue('email', a.email, { shouldValidate: true })
+                      setValue('password', a.password, { shouldValidate: true })
+                    }}
+                    className="rounded-full border border-hairline px-3 py-1.5 text-xs font-bold text-brand hover:bg-brand-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+                  >
+                    Fill the form
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </details>
 
           {demoLoginMutation.error && (
             <div
