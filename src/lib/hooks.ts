@@ -4,6 +4,8 @@ import { api, ApiError } from './api'
 import { useAuth } from './store'
 import type {
   AdminFeedbackItem,
+  Capabilities,
+  IntegrationTestResult,
   AdminUser,
   DriverStats,
   PublicStats,
@@ -630,11 +632,19 @@ export function useHospitals() {
 // Profile
 export function useUpdateProfile() {
   const setUser = useAuth((s) => s.setUser)
+  const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: { name?: string; phone?: string }) =>
-      api.patch<{ user: User }>('/users/me', data).then((d) => d.user),
-    onSuccess: (user) => setUser(user),
+    mutationFn: (data: {
+      name?: string
+      phone?: string
+      notifySms?: boolean
+      notifyEmail?: boolean
+    }) => api.patch<{ user: User }>('/users/me', data).then((d) => d.user),
+    onSuccess: (user) => {
+      setUser(user)
+      queryClient.setQueryData(['auth', 'me'], user)
+    },
   })
 }
 
@@ -744,3 +754,46 @@ export function useFareEstimate(type?: AmbulanceType) {
   })
 }
 
+
+// Optional integrations (email, SMS). Any error counts as "nothing configured".
+const NO_CAPABILITIES: Capabilities = { email: false, sms: false, passwordReset: false }
+
+export function usePublicCapabilities() {
+  return useQuery({
+    queryKey: ['public', 'capabilities'],
+    queryFn: () =>
+      api
+        .get<{ capabilities: Capabilities }>('/public/capabilities')
+        .then((d) => d.capabilities)
+        .catch(() => NO_CAPABILITIES),
+    staleTime: 60_000,
+    retry: false,
+  })
+}
+
+export function useForgotPassword() {
+  return useMutation({
+    mutationFn: (data: { email: string }) => api.post<null>('/auth/forgot-password', data),
+  })
+}
+
+export function useResetPassword() {
+  return useMutation({
+    mutationFn: (data: { token: string; newPassword: string }) =>
+      api.post<null>('/auth/reset-password', data),
+  })
+}
+
+export function useAdminTestEmail() {
+  return useMutation({
+    mutationFn: (data: { to: string }) =>
+      api.post<IntegrationTestResult>('/admin/integrations/test-email', data),
+  })
+}
+
+export function useAdminTestSms() {
+  return useMutation({
+    mutationFn: (data: { to: string }) =>
+      api.post<IntegrationTestResult>('/admin/integrations/test-sms', data),
+  })
+}

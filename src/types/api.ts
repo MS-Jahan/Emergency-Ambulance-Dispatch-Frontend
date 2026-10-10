@@ -20,6 +20,8 @@ export interface User {
   phone?: string
   role: Role
   isVerified: boolean
+  notifySms?: boolean
+  notifyEmail?: boolean
   createdAt: string
 }
 
@@ -250,3 +252,17 @@ export interface FaresResponse {
   currency: string
 }
 
+
+// Backend: GET /public/capabilities (which optional integrations are configured)
+export interface Capabilities {
+  email: boolean
+  sms: boolean
+  passwordReset: boolean
+}
+
+// Backend: POST /admin/integrations/test-email and /test-sms
+export interface IntegrationTestResult {
+  sent: boolean
+  skipped?: 'not_configured'
+  error?: string
+}

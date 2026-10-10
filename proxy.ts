@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-const publicRoutes = ['/', '/about', '/services', '/contact', '/faq', '/hospitals', '/login', '/register', '/payment']
+const publicRoutes = ['/', '/about', '/services', '/contact', '/faq', '/hospitals', '/login', '/register', '/forgot-password', '/reset-password', '/payment']
 const authRoutes = ['/login', '/register']
 const patientRoutes = ['/dashboard']
 const driverRoutes = ['/driver']
