@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { FieldError } from '@/components/shared/field-error'
 import { AuthLayout } from '@/components/auth/auth-layout'
-import { useLogin, useDemoLogin } from '@/lib/hooks'
+import { useLogin, useDemoLogin, usePublicCapabilities } from '@/lib/hooks'
 import { cn } from '@/lib/utils'
 
 const loginSchema = z.object({
@@ -57,6 +57,7 @@ export function LoginForm() {
     },
   })
 
+  const capabilities = usePublicCapabilities()
   const loginMutation = useLogin(next)
   const demoLoginMutation = useDemoLogin(next)
 
@@ -119,6 +120,16 @@ export function LoginForm() {
               </button>
             </div>
             {errors.password && <FieldError>{errors.password.message}</FieldError>}
+            {capabilities.data?.passwordReset && (
+              <p className="text-right text-sm">
+                <Link
+                  href="/forgot-password"
+                  className="font-bold text-brand underline-offset-2 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </p>
+            )}
           </div>
 
           {loginMutation.error && (
