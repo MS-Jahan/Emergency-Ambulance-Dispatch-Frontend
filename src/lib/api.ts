@@ -19,7 +19,10 @@ export class ApiError extends Error {
 async function handleResponse<T>(response: Response): Promise<T> {
   if (response.status === 401 && typeof window !== 'undefined') {
     const pathname = window.location.pathname
-    if (!pathname.startsWith('/login') && !pathname.startsWith('/register')) {
+    // Only signed-in areas bounce to the login page. Public pages also call
+    // /users/me in the background and a visitor without a session must stay put.
+    const protectedArea = ['/dashboard', '/driver', '/admin'].some((p) => pathname.startsWith(p))
+    if (protectedArea) {
       const next = pathname + window.location.search
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination
       window.location.assign(`/login?next=${encodeURIComponent(next)}`)
