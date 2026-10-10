@@ -1,5 +1,6 @@
 'use client'
 
+import { IntegrationsCard } from '@/components/admin/integrations-card'
 import Link from 'next/link'
 import { AlertTriangle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -198,6 +199,8 @@ export default function AdminDashboardPage() {
           </ul>
         )}
       </Card>
+
+      <IntegrationsCard />
     </div>
   )
 }
