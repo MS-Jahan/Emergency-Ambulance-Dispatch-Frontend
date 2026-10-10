@@ -10,70 +10,70 @@
    (signal/oxygen/amber) stay static in both modes so white-on-accent text
    keeps its contrast. */
 :root {
-  /* Gauze & paper */
-  --gauze: #F2F5F7;
-  --paper: #FFFFFF;
+  /* RapidAid on the Organic system: warm cream ground, terracotta brand.
+     Signal red = emergency actions only, oxygen = available/success,
+     amber = pending/warning. */
+  --gauze: #F5EAD8;
+  --paper: #FFF9EF;
 
-  /* Triage ink & dark console */
-  --ink: #0D1B2A;
-  --console: #0A141F;
+  --ink: #201E1D;
+  --console: #2E2B25;
 
-  /* Signal red - emergency only */
-  --signal: #E0312B;
+  --signal: #DC2626;
+  --oxygen: #15803D;
+  --amber: #B45309;
 
-  /* Oxygen teal - available, done, success */
-  --oxygen: #0E8C86;
+  --slate: #6B5F50;
+  --hairline: #D9C7A6;
 
-  /* Amber - pending, assigned, warning */
-  --amber: #E9A21B;
+  /* Brand (buttons, links, active nav). Terracotta ramp step 700 for AA text. */
+  --brand: #8C491A;
+  --brand-soft: #F1DCC8;
+  --brand-foreground: #FFFFFF;
 
-  /* Slate - secondary, borders */
-  --slate: #5A6B7B;
-  --hairline: #D8DFE5;
-
-  /* Tailwind integration */
   --background: var(--gauze);
   --foreground: var(--ink);
   --card: var(--paper);
   --card-foreground: var(--ink);
   --popover: var(--paper);
   --popover-foreground: var(--ink);
-  --primary: var(--ink);
-  --primary-foreground: var(--paper);
-  --secondary: var(--slate);
-  --secondary-foreground: var(--paper);
-  --muted: var(--hairline);
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
+  --secondary: #EBDDC5;
+  --secondary-foreground: var(--ink);
+  --muted: #EBDDC5;
   --muted-foreground: var(--slate);
-  --accent: var(--signal);
-  --accent-foreground: var(--paper);
+  --accent: var(--brand-soft);
+  --accent-foreground: var(--ink);
   --destructive: var(--signal);
   --border: var(--hairline);
   --input: var(--paper);
-  --ring: var(--ink);
+  --ring: var(--brand);
 
-  /* Chart colors */
   --chart-1: var(--signal);
   --chart-2: var(--oxygen);
   --chart-3: var(--amber);
   --chart-4: var(--slate);
   --chart-5: var(--hairline);
 
-  /* Typography */
-  --font-sans: var(--font-grotesk, system-ui, -apple-system, sans-serif);
+  --font-sans: var(--font-figtree, system-ui, -apple-system, sans-serif);
+  --font-heading: var(--font-caprasimo, Georgia, serif);
 
-  /* Spacing */
-  --radius: 0.375rem;
+  --radius: 1rem;
 }
 
-.dark,
-[data-theme="dark"] {
-  /* Surfaces go dark; ink becomes the light text color. */
-  --gauze: #0A141F;
-  --paper: #101E30;
-  --ink: #E9F0F6;
-  --console: #060D15;
-  --slate: #93A7BA;
-  --hairline: rgba(255, 255, 255, 0.12);
+:root[data-theme="dark"],
+.dark {
+  --gauze: #0F172A;
+  --paper: #1E293B;
+  --ink: #F1F5F9;
+  --console: #0A1020;
+  --slate: #94A3B8;
+  --hairline: #334155;
+
+  --brand: #60A5FA;
+  --brand-soft: rgba(96, 165, 250, 0.16);
+  --brand-foreground: #0F172A;
 
   --background: var(--gauze);
   --foreground: var(--ink);
@@ -81,20 +81,19 @@
   --card-foreground: var(--ink);
   --popover: var(--paper);
   --popover-foreground: var(--ink);
-  --primary: var(--paper);
-  --primary-foreground: var(--ink);
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
   --secondary: rgba(255, 255, 255, 0.08);
   --secondary-foreground: var(--ink);
   --muted: rgba(255, 255, 255, 0.08);
   --muted-foreground: var(--slate);
-  --accent: var(--signal);
-  --accent-foreground: var(--paper);
+  --accent: var(--brand-soft);
+  --accent-foreground: var(--ink);
   --destructive: var(--signal);
   --border: var(--hairline);
   --input: rgba(255, 255, 255, 0.06);
-  --ring: var(--oxygen);
+  --ring: var(--brand);
 
-  /* Chart colors stay consistent */
   --chart-1: var(--signal);
   --chart-2: var(--oxygen);
   --chart-3: var(--amber);
@@ -113,6 +112,10 @@
   --color-amber: var(--amber);
   --color-slate: var(--slate);
   --color-hairline: var(--hairline);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-foreground: var(--brand-foreground);
+  --font-heading: var(--font-heading);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -145,10 +148,10 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: 0.25rem;
-  --radius-md: 0.375rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.75rem;
 }
 
 @layer base {
@@ -165,7 +168,7 @@
   }
 
   h1 {
-    @apply text-4xl font-bold tracking-tight;
+    @apply text-4xl tracking-tight;
   }
 
   h2 {
@@ -245,3 +248,29 @@
     }
   }
 }
+
+/* Caprasimo ships one weight; force it so utility font-bold does not fake-bold. */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 400 !important;
+  letter-spacing: -0.01em;
+}
+
+/* Rounder, heavier icons (Organic: stroke 2.75; 2.4 keeps small icons crisp). */
+svg.lucide {
+  stroke-width: 2.4;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Status colours as TEXT need lighter tints on the dark ground to hold AA;
+   backgrounds keep the static values so white-on-colour labels stay legible. */
+:root[data-theme="dark"] .text-oxygen,
+.dark .text-oxygen { color: #4ade80; }
+:root[data-theme="dark"] .text-amber,
+.dark .text-amber { color: #fbbf24; }
+:root[data-theme="dark"] .text-signal,
+.dark .text-signal { color: #f87171; }

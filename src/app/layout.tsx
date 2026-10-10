@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { Schibsted_Grotesk } from "next/font/google";
+import { Caprasimo, Figtree } from "next/font/google";
 import { Providers } from "@/components/providers";
 import "./globals.css";
 
-const schib = Schibsted_Grotesk({
-  variable: "--font-grotesk",
+const figtree = Figtree({
+  variable: "--font-figtree",
+  subsets: ["latin"],
+});
+
+const caprasimo = Caprasimo({
+  variable: "--font-caprasimo",
+  weight: "400",
   subsets: ["latin"],
 });
 
@@ -25,7 +31,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${schib.variable} h-full antialiased`}>
+    <html lang="en" className={`${figtree.variable} ${caprasimo.variable} h-full antialiased`}>
       <head>
         {/* Apply the persisted theme before first paint — kills the light
             flash on reload and carries dark mode to every route. */}
