@@ -39,16 +39,16 @@ function MiniTripLine({ status }: { status: EmergencyRequest['status'] }) {
               <span
                 className={cn(
                   'h-0.5 flex-1',
-                  i === 0 ? 'opacity-0' : done || active ? 'bg-signal' : 'bg-hairline',
+                  i === 0 ? 'opacity-0' : done || active ? 'bg-oxygen' : 'bg-hairline',
                 )}
               />
               <span
                 className={cn(
                   'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold',
                   active
-                    ? 'bg-signal text-white ring-4 ring-signal/20 trip-dot-active'
+                    ? 'bg-oxygen text-white ring-4 ring-oxygen/20 trip-dot-active'
                     : done
-                      ? 'bg-signal text-white'
+                      ? 'bg-oxygen text-white'
                       : 'border border-hairline bg-gauze text-slate',
                 )}
               >
@@ -60,7 +60,7 @@ function MiniTripLine({ status }: { status: EmergencyRequest['status'] }) {
                   i === TRIP_STEPS.length - 1
                     ? 'opacity-0'
                     : done
-                      ? 'bg-signal'
+                      ? 'bg-oxygen'
                       : 'bg-hairline',
                 )}
               />
@@ -87,7 +87,7 @@ export function TripCard({ trip, isActive = false, onCall, onNavigate }: TripCar
     // History row: time, patient, status, detail link.
     return (
       <Link href={`/dashboard/requests/${trip.id}`} className="block">
-        <Card className="border border-hairline p-3 transition-colors hover:bg-gauze/50">
+        <Card className="rounded-2xl border border-hairline p-3 transition-colors hover:border-brand">
           <div className="flex items-center justify-between gap-2">
             <div className="min-w-0">
               <p className="truncate text-sm text-ink">{patient}</p>
@@ -108,10 +108,10 @@ export function TripCard({ trip, isActive = false, onCall, onNavigate }: TripCar
   }
 
   return (
-    <Card className="w-full space-y-4 border border-hairline p-5">
+    <Card className="w-full space-y-4 rounded-2xl border border-hairline p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-lg font-bold text-ink">{patient}</p>
+          <p className="truncate font-heading text-lg text-ink">{patient}</p>
           <p className="mt-0.5 line-clamp-2 text-sm text-slate">
             {trip.pickupAddress || 'Pickup address on file'}
           </p>
@@ -133,7 +133,7 @@ export function TripCard({ trip, isActive = false, onCall, onNavigate }: TripCar
           type="button"
           onClick={onCall}
           disabled={!onCall}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg border border-hairline bg-paper text-sm font-medium text-ink transition-colors hover:bg-gauze disabled:opacity-50"
+          className="flex h-12 items-center justify-center gap-2 rounded-full border border-hairline bg-paper text-sm font-bold text-ink transition-colors hover:bg-gauze disabled:opacity-50"
         >
           <Phone className="h-4 w-4" aria-hidden />
           Call patient
@@ -142,7 +142,7 @@ export function TripCard({ trip, isActive = false, onCall, onNavigate }: TripCar
           type="button"
           onClick={onNavigate}
           disabled={!onNavigate}
-          className="flex h-12 items-center justify-center gap-2 rounded-lg bg-oxygen text-sm font-semibold text-paper transition-colors hover:bg-oxygen/90 disabled:opacity-50"
+          className="flex h-12 items-center justify-center gap-2 rounded-full bg-oxygen text-sm font-bold text-white transition-colors hover:bg-oxygen/90 disabled:opacity-50"
         >
           Navigate
           <ExternalLink className="h-4 w-4" aria-hidden />

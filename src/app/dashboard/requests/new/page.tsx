@@ -1,5 +1,6 @@
 'use client'
 
+import { FieldError } from '@/components/shared/field-error'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -38,7 +39,7 @@ type StepOneData = z.infer<typeof stepOneSchema>
 const MapPicker = dynamic(() => import('@/components/request/map-picker'), {
   ssr: false,
   loading: () => (
-    <div className="h-72 w-full rounded-lg border border-hairline bg-gauze animate-pulse" />
+    <div className="h-72 w-full rounded-2xl border border-hairline bg-gauze animate-pulse" />
   ),
 })
 
@@ -166,6 +167,7 @@ export default function NewRequestPage() {
       {step < 3 ? (
         <QuickActionButton
           label={step === 1 ? 'Next' : 'Review'}
+          variant="brand"
           onClick={handleNextStep}
           disabled={step === 1 && !hasPin}
         />
@@ -200,14 +202,14 @@ export default function NewRequestPage() {
                 type="button"
                 onClick={useMyLocation}
                 disabled={locating}
-                className="inline-flex items-center gap-2 text-sm font-medium text-oxygen hover:underline disabled:opacity-60"
+                className="inline-flex items-center gap-2 text-sm font-bold text-brand hover:underline disabled:opacity-60"
               >
                 <Crosshair className="h-4 w-4" aria-hidden />
                 {locating ? 'Locating...' : 'Use my current location'}
               </button>
 
               <div className="space-y-1.5">
-                <Label htmlFor="pickupAddress" className="text-sm font-medium text-ink">
+                <Label htmlFor="pickupAddress" className="text-sm font-bold text-ink">
                   Pickup address
                 </Label>
                 <Input
@@ -216,12 +218,12 @@ export default function NewRequestPage() {
                   {...stepOneForm.register('pickupAddress', {
                     onChange: (e) => wizard.setPickupAddress(e.target.value),
                   })}
-                  className="h-12 bg-paper border-hairline text-ink placeholder:text-slate-400"
+                  className="h-12 border-hairline text-ink"
                 />
                 {stepOneForm.formState.errors.pickupAddress && (
-                  <p className="text-xs text-signal">
+                  <FieldError>
                     {stepOneForm.formState.errors.pickupAddress.message}
-                  </p>
+                  </FieldError>
                 )}
               </div>
 
@@ -236,21 +238,22 @@ export default function NewRequestPage() {
 
           {step === 2 && (
             <div className="space-y-6">
-              <fieldset className="space-y-2">
-                <legend className="text-sm font-medium text-ink mb-2">
+              <fieldset>
+                <legend className="text-sm font-bold text-ink mb-2">
                   Priority
                 </legend>
+                <div className="grid gap-2 sm:grid-cols-3">
                 {PRIORITY_OPTIONS.map((opt) => {
                   const selected = wizard.priority === opt.value
                   return (
                     <label
                       key={opt.value}
                       className={cn(
-                        'flex h-14 cursor-pointer items-center gap-3 rounded-lg border-2 px-4 transition-colors',
+                        'flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border-2 px-4 py-2 transition-colors',
                         selected
-                          ? 'border-oxygen bg-oxygen/5'
-                          : 'border-hairline hover:border-ink/30',
-                        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-oxygen has-[:focus-visible]:border-oxygen',
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-hairline hover:border-brand',
+                        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand has-[:focus-visible]:border-brand',
                       )}
                     >
                       <input
@@ -263,16 +266,17 @@ export default function NewRequestPage() {
                       />
                       <span className={cn('h-3 w-3 rounded-full shrink-0', opt.dot)} aria-hidden />
                       <span className="min-w-0">
-                        <span className="block text-sm font-medium text-ink">{opt.label}</span>
+                        <span className="block text-sm font-bold text-ink">{opt.label}</span>
                         <span className="block text-xs text-slate">{opt.note}</span>
                       </span>
                     </label>
                   )
                 })}
+                </div>
               </fieldset>
 
               <div className="space-y-1.5">
-                <Label className="text-sm font-medium text-ink">
+                <Label className="text-sm font-bold text-ink">
                   Destination hospital{' '}
                   <span className="text-slate font-normal">(optional)</span>
                 </Label>
@@ -282,8 +286,14 @@ export default function NewRequestPage() {
                     wizard.setHospitalId(v === 'none' ? null : v)
                   }
                 >
-                  <SelectTrigger className="w-full h-12 bg-paper border-hairline text-ink">
-                    <SelectValue placeholder="No hospital selected" />
+                  <SelectTrigger className="w-full h-12 border-hairline text-ink">
+                    <SelectValue>
+                      {(v: string) =>
+                        v === 'none'
+                          ? 'No hospital selected'
+                          : ((hospitals.data?.items ?? []).find((h) => h.id === v)?.name ?? 'Selected hospital')
+                      }
+                    </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">No hospital selected</SelectItem>
@@ -308,10 +318,10 @@ export default function NewRequestPage() {
 
           {step === 3 && (
             <div className="space-y-5">
-              <div className="flex gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row">
                 {/* Map thumbnail */}
-                <div className="flex h-[200px] w-[200px] shrink-0 flex-col items-center justify-center gap-1 rounded-lg border border-hairline bg-gauze text-slate">
-                  <MapPin className="h-6 w-6 text-signal" aria-hidden />
+                <div className="flex h-32 w-full shrink-0 flex-col items-center justify-center gap-1 rounded-2xl sm:h-[160px] sm:w-[160px] border border-hairline bg-gauze text-slate">
+                  <MapPin className="h-6 w-6 text-brand" aria-hidden />
                   {hasPin && (
                     <span className="px-2 text-center text-[10px] tabular-nums">
                       {wizard.pickupLat!.toFixed(4)}, {wizard.pickupLng!.toFixed(4)}
@@ -320,7 +330,7 @@ export default function NewRequestPage() {
                 </div>
 
                 <div className="min-w-0 space-y-2">
-                  <p className="font-semibold text-ink line-clamp-2">
+                  <p className="font-bold text-ink line-clamp-2">
                     {wizard.pickupAddress || 'No address given'}
                   </p>
                   <PriorityBadge priority={wizard.priority} />

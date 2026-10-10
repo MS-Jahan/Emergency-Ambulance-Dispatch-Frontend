@@ -9,9 +9,9 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
-    <Card className="p-10 border border-dashed border-hairline flex flex-col items-center justify-center text-center">
+    <Card className="rounded-2xl p-10 border border-dashed border-hairline flex flex-col items-center justify-center text-center">
       {icon && <div className="text-3xl mb-3 text-slate">{icon}</div>}
-      <p className="font-semibold text-ink">{title}</p>
+      <p className="font-heading text-xl text-ink">{title}</p>
       {description && <p className="text-sm text-slate mt-1 max-w-sm">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </Card>

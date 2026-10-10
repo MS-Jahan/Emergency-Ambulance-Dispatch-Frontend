@@ -4,17 +4,7 @@ import { MapPin } from 'lucide-react'
 import { TripLine } from '@/components/trip-line'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { cn } from '@/lib/utils'
-import type { EmergencyRequest, RequestStatus } from '@/types/api'
-
-const STATUS_DOT: Record<RequestStatus, string> = {
-  PENDING: 'bg-amber-500',
-  ASSIGNED: 'bg-amber-500',
-  EN_ROUTE_PICKUP: 'bg-oxygen',
-  PICKED_UP: 'bg-oxygen',
-  EN_ROUTE_HOSPITAL: 'bg-oxygen',
-  COMPLETED: 'bg-green-500',
-  CANCELLED: 'bg-red-500',
-}
+import type { EmergencyRequest } from '@/types/api'
 
 interface RequestCardProps {
   request: EmergencyRequest
@@ -48,18 +38,11 @@ export function RequestCard({
       {/* Left: status + address */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span
-            className={cn(
-              'h-2 w-2 rounded-full shrink-0',
-              STATUS_DOT[request.status] ?? 'bg-slate',
-            )}
-            aria-hidden
-          />
           <StatusBadge status={request.status} />
         </div>
         <p
           className={cn(
-            'mt-1.5 font-medium text-ink',
+            'mt-1.5 font-bold text-ink',
             compact ? 'text-sm truncate' : 'line-clamp-2 text-sm sm:text-base',
           )}
         >
@@ -95,7 +78,7 @@ export function RequestCard({
 
       {/* Optional map preview slot (dispatch board) */}
       {showMap && (
-        <div className="hidden lg:flex h-14 w-20 shrink-0 items-center justify-center rounded border border-hairline bg-gauze text-slate">
+        <div className="hidden lg:flex h-14 w-20 shrink-0 items-center justify-center rounded-xl border border-hairline bg-gauze text-slate">
           <MapPin className="h-4 w-4" />
         </div>
       )}
@@ -103,10 +86,10 @@ export function RequestCard({
   )
 
   const shell = cn(
-    'flex items-center gap-3 rounded-lg border border-hairline bg-paper',
-    compact ? 'p-3' : 'p-4',
+    'flex items-center gap-3 rounded-2xl border border-hairline bg-paper',
+    compact ? 'p-3' : 'px-5 py-4',
     onClick &&
-      'cursor-pointer hover:border-ink/30 hover:shadow-md hover:-translate-y-px transition-all',
+      'cursor-pointer hover:border-brand hover:shadow-md hover:-translate-y-px transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
     className,
   )
 

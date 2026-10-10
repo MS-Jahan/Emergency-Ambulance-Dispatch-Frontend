@@ -1,10 +1,11 @@
 'use client'
 
+import { FieldError } from '@/components/shared/field-error'
 import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { AlertCircle, Lock, Mail, Phone, User } from 'lucide-react'
+import { AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -42,8 +43,7 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>
 
-const INPUT_ICON = 'absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate'
-const INPUT_CLASS = 'h-12 pl-10 bg-paper border-hairline text-ink'
+const INPUT_CLASS = 'h-12 border-hairline px-5 text-ink'
 
 export function RegisterForm() {
   const {
@@ -68,12 +68,12 @@ export function RegisterForm() {
 
   return (
     <AuthLayout>
-      <div className="bg-paper border border-hairline rounded-lg p-6 sm:p-8 space-y-6">
+      <div className="space-y-6 rounded-3xl border border-hairline bg-paper p-6 shadow-sm sm:p-9">
         <div className="space-y-1">
-          <h2 className="text-xl font-bold text-ink">Create your account</h2>
+          <h1 className="text-4xl text-ink">Create account</h1>
           <p className="text-sm text-slate">
             Already registered?{' '}
-            <Link href="/login" className="font-medium text-oxygen hover:underline">
+            <Link href="/login" className="font-bold text-brand underline-offset-2 hover:underline">
               Sign in
             </Link>
           </p>
@@ -81,81 +81,69 @@ export function RegisterForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
           <div className="space-y-1.5">
-            <Label htmlFor="name" className="text-sm font-medium text-ink">
+            <Label htmlFor="name" className="text-sm font-bold text-ink">
               Full name
             </Label>
-            <div className="relative">
-              <User className={INPUT_ICON} />
-              <Input
-                id="name"
-                placeholder="Jane Doe"
-                autoComplete="name"
-                {...register('name')}
-                className={INPUT_CLASS}
-              />
-            </div>
+            <Input
+              id="name"
+              placeholder="Jane Doe"
+              autoComplete="name"
+              {...register('name')}
+              className={INPUT_CLASS}
+            />
             {errors.name && (
-              <p className="text-xs text-signal">{errors.name.message}</p>
+              <FieldError>{errors.name.message}</FieldError>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-sm font-medium text-ink">
+            <Label htmlFor="email" className="text-sm font-bold text-ink">
               Email
             </Label>
-            <div className="relative">
-              <Mail className={INPUT_ICON} />
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                {...register('email')}
-                className={INPUT_CLASS}
-              />
-            </div>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              autoComplete="email"
+              {...register('email')}
+              className={INPUT_CLASS}
+            />
             {errors.email && (
-              <p className="text-xs text-signal">{errors.email.message}</p>
+              <FieldError>{errors.email.message}</FieldError>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="phone" className="text-sm font-medium text-ink">
+            <Label htmlFor="phone" className="text-sm font-bold text-ink">
               Phone <span className="text-slate font-normal">(optional)</span>
             </Label>
-            <div className="relative">
-              <Phone className={INPUT_ICON} />
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="+8801712345678"
-                autoComplete="tel"
-                {...register('phone')}
-                className={INPUT_CLASS}
-              />
-            </div>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="+8801712345678"
+              autoComplete="tel"
+              {...register('phone')}
+              className={INPUT_CLASS}
+            />
             {errors.phone && (
-              <p className="text-xs text-signal">{errors.phone.message}</p>
+              <FieldError>{errors.phone.message}</FieldError>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-sm font-medium text-ink">
+            <Label htmlFor="password" className="text-sm font-bold text-ink">
               Password
             </Label>
-            <div className="relative">
-              <Lock className={INPUT_ICON} />
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                autoComplete="new-password"
-                {...register('password')}
-                className={INPUT_CLASS}
-              />
-            </div>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              autoComplete="new-password"
+              {...register('password')}
+              className={INPUT_CLASS}
+            />
             {errors.password ? (
-              <p className="text-xs text-signal">{errors.password.message}</p>
+              <FieldError>{errors.password.message}</FieldError>
             ) : (
               <PasswordStrength password={passwordValue} />
             )}
@@ -164,25 +152,22 @@ export function RegisterForm() {
           <div className="space-y-1.5">
             <Label
               htmlFor="confirmPassword"
-              className="text-sm font-medium text-ink"
+              className="text-sm font-bold text-ink"
             >
               Confirm password
             </Label>
-            <div className="relative">
-              <Lock className={INPUT_ICON} />
-              <Input
-                id="confirmPassword"
-                type="password"
-                placeholder="••••••••"
-                autoComplete="new-password"
-                {...register('confirmPassword')}
-                className={INPUT_CLASS}
-              />
-            </div>
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="••••••••"
+              autoComplete="new-password"
+              {...register('confirmPassword')}
+              className={INPUT_CLASS}
+            />
             {errors.confirmPassword && (
-              <p className="text-xs text-signal">
+              <FieldError>
                 {errors.confirmPassword.message}
-              </p>
+              </FieldError>
             )}
           </div>
 
@@ -191,19 +176,19 @@ export function RegisterForm() {
               id="agreeTerms"
               type="checkbox"
               {...register('agreeTerms')}
-              className="mt-0.5 h-4 w-4 accent-oxygen"
+              className="mt-0.5 h-5 w-5 accent-[var(--brand)]"
             />
-            <Label htmlFor="agreeTerms" className="text-sm font-normal text-slate">
+            <Label htmlFor="agreeTerms" className="text-sm font-normal text-ink">
               I agree to the terms of service
             </Label>
           </div>
           {errors.agreeTerms && (
-            <p className="text-xs text-signal">{errors.agreeTerms.message}</p>
+            <FieldError>{errors.agreeTerms.message}</FieldError>
           )}
 
           {registerMutation.error && (
-            <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 rounded text-red-700 dark:text-red-300 text-sm">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <div role="alert" className="flex gap-2 rounded-2xl border border-signal/40 bg-signal/10 p-3 text-sm text-ink">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-signal" aria-hidden />
               <p>{registerMutation.error.message}</p>
             </div>
           )}
@@ -211,7 +196,7 @@ export function RegisterForm() {
           <Button
             type="submit"
             disabled={registerMutation.isPending}
-            className="w-full h-12 bg-ink text-paper hover:bg-signal"
+            className="h-12 w-full text-base font-bold"
           >
             {registerMutation.isPending ? 'Creating account...' : 'Create account'}
           </Button>

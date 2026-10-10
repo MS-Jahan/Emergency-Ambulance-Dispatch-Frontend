@@ -1,5 +1,6 @@
 'use client'
 
+import { FieldError } from '@/components/shared/field-error'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -53,14 +54,14 @@ function Toggle({
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={cn(
-        'relative h-6 w-11 flex-shrink-0 rounded-full transition-colors',
-        checked ? 'bg-oxygen' : 'bg-slate-300',
+        'relative h-7 w-12 flex-shrink-0 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
+        checked ? 'bg-brand' : 'border-2 border-slate bg-muted',
       )}
     >
       <span
         className={cn(
-          'absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform',
-          checked ? 'translate-x-[22px]' : 'translate-x-0.5',
+          'absolute top-0.5 h-6 w-6 rounded-full shadow transition-transform',
+          checked ? 'translate-x-[22px] bg-white' : 'translate-x-0 bg-slate',
         )}
       />
     </button>
@@ -104,16 +105,16 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="max-w-md mx-auto space-y-6">
+    <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-ink">Profile</h1>
+        <h1 className="text-4xl text-ink">Profile</h1>
         <p className="text-sm text-slate mt-1">Your account details</p>
       </div>
 
       {/* Avatar — initials, no photo upload (no endpoint) */}
-      <div className="flex justify-center">
+      <div className="flex">
         <div className="relative">
-          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-oxygen to-ink text-2xl font-bold text-paper">
+          <div className="flex h-24 w-24 items-center justify-center rounded-full bg-brand font-heading text-3xl text-brand-foreground">
             {me.data ? initials(me.data.name) : '—'}
           </div>
           <span
@@ -125,24 +126,26 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <Card className="space-y-5 border border-hairline p-6">
+      <div className="grid gap-5 md:grid-cols-2 md:items-start">
+      <Card className="space-y-5 rounded-3xl border border-hairline p-6">
+        <p className="font-heading text-xl text-ink">Details</p>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
-            <Label htmlFor="name" className="text-sm font-medium text-ink">
+            <Label htmlFor="name" className="text-sm font-bold text-ink">
               Name
             </Label>
             <Input
               id="name"
               {...register('name')}
-              className="mt-1 h-12 bg-paper border-hairline text-ink"
+              className="mt-1 h-11 border-hairline px-4 text-ink"
             />
             {errors.name && (
-              <p className="mt-1 text-xs text-signal">{errors.name.message}</p>
+              <FieldError>{errors.name.message}</FieldError>
             )}
           </div>
 
           <div>
-            <Label htmlFor="email" className="text-sm font-medium text-ink">
+            <Label htmlFor="email" className="text-sm font-bold text-ink">
               Email
             </Label>
             <Input
@@ -150,40 +153,41 @@ export default function ProfilePage() {
               value={me.data?.email ?? ''}
               readOnly
               disabled
-              className="mt-1 h-12 border-transparent bg-gauze text-slate"
+              className="mt-1 h-11 px-4 border-transparent bg-muted text-slate"
             />
           </div>
 
           <div>
-            <Label htmlFor="phone" className="text-sm font-medium text-ink">
+            <Label htmlFor="phone" className="text-sm font-bold text-ink">
               Phone
             </Label>
             <Input
               id="phone"
               placeholder="+8801XXXXXXXXX"
               {...register('phone')}
-              className="mt-1 h-12 bg-paper border-hairline text-ink"
+              className="mt-1 h-11 border-hairline px-4 text-ink"
             />
             {errors.phone && (
-              <p className="mt-1 text-xs text-signal">{errors.phone.message}</p>
+              <FieldError>{errors.phone.message}</FieldError>
             )}
           </div>
 
           <Button
             type="submit"
             disabled={!isDirty || updateProfile.isPending}
-            className="h-12 w-full bg-ink text-paper hover:bg-ink/90"
+            className="h-11 w-full"
           >
             {updateProfile.isPending ? 'Saving...' : 'Save changes'}
           </Button>
         </form>
       </Card>
 
-      <Card className="space-y-4 border border-hairline p-6">
-        <p className="text-sm font-semibold text-ink">Preferences</p>
+      <div className="space-y-5">
+      <Card className="space-y-4 rounded-3xl border border-hairline p-6">
+        <p className="font-heading text-xl text-ink">Preferences</p>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-ink">Dark mode</p>
+            <p className="text-sm font-bold text-ink">Dark theme</p>
             <p className="text-xs text-slate">Easier on the eyes at night</p>
           </div>
           <Toggle
@@ -194,7 +198,7 @@ export default function ProfilePage() {
         </div>
       </Card>
 
-      <Card className="space-y-4 border border-hairline p-6">
+      <Card className="space-y-4 rounded-3xl border border-hairline p-6">
         <p className="text-sm text-slate">
           Logged in as{' '}
           <span className="font-medium text-ink">{me.data?.email ?? '—'}</span>
@@ -204,12 +208,14 @@ export default function ProfilePage() {
           variant="outline"
           onClick={() => logout.mutate()}
           disabled={logout.isPending}
-          className="h-12 w-full border-red-200 text-signal hover:bg-red-50"
+          className="h-11 w-full"
         >
           <LogOut className="h-4 w-4" aria-hidden />
           {logout.isPending ? 'Logging out...' : 'Log out'}
         </Button>
       </Card>
+      </div>
+      </div>
     </div>
   )
 }

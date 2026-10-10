@@ -13,8 +13,8 @@ interface RequestWizardStepProps {
 }
 
 /**
- * Wrapper for one step of the request wizard: colored progress segments
- * on top, "Step n of m" + heading, content, sticky footer actions.
+ * Wrapper for one step of the request wizard: progress pills on top,
+ * "Step n of m" + heading, content, sticky footer actions.
  */
 export function RequestWizardStep({
   stepNumber,
@@ -24,25 +24,31 @@ export function RequestWizardStep({
   footer,
 }: RequestWizardStepProps) {
   return (
-    <Card className="border border-hairline p-6 sm:p-8 flex flex-col">
-      {/* Progress segments */}
-      <div className="flex gap-1.5" aria-hidden>
+    <Card className="flex flex-col rounded-3xl border border-hairline p-6 sm:p-8">
+      <div
+        className="flex gap-2"
+        role="progressbar"
+        aria-label="Request progress"
+        aria-valuemin={1}
+        aria-valuemax={totalSteps}
+        aria-valuenow={stepNumber}
+      >
         {Array.from({ length: totalSteps }, (_, i) => (
           <span
             key={i}
             className={cn(
-              'h-1 flex-1 rounded-full',
-              i < stepNumber ? 'bg-oxygen' : 'bg-hairline',
+              'h-2 flex-1 rounded-full',
+              i < stepNumber ? 'bg-brand' : 'bg-hairline',
             )}
           />
         ))}
       </div>
 
       <div className="mt-5 space-y-1">
-        <p className="text-xs font-medium text-slate">
+        <p className="text-xs font-bold uppercase tracking-wide text-slate">
           Step {stepNumber} of {totalSteps}
         </p>
-        <h1 className="text-xl font-bold text-ink sm:text-2xl">{heading}</h1>
+        <h1 className="text-3xl text-ink sm:text-4xl">{heading}</h1>
       </div>
 
       <div className="mt-6 flex-1">{children}</div>

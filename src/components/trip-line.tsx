@@ -1,6 +1,5 @@
 'use client'
 
-import { Check } from 'lucide-react'
 import type { RequestStatus } from '@/types/api'
 import { cn } from '@/lib/utils'
 
@@ -23,18 +22,6 @@ const STATUS_LABELS: Record<RequestStatus, string> = {
   CANCELLED: 'Cancelled',
 }
 
-/* Brand tokens — accents are static in both modes and flip with the theme,
-   unlike Tailwind's default -500 scale (bg-oxygen-500 is never generated). */
-const STATUS_COLORS: Record<RequestStatus, string> = {
-  PENDING: 'bg-amber',
-  ASSIGNED: 'bg-amber',
-  EN_ROUTE_PICKUP: 'bg-oxygen',
-  PICKED_UP: 'bg-oxygen',
-  EN_ROUTE_HOSPITAL: 'bg-oxygen',
-  COMPLETED: 'bg-oxygen',
-  CANCELLED: 'bg-signal',
-}
-
 interface TripLineProps {
   status: RequestStatus
   compact?: boolean
@@ -48,79 +35,63 @@ export function TripLine({ status, compact, vertical }: TripLineProps) {
 
   if (isCancelled) {
     return (
-      <div
-        className={cn('flex items-center gap-2', vertical && 'flex-col')}
-      >
-        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-signal text-white">
+      <div className={cn('flex items-center gap-2', vertical && 'flex-col')}>
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-signal text-white">
           <span className="text-xs" aria-hidden>✕</span>
         </div>
-        <span className={cn('text-xs font-medium text-slate', !vertical && 'truncate')}>
+        <span className={cn('text-xs font-bold text-slate', !vertical && 'truncate')}>
           Cancelled
         </span>
       </div>
     )
   }
 
+  // Done = green, current = amber (pulses 3x then stops), upcoming = hairline.
+  const segment = (idx: number) =>
+    isCompleted || idx < currentIndex
+      ? 'bg-oxygen'
+      : idx === currentIndex
+        ? 'bg-amber trip-dot-active'
+        : 'bg-hairline'
+
   return (
-    <div
+    <ol
+      aria-label="Trip progress"
       className={cn(
-        'flex items-center gap-1',
-        vertical ? 'flex-col h-full' : 'w-full',
-        compact ? 'gap-0.5' : 'gap-2',
+        vertical ? 'flex flex-col gap-2' : 'flex w-full items-start',
+        !vertical && (compact ? 'gap-1' : 'gap-1.5'),
       )}
     >
       {STATUSES.map((s, idx) => {
-        const isDone = idx < currentIndex
-        const isCurrent = idx === currentIndex
-        const color = isDone || isCurrent ? STATUS_COLORS[s] : 'bg-hairline'
-
+        const reached = isCompleted || idx <= currentIndex
         return (
-          <div key={s} className={vertical ? 'w-full' : 'flex-1'}>
-            <div className="flex items-center gap-1 min-h-fit">
-              {/* Dot */}
-              <div
-                aria-hidden
+          <li
+            key={s}
+            aria-current={idx === currentIndex && !isCompleted ? 'step' : undefined}
+            className={cn(vertical ? 'flex items-center gap-2' : 'flex-1 min-w-0')}
+          >
+            <span
+              aria-hidden
+              className={cn(
+                'block rounded-full transition-colors',
+                vertical ? 'h-3 w-3' : compact ? 'h-1.5' : 'h-2',
+                segment(idx),
+              )}
+            />
+            {!compact && (
+              <span
                 className={cn(
-                  'flex-shrink-0 w-2 h-2 rounded-full transition-all',
-                  color,
-                  isCurrent && 'trip-dot-active w-3 h-3',
+                  'text-xs font-bold',
+                  vertical ? '' : 'mt-1.5 block truncate',
+                  reached ? 'text-ink' : 'text-slate',
                 )}
-              />
-
-              {/* Line to next */}
-              {idx < STATUSES.length - 1 && (
-                <div
-                  className={cn(
-                    'flex-1 h-0.5 transition-colors',
-                    isDone || isCurrent ? 'bg-slate' : 'bg-hairline',
-                    vertical && 'hidden',
-                    compact && 'mx-0',
-                  )}
-                />
-              )}
-
-              {/* Label */}
-              {!compact && (
-                <span
-                  className={cn(
-                    'text-xs font-medium whitespace-nowrap',
-                    isDone || isCurrent ? 'text-ink' : 'text-slate',
-                  )}
-                >
-                  {STATUS_LABELS[s]}
-                </span>
-              )}
-            </div>
-          </div>
+              >
+                {STATUS_LABELS[s]}
+              </span>
+            )}
+          </li>
         )
       })}
-
-      {isCompleted && (
-        <div className="flex items-center gap-1 flex-1">
-          <Check className="w-4 h-4 text-oxygen" aria-hidden />
-          <span className="text-xs font-medium text-oxygen">Done</span>
-        </div>
-      )}
-    </div>
+    </ol>
   )
 }

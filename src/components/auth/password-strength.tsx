@@ -41,7 +41,7 @@ export function PasswordStrength({ password }: { password: string }) {
           <div
             key={seg.key}
             className={cn(
-              'h-1 flex-1 rounded-full bg-hairline',
+              'h-2 flex-1 rounded-full bg-hairline',
               i <= activeIndex && SEGMENT_COLOR[current],
             )}
           />
