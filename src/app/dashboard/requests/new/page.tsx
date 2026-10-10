@@ -3,6 +3,9 @@
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Crosshair, MapPin } from 'lucide-react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
@@ -23,6 +26,14 @@ import { useRequestWizard } from '@/lib/store'
 import { ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
 import type { RequestPriority } from '@/types/api'
+
+const stepOneSchema = z.object({
+  pickupAddress: z
+    .string()
+    .min(5, 'Pickup address must be at least 5 characters (road, house or area)'),
+})
+
+type StepOneData = z.infer<typeof stepOneSchema>
 
 const MapPicker = dynamic(() => import('@/components/request/map-picker'), {
   ssr: false,
@@ -77,7 +88,31 @@ export default function NewRequestPage() {
         ?.name ?? 'Selected hospital'
     : null
 
+  const stepOneForm = useForm<StepOneData>({
+    resolver: zodResolver(stepOneSchema),
+    values: {
+      pickupAddress: wizard.pickupAddress,
+    },
+  })
+
   const go = (n: 1 | 2 | 3) => wizard.setStep(n)
+
+  const handleNextStep = async () => {
+    if (step === 1) {
+      if (!hasPin) {
+        toast.error('Please select a pickup point on the map or use your current location')
+        return
+      }
+      const valid = await stepOneForm.trigger()
+      if (!valid) return
+      wizard.setPickupAddress(stepOneForm.getValues('pickupAddress'))
+      go(2)
+      return
+    }
+    if (step === 2) {
+      go(3)
+    }
+  }
 
   const useMyLocation = () => {
     if (!navigator.geolocation) {
@@ -131,7 +166,7 @@ export default function NewRequestPage() {
       {step < 3 ? (
         <QuickActionButton
           label={step === 1 ? 'Next' : 'Review'}
-          onClick={() => go((step + 1) as 1 | 2 | 3)}
+          onClick={handleNextStep}
           disabled={step === 1 && !hasPin}
         />
       ) : (
@@ -178,10 +213,16 @@ export default function NewRequestPage() {
                 <Input
                   id="pickupAddress"
                   placeholder="House 12, Road 5, Dhanmondi, Dhaka"
-                  value={wizard.pickupAddress}
-                  onChange={(e) => wizard.setPickupAddress(e.target.value)}
+                  {...stepOneForm.register('pickupAddress', {
+                    onChange: (e) => wizard.setPickupAddress(e.target.value),
+                  })}
                   className="h-12 bg-paper border-hairline text-ink placeholder:text-slate-400"
                 />
+                {stepOneForm.formState.errors.pickupAddress && (
+                  <p className="text-xs text-signal">
+                    {stepOneForm.formState.errors.pickupAddress.message}
+                  </p>
+                )}
               </div>
 
               {hasPin && (

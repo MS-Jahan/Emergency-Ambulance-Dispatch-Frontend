@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { CreditCard, ExternalLink, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -36,11 +37,34 @@ const AMOUNT_COLOR: Record<PaymentStatus, string> = {
 
 const STATUS_FILTERS = ['ALL', 'PENDING', 'PAID', 'FAILED'] as const
 
-export default function PaymentsPage() {
+function PaymentsContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const statusFilter = searchParams.get('status') ?? 'ALL'
+  const tripQuery = searchParams.get('q') ?? ''
+
   const payments = useMyPayments(1, 50)
   const initiate = useInitiatePayment()
-  const [statusFilter, setStatusFilter] = useState<string>('ALL')
-  const [tripQuery, setTripQuery] = useState('')
+
+  const setStatus = (v: string | null) => {
+    const sp = new URLSearchParams(searchParams.toString())
+    if (!v || v === 'ALL') {
+      sp.delete('status')
+    } else {
+      sp.set('status', v)
+    }
+    router.push(`/dashboard/payments?${sp.toString()}`)
+  }
+
+  const setQuery = (q: string) => {
+    const sp = new URLSearchParams(searchParams.toString())
+    if (q.trim()) {
+      sp.set('q', q)
+    } else {
+      sp.delete('q')
+    }
+    router.push(`/dashboard/payments?${sp.toString()}`)
+  }
 
   const payNow = async (requestId: string) => {
     try {
@@ -72,7 +96,7 @@ export default function PaymentsPage() {
 
       {/* Filter bar — stacked on phones, inline from sm up */}
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v ?? 'ALL')}>
+        <Select value={statusFilter} onValueChange={setStatus}>
           <SelectTrigger className="w-full sm:w-40 bg-paper border-hairline text-ink">
             <SelectValue />
           </SelectTrigger>
@@ -91,7 +115,7 @@ export default function PaymentsPage() {
           />
           <Input
             value={tripQuery}
-            onChange={(e) => setTripQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by trip ID"
             className="h-10 bg-paper border-hairline text-ink pl-9"
             aria-label="Search by trip ID"
@@ -175,5 +199,13 @@ export default function PaymentsPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function PaymentsPage() {
+  return (
+    <Suspense fallback={<ListSkeleton rows={4} />}>
+      <PaymentsContent />
+    </Suspense>
   )
 }

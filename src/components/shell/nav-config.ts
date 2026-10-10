@@ -1,8 +1,10 @@
 import {
   Ambulance,
+  BarChart3,
   ClipboardList,
   CreditCard,
   Gauge,
+  TrendingUp,
   UserCircle,
   Users,
 } from 'lucide-react'
@@ -22,10 +24,13 @@ export const patientNav: NavItem[] = [
 
 export const driverNav: NavItem[] = [
   { href: '/driver', label: 'Duty', icon: Gauge },
+  { href: '/driver/earnings', label: 'Earnings', icon: TrendingUp },
+  { href: '/driver/profile', label: 'Profile', icon: UserCircle },
 ]
 
 export const adminNav: NavItem[] = [
   { href: '/admin', label: 'Overview', icon: Gauge },
   { href: '/admin/dispatch', label: 'Dispatch', icon: Ambulance },
   { href: '/admin/resources', label: 'Resources', icon: Users },
+  { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
 ]

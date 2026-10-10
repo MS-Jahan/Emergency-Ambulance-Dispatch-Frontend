@@ -29,6 +29,9 @@ import { StatusBadge } from '@/components/shared/status-badge'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { ListSkeleton } from '@/components/shared/skeletons'
 import { EmptyState } from '@/components/shared/empty-state'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import {
   useCancelRequest,
   useInitiatePayment,
@@ -38,6 +41,17 @@ import {
 } from '@/lib/hooks'
 import { ApiError } from '@/lib/api'
 import type { EmergencyRequest, RequestStatus } from '@/types/api'
+
+const feedbackSchema = z.object({
+  rating: z.number().int().min(1, 'Please select a star rating (1-5)').max(5),
+  comment: z.string().max(500).optional(),
+})
+type FeedbackFormData = z.infer<typeof feedbackSchema>
+
+const cancelSchema = z.object({
+  reason: z.string().min(3, 'Please provide a cancellation reason (min 3 chars)'),
+})
+type CancelFormData = z.infer<typeof cancelSchema>
 
 const ACTIVE_STATUSES: RequestStatus[] = [
   'PENDING',
@@ -252,12 +266,26 @@ function PayNowCard({ requestId }: { requestId: string }) {
 }
 
 function FeedbackForm({ requestId }: { requestId: string }) {
-  const [rating, setRating] = useState(0)
   const [hover, setHover] = useState(0)
-  const [comment, setComment] = useState('')
   const submit = useSubmitFeedback()
   const existing = useRequestFeedback(requestId)
   const alreadySubmitted = (existing.data?.length ?? 0) > 0
+
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    register,
+    formState: { errors },
+  } = useForm<FeedbackFormData>({
+    resolver: zodResolver(feedbackSchema),
+    defaultValues: {
+      rating: 0,
+      comment: '',
+    },
+  })
+
+  const currentRating = watch('rating')
 
   if (alreadySubmitted) {
     const fb = existing.data![0]
@@ -279,16 +307,12 @@ function FeedbackForm({ requestId }: { requestId: string }) {
     )
   }
 
-  const send = async () => {
-    if (rating === 0) {
-      toast.error('Pick a star rating first')
-      return
-    }
+  const onSubmit = async (data: FeedbackFormData) => {
     try {
       await submit.mutateAsync({
         requestId,
-        rating,
-        comment: comment.trim() || undefined,
+        rating: data.rating,
+        comment: data.comment?.trim() || undefined,
       })
       toast.success('Thanks for the feedback')
     } catch (err) {
@@ -299,44 +323,50 @@ function FeedbackForm({ requestId }: { requestId: string }) {
   return (
     <Card className="p-4 border border-hairline">
       <p className="text-sm font-medium text-ink">Rate your trip</p>
-      <div className="mt-2 flex gap-1" onMouseLeave={() => setHover(0)}>
-        {Array.from({ length: 5 }).map((_, i) => {
-          const value = i + 1
-          return (
-            <button
-              key={value}
-              type="button"
-              onMouseEnter={() => setHover(value)}
-              onClick={() => setRating(value)}
-              className="cursor-pointer"
-              aria-label={`Rate ${value} stars`}
-            >
-              <Star
-                className={`h-6 w-6 transition-colors ${
-                  value <= (hover || rating)
-                    ? 'fill-amber text-amber'
-                    : 'text-slate-300'
-                }`}
-              />
-            </button>
-          )
-        })}
-      </div>
-      <Textarea
-        placeholder="Anything to add? (optional)"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        className="mt-3 bg-paper border-hairline text-ink"
-        rows={2}
-      />
-      <Button
-        type="button"
-        onClick={send}
-        disabled={submit.isPending}
-        className="mt-3 bg-ink text-paper hover:bg-ink/90"
-      >
-        {submit.isPending ? 'Sending...' : 'Send feedback'}
-      </Button>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+        <div className="mt-2 flex gap-1" onMouseLeave={() => setHover(0)}>
+          {Array.from({ length: 5 }).map((_, i) => {
+            const value = i + 1
+            return (
+              <button
+                key={value}
+                type="button"
+                onMouseEnter={() => setHover(value)}
+                onClick={() => setValue('rating', value, { shouldValidate: true })}
+                className="cursor-pointer"
+                aria-label={`Rate ${value} stars`}
+              >
+                <Star
+                  className={`h-6 w-6 transition-colors ${
+                    value <= (hover || currentRating)
+                      ? 'fill-amber text-amber'
+                      : 'text-slate-300'
+                  }`}
+                />
+              </button>
+            )
+          })}
+        </div>
+        {errors.rating && (
+          <p className="text-xs text-signal">{errors.rating.message}</p>
+        )}
+        <Textarea
+          placeholder="Anything to add? (optional)"
+          {...register('comment')}
+          className="mt-3 bg-paper border-hairline text-ink"
+          rows={2}
+        />
+        {errors.comment && (
+          <p className="text-xs text-signal">{errors.comment.message}</p>
+        )}
+        <Button
+          type="submit"
+          disabled={submit.isPending}
+          className="mt-3 bg-ink text-paper hover:bg-ink/90"
+        >
+          {submit.isPending ? 'Sending...' : 'Send feedback'}
+        </Button>
+      </form>
     </Card>
   )
 }
@@ -359,7 +389,6 @@ export default function RequestDetailPage() {
   })
   const cancel = useCancelRequest()
   const [cancelOpen, setCancelOpen] = useState(false)
-  const [cancelReason, setCancelReason] = useState('')
 
   if (request.isLoading) {
     return (
@@ -397,13 +426,9 @@ export default function RequestDetailPage() {
         ? `Cancelled after ${formatElapsed(elapsedMs)}`
         : `Elapsed ${formatElapsed(elapsedMs)}`
 
-  const doCancel = async () => {
-    if (!cancelReason.trim()) {
-      toast.error('Tell us why you are cancelling')
-      return
-    }
+  const doCancel = async (reason: string) => {
     try {
-      await cancel.mutateAsync({ id: req.id, reason: cancelReason.trim() })
+      await cancel.mutateAsync({ id: req.id, reason: reason.trim() })
       toast.success('Request cancelled')
       setCancelOpen(false)
     } catch (err) {
@@ -537,40 +562,83 @@ export default function RequestDetailPage() {
           </details>
         )}
 
-        <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Cancel this request?</DialogTitle>
-              <DialogDescription>
-                The assigned unit will be released. This cannot be undone.
-              </DialogDescription>
-            </DialogHeader>
+        <CancelModal
+          open={cancelOpen}
+          onOpenChange={setCancelOpen}
+          onConfirm={doCancel}
+          pending={cancel.isPending}
+        />
+      </div>
+    </>
+  )
+}
+
+function CancelModal({
+  open,
+  onOpenChange,
+  onConfirm,
+  pending,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onConfirm: (reason: string) => Promise<void>
+  pending: boolean
+}) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CancelFormData>({
+    resolver: zodResolver(cancelSchema),
+    defaultValues: { reason: '' },
+  })
+
+  const onSubmit = async (data: CancelFormData) => {
+    await onConfirm(data.reason)
+    reset()
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Cancel this request?</DialogTitle>
+          <DialogDescription>
+            The assigned unit will be released. This cannot be undone.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div>
             <Textarea
-              placeholder="Reason for cancelling"
-              value={cancelReason}
-              onChange={(e) => setCancelReason(e.target.value)}
+              placeholder="Reason for cancelling (min 3 characters)"
+              {...register('reason')}
               rows={3}
               className="bg-paper border-hairline text-ink"
             />
-            <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setCancelOpen(false)}
-                className="border-hairline text-ink hover:bg-gauze"
-              >
-                Keep request
-              </Button>
-              <Button
-                onClick={doCancel}
-                disabled={cancel.isPending}
-                className="bg-signal text-white hover:bg-signal/90"
-              >
-                {cancel.isPending ? 'Cancelling...' : 'Cancel request'}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </>
+            {errors.reason && (
+              <p className="mt-1 text-xs text-signal">{errors.reason.message}</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="border-hairline text-ink hover:bg-gauze"
+            >
+              Keep request
+            </Button>
+            <Button
+              type="submit"
+              disabled={pending}
+              className="bg-signal text-white hover:bg-signal/90"
+            >
+              {pending ? 'Cancelling...' : 'Cancel request'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

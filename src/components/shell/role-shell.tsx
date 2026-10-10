@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { LogOut, Menu } from 'lucide-react'
 import { useState } from 'react'
@@ -27,10 +28,14 @@ const NAV_BY_VARIANT = {
 function Brand() {
   return (
     <Link href="/" className="flex items-center gap-2">
-      <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-signal text-white font-bold">
-        ⚕
-      </span>
-      <span className="font-bold text-ink hidden sm:inline">Dispatch</span>
+      <Image
+        src="/rapidaid-logo.svg"
+        alt="RapidAid"
+        width={32}
+        height={32}
+        className="rounded-lg shadow-sm"
+      />
+      <span className="font-bold text-ink hidden sm:inline">RapidAid</span>
     </Link>
   )
 }
