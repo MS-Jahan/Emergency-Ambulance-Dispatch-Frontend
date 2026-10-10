@@ -25,6 +25,7 @@ import { MotionCard } from '@/components/motion-card'
 import { Button } from '@/components/ui/button'
 import { NearbyHospitals } from '@/components/public/nearby-hospitals'
 import { LiveStats } from '@/components/public/live-stats'
+import { AmbulanceFareBadge } from '@/components/public/ambulance-fare-badge'
 import { DemoCoverage } from '@/components/public/demo-coverage'
 import {
   PatientSpotlightPreview,
@@ -320,8 +321,10 @@ export default function Home() {
                 <h3 className="text-2xl text-ink">{t.name}</h3>
                 <p className="text-sm text-slate flex-1">{t.blurb}</p>
                 <p className="font-heading text-2xl tabular-nums text-ink">
-                  {t.fare}
-                  <span className="ml-1 font-sans text-xs text-slate">per trip</span>
+                  <AmbulanceFareBadge
+                    type={t.code as 'BASIC' | 'ICU' | 'CARDIAC'}
+                    fallback={t.fare}
+                  />
                 </p>
               </MotionCard>
             ))}

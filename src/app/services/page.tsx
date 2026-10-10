@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Activity, HeartPulse, Stethoscope } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 import { PublicFooter } from '@/components/public/public-footer'
+import { AmbulanceFareBadge } from '@/components/public/ambulance-fare-badge'
+import type { AmbulanceType } from '@/types/api'
 
 export const metadata: Metadata = {
   title: 'Emergency Medical Services & Fleet Classes',
@@ -17,11 +19,20 @@ export const metadata: Metadata = {
 // Marketing content rarely changes — rebuild the static HTML hourly.
 export const revalidate = 3600
 
-const SERVICES = [
+const SERVICES: {
+  tone: string
+  icon: React.ReactNode
+  name: string
+  type: AmbulanceType
+  price: string
+  blurb: string
+  eta: string
+}[] = [
   {
     tone: 'text-oxygen',
     icon: <Stethoscope className="h-6 w-6" />,
     name: 'Basic transport',
+    type: 'BASIC',
     price: '$15',
     blurb:
       'Stretcher transport with a trained driver for stable patients — hospital transfers, discharges, routine runs.',
@@ -31,6 +42,7 @@ const SERVICES = [
     tone: 'text-brand',
     icon: <HeartPulse className="h-6 w-6" />,
     name: 'ICU support',
+    type: 'ICU',
     price: '$35',
     blurb:
       'Ventilator-ready ambulance with monitoring equipment on board for patients who need continuous support in transit.',
@@ -40,6 +52,7 @@ const SERVICES = [
     tone: 'text-amber',
     icon: <Activity className="h-6 w-6" />,
     name: 'Cardiac care',
+    type: 'CARDIAC',
     price: '$60',
     blurb:
       'Defibrillator and cardiac monitoring with the highest dispatch priority — chest pain and cardiac events go to the front of the queue.',
@@ -71,8 +84,7 @@ export default function ServicesPage() {
               </span>
               <h2 className="text-2xl text-ink">{s.name}</h2>
               <p className="font-heading text-3xl text-ink tabular-nums">
-                {s.price}
-                <span className="font-sans text-xs font-normal text-slate ml-1">per trip</span>
+                <AmbulanceFareBadge type={s.type} fallback={s.price} suffix="per trip" />
               </p>
               <p className="text-sm text-slate flex-1">{s.blurb}</p>
               <p className="text-xs font-semibold text-ink">{s.eta}</p>

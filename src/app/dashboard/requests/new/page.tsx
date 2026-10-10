@@ -23,7 +23,7 @@ import { MotionCard } from '@/components/motion-card'
 import { QuickActionButton } from '@/components/quick-action-button'
 import { RequestWizardStep } from '@/components/request-wizard-step'
 import { PriorityBadge } from '@/components/shared/priority-badge'
-import { useCreateRequest, useHospitals } from '@/lib/hooks'
+import { useCreateRequest, useFares, useHospitals } from '@/lib/hooks'
 import { useRequestWizard } from '@/lib/store'
 import { ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -130,6 +130,8 @@ export default function NewRequestPage() {
   const wizard = useRequestWizard()
   const hospitals = useHospitals()
   const createRequest = useCreateRequest()
+  const faresQuery = useFares()
+  const fares = faresQuery.data?.rates ?? AMBULANCE_FARES
   const [locating, setLocating] = useState(false)
 
   const step = wizard.step as 1 | 2 | 3
@@ -377,7 +379,7 @@ export default function NewRequestPage() {
                         <div>
                           <div className="flex items-center justify-between">
                             <span className="text-sm font-bold text-ink">{opt.label}</span>
-                            <span className="font-mono text-xs font-bold text-brand">${opt.fare}</span>
+                            <span className="font-mono text-xs font-bold text-brand">${fares[opt.value]}</span>
                           </div>
                           <p className="mt-1 text-xs text-slate">{opt.note}</p>
                         </div>
@@ -529,7 +531,7 @@ export default function NewRequestPage() {
                     <PriorityBadge priority={wizard.priority} />
                     {wizard.requestedAmbulanceType && (
                       <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
-                        {wizard.requestedAmbulanceType} (${AMBULANCE_FARES[wizard.requestedAmbulanceType]})
+                        {wizard.requestedAmbulanceType} (${fares[wizard.requestedAmbulanceType]})
                       </span>
                     )}
                   </div>

@@ -14,13 +14,19 @@ import {
   MapPin,
   Phone,
   User,
+  Wrench,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { DetailSkeleton } from '@/components/shared/skeletons'
-import { useMyDriverProfile, useUpdateProfile } from '@/lib/hooks'
+import { ChangePasswordCard } from '@/components/auth/change-password-card'
+import {
+  useMyDriverProfile,
+  useUpdateDriverAmbulanceStatus,
+  useUpdateProfile,
+} from '@/lib/hooks'
 import { ApiError } from '@/lib/api'
 
 const profileSchema = z.object({
@@ -36,6 +42,27 @@ type ProfileFormData = z.infer<typeof profileSchema>
 export default function DriverProfilePage() {
   const { data: profile, isLoading } = useMyDriverProfile()
   const updateProfile = useUpdateProfile()
+  const updateAmbulanceStatus = useUpdateDriverAmbulanceStatus()
+
+  const handleToggleAmbulanceStatus = async () => {
+    if (!profile?.ambulance) return
+    const current = profile.ambulance.status
+    const nextStatus = current === 'MAINTENANCE' ? 'AVAILABLE' : 'MAINTENANCE'
+    try {
+      await updateAmbulanceStatus.mutateAsync({ status: nextStatus })
+      toast.success(
+        nextStatus === 'MAINTENANCE'
+          ? 'Ambulance marked in maintenance'
+          : 'Ambulance marked available for dispatch',
+      )
+    } catch (err) {
+      toast.error(
+        err instanceof ApiError
+          ? err.message
+          : 'Failed to update ambulance status',
+      )
+    }
+  }
 
   const {
     register,
@@ -180,29 +207,64 @@ export default function DriverProfilePage() {
             </div>
 
             {ambulance ? (
-              <div className="grid gap-3 sm:grid-cols-2 text-xs">
-                <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1">
-                  <span className="text-slate block">Plate</span>
-                  <span className="font-mono font-bold text-ink text-sm">
-                    {ambulance.plateNumber}
-                  </span>
+              <div className="space-y-4">
+                <div className="grid gap-3 sm:grid-cols-3 text-xs">
+                  <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1">
+                    <span className="text-slate block">Plate</span>
+                    <span className="font-mono font-bold text-ink text-sm">
+                      {ambulance.plateNumber}
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1">
+                    <span className="text-slate block">Type</span>
+                    <span className="font-semibold text-ink text-sm">
+                      {ambulance.type}
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1">
+                    <span className="text-slate block">Status</span>
+                    <span
+                      className={`inline-block font-semibold text-xs px-2 py-0.5 rounded-full ${
+                        ambulance.status === 'MAINTENANCE'
+                          ? 'bg-amber/15 text-amber'
+                          : ambulance.status === 'ON_TRIP'
+                          ? 'bg-signal/15 text-signal'
+                          : 'bg-oxygen/15 text-oxygen'
+                      }`}
+                    >
+                      {ambulance.status}
+                    </span>
+                  </div>
+
+                  <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1 sm:col-span-3">
+                    <span className="text-slate flex items-center gap-1">
+                      <Building2 className="h-3 w-3" /> Home hospital
+                    </span>
+                    <span className="font-medium text-ink">
+                      {ambulance.homeHospital?.name ?? 'Not set'}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1">
-                  <span className="text-slate block">Type</span>
-                  <span className="font-semibold text-ink text-sm">
-                    {ambulance.type}
-                  </span>
-                </div>
-
-                <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1 sm:col-span-2">
-                  <span className="text-slate flex items-center gap-1">
-                    <Building2 className="h-3 w-3" /> Home hospital
-                  </span>
-                  <span className="font-medium text-ink">
-                    {ambulance.homeHospital?.name ?? 'Not set'}
-                  </span>
-                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleToggleAmbulanceStatus}
+                  disabled={
+                    ambulance.status === 'ON_TRIP' ||
+                    updateAmbulanceStatus.isPending
+                  }
+                  className="w-full text-xs h-9 flex items-center justify-center gap-1.5"
+                >
+                  <Wrench className="h-3.5 w-3.5" />
+                  {ambulance.status === 'ON_TRIP'
+                    ? 'Vehicle on active trip'
+                    : ambulance.status === 'MAINTENANCE'
+                    ? 'Mark vehicle available'
+                    : 'Report vehicle maintenance'}
+                </Button>
               </div>
             ) : (
               <p className="text-xs text-slate">
@@ -215,6 +277,8 @@ export default function DriverProfilePage() {
 
         {/* Verification & License Details */}
         <div className="space-y-6">
+          <ChangePasswordCard />
+
           <Card className="p-5 border-hairline bg-paper space-y-4">
             <h3 className="text-base flex items-center gap-1.5">
               <IdCard className="h-4 w-4 text-brand" /> Licence
@@ -227,7 +291,6 @@ export default function DriverProfilePage() {
                   {profile.licenseNumber}
                 </span>
               </div>
-
             </div>
           </Card>
 

@@ -237,3 +237,16 @@ export interface ContactMessage {
   status: ContactStatus
   createdAt: string
 }
+
+export interface FareEstimate {
+  type: AmbulanceType
+  amount: number
+  currency: string
+}
+
+export interface FaresResponse {
+  estimates: FareEstimate[]
+  rates: Record<AmbulanceType, number>
+  currency: string
+}
+

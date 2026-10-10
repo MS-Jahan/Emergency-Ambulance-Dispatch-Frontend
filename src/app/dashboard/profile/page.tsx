@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
+import { ChangePasswordCard } from '@/components/auth/change-password-card'
 import { useLogout, useMe, useUpdateProfile } from '@/lib/hooks'
 import { useUI } from '@/lib/store'
 import { ApiError } from '@/lib/api'
@@ -197,6 +198,8 @@ export default function ProfilePage() {
           />
         </div>
       </Card>
+
+      <ChangePasswordCard />
 
       <Card className="space-y-4 rounded-3xl border border-hairline p-6">
         <p className="text-sm text-slate">

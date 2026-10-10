@@ -225,12 +225,12 @@ After each item: `bun run typecheck && bun run lint && bun run test` in the back
 | 2 contact | done (backend ee5f570) |
 | 3 request fields | done (backend 39ea824, frontend 97fcfd4) |
 | 4 patient extras | open |
-| 5.1 change password | open |
+| 5.1 change password | done (backend 363833d) |
 | 5.2 forgot/reset password | blocked on email provider |
 | 6 driver applications | open |
 | 7 realtime | open |
 | 8 receipts | open |
-| 9 fares | open |
-| 10 maintenance | open |
+| 9 fares | done (backend 363833d) |
+| 10 maintenance | done (backend 363833d) |
 | 11 notifications | blocked on provider |
 | 12 small items | open |

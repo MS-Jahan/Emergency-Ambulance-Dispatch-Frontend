@@ -18,6 +18,8 @@ import type {
   DriverProfile,
   EmergencyRequest,
   Feedback,
+  FareEstimate,
+  FaresResponse,
   Hospital,
   NearbyAmbulance,
   Payment,
@@ -680,3 +682,44 @@ export function useUpdateContactMessageStatus() {
     },
   })
 }
+
+// Password management
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: (data: { currentPassword: string; newPassword: string }) =>
+      api.patch('/users/me/password', data),
+  })
+}
+
+// Driver ambulance maintenance toggle
+export function useUpdateDriverAmbulanceStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { status: 'AVAILABLE' | 'MAINTENANCE' }) =>
+      api.patch<{ ambulance: Ambulance }>('/driver/ambulance/status', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['driver', 'me'] })
+      queryClient.invalidateQueries({ queryKey: ['ambulances'] })
+    },
+  })
+}
+
+// Fare estimator
+export function useFares() {
+  return useQuery({
+    queryKey: ['fares'],
+    queryFn: () => api.get<FaresResponse>('/fares/estimate'),
+    staleTime: 60 * 60 * 1000,
+  })
+}
+
+export function useFareEstimate(type?: AmbulanceType) {
+  return useQuery({
+    queryKey: ['fares', 'estimate', type],
+    queryFn: () =>
+      api.get<{ estimate: FareEstimate }>(`/fares/estimate?type=${type}`),
+    enabled: !!type,
+  })
+}
+
