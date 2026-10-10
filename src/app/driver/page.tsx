@@ -79,10 +79,20 @@ function AssignmentCard({
 }) {
   const outline =
     'flex h-12 flex-1 items-center justify-center gap-2 rounded-full border-2 border-ink text-sm font-bold text-ink transition-colors hover:bg-ink/5 disabled:opacity-50 outline-none focus-visible:ring-3 focus-visible:ring-ring/50'
-  return (
+    const patientDisplayName = trip.patientName || trip.patient?.name || 'Patient'
+    const patientPhone = trip.callbackPhone || trip.patient?.phone
+
+    return (
     <Card className="gap-3 border border-hairline p-5">
       <div className="flex items-center justify-between gap-2">
-        <PriorityBadge priority={trip.priority} />
+        <div className="flex items-center gap-2">
+          <PriorityBadge priority={trip.priority} />
+          {trip.requestedAmbulanceType && (
+            <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
+              {trip.requestedAmbulanceType}
+            </span>
+          )}
+        </div>
         <span className="text-xs font-semibold text-slate">
           Requested{' '}
           {new Date(trip.requestedAt).toLocaleTimeString([], {
@@ -91,9 +101,20 @@ function AssignmentCard({
           })}
         </span>
       </div>
-      <h2 className="font-heading text-2xl font-normal leading-tight text-ink">
-        {trip.patient?.name ?? 'Patient'}
-      </h2>
+      <div>
+        <h2 className="font-heading text-2xl font-normal leading-tight text-ink">
+          {patientDisplayName}
+          {trip.patientAge != null && (
+            <span className="ml-2 text-base font-normal text-slate">({trip.patientAge} yrs)</span>
+          )}
+        </h2>
+        {patientPhone && (
+          <p className="mt-1 flex items-center gap-1.5 text-sm font-semibold text-brand">
+            <Phone className="h-3.5 w-3.5" aria-hidden />
+            {patientPhone}
+          </p>
+        )}
+      </div>
       <p className="text-sm text-slate">
         {trip.pickupAddress || 'Pickup address on file'}
       </p>
@@ -102,6 +123,12 @@ function AssignmentCard({
           <span className="h-2 w-2 shrink-0 rounded-full bg-oxygen" aria-hidden />
           <span className="truncate">To: {trip.destinationHospital.name}</span>
         </p>
+      )}
+      {trip.notes && (
+        <div className="rounded-2xl bg-gauze p-3 text-xs text-ink">
+          <p className="font-semibold text-slate mb-0.5">Medical notes</p>
+          <p className="whitespace-pre-wrap">{trip.notes}</p>
+        </div>
       )}
       <div className="mt-1 flex gap-2.5">
         <button type="button" onClick={onCall} disabled={!onCall} className={outline}>
@@ -302,9 +329,12 @@ export default function DriverPage() {
   }
 
   const callPatient = () => {
-    if (!active?.patient?.phone) return
-    window.location.assign(`tel:${active.patient.phone}`)
+    const phone = active?.callbackPhone || active?.patient?.phone
+    if (!phone) return
+    window.location.assign(`tel:${phone}`)
   }
+
+  const activePatientPhone = active?.callbackPhone || active?.patient?.phone
 
   return (
     <div className="mx-auto flex max-w-md flex-col gap-5">
@@ -331,7 +361,7 @@ export default function DriverPage() {
           <MotionCard duration={300} className="space-y-4">
             <AssignmentCard
               trip={active}
-              onCall={active.patient?.phone ? callPatient : undefined}
+              onCall={activePatientPhone ? callPatient : undefined}
               onNavigate={navigateToPickup}
             />
             <PhasePills status={active.status} />

@@ -184,14 +184,19 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
         {/* Body */}
         <div className="flex-1 space-y-5 overflow-y-auto px-5 py-4">
           <section>
-            <p className="text-sm font-bold text-ink">{request.patient?.name ?? 'Patient'}</p>
-            {request.patient?.phone && (
+            <p className="text-sm font-bold text-ink">
+              {request.patientName || request.patient?.name || 'Patient'}
+              {request.patientAge != null && (
+                <span className="ml-1 text-xs font-normal text-slate">({request.patientAge} yrs)</span>
+              )}
+            </p>
+            {(request.callbackPhone || request.patient?.phone) && (
               <a
-                href={`tel:${request.patient.phone}`}
+                href={`tel:${request.callbackPhone || request.patient?.phone}`}
                 className="mt-1 flex w-fit items-center gap-1.5 text-sm text-brand hover:underline"
               >
                 <Phone className="h-3.5 w-3.5" aria-hidden />
-                {request.patient.phone}
+                {request.callbackPhone || request.patient?.phone}
               </a>
             )}
             <p className="mt-1.5 flex items-start gap-1.5 text-sm text-slate">
@@ -199,6 +204,25 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
               {request.pickupAddress || 'Pickup address on file'}
             </p>
           </section>
+
+          {(request.requestedAmbulanceType || request.notes) && (
+            <section className="rounded-2xl border border-hairline bg-gauze p-3 space-y-1.5">
+              {request.requestedAmbulanceType && (
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium uppercase tracking-wide text-slate">Requested Unit</span>
+                  <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
+                    {request.requestedAmbulanceType}
+                  </span>
+                </div>
+              )}
+              {request.notes && (
+                <div>
+                  <span className="text-xs font-medium uppercase tracking-wide text-slate">Notes / Instructions</span>
+                  <p className="mt-0.5 text-xs text-ink whitespace-pre-wrap">{request.notes}</p>
+                </div>
+              )}
+            </section>
+          )}
 
           {request.destinationHospital && (
             <section>
@@ -221,6 +245,12 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
                   <p className="truncate text-xs text-slate">
                     {request.driver?.name ?? 'Unassigned driver'} · {request.ambulance.type}
                   </p>
+                  {request.requestedAmbulanceType &&
+                    request.ambulance.type !== request.requestedAmbulanceType && (
+                      <p className="mt-1 inline-block rounded bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+                        Differs from requested ({request.requestedAmbulanceType})
+                      </p>
+                    )}
                 </div>
               </div>
               {!terminal && (
@@ -266,9 +296,16 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
                         <p className="truncate text-sm font-semibold text-ink">
                           {a.plateNumber}
                           <span className="ml-2 font-normal text-slate">{a.type}</span>
+                          {request.requestedAmbulanceType &&
+                            a.type !== request.requestedAmbulanceType && (
+                              <span className="ml-2 rounded bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+                                differs
+                              </span>
+                            )}
                         </p>
                         <p className="truncate text-xs text-slate">
                           {a.homeHospital?.name ?? 'Base'} — {a.distanceKm} km
+                          {a.driver?.name ? ` · ${a.driver.name}` : ''}
                         </p>
                       </div>
                       <Button

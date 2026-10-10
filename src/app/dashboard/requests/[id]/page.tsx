@@ -477,6 +477,34 @@ export default function RequestDetailPage() {
           </div>
         </Card>
 
+        {(req.requestedAmbulanceType || req.notes || req.patientName || req.patientAge || req.callbackPhone) && (
+          <Card className="rounded-2xl p-5 border border-hairline space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium uppercase tracking-wide text-slate">Request Details</p>
+              {req.requestedAmbulanceType && (
+                <span className="rounded-full bg-brand-soft px-2.5 py-0.5 text-xs font-semibold text-brand">
+                  Requested: {req.requestedAmbulanceType}
+                </span>
+              )}
+            </div>
+            {(req.patientName || req.callbackPhone) && (
+              <div className="text-sm text-ink">
+                <span className="font-semibold">{req.patientName ?? 'Patient'}</span>
+                {req.patientAge != null && <span className="text-slate"> ({req.patientAge} yrs)</span>}
+                {req.callbackPhone && (
+                  <span className="text-slate"> · <a href={`tel:${req.callbackPhone}`} className="text-brand hover:underline">{req.callbackPhone}</a></span>
+                )}
+              </div>
+            )}
+            {req.notes && (
+              <div className="rounded-xl bg-gauze p-3 text-xs text-ink">
+                <p className="font-semibold text-slate mb-0.5">Notes / Symptoms</p>
+                <p className="whitespace-pre-wrap">{req.notes}</p>
+              </div>
+            )}
+          </Card>
+        )}
+
         {cancellable && (
           <Button
             variant="outline"

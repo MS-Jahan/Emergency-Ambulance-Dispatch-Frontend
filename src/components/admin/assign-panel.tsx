@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Ambulance, Loader2, MapPin } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -22,8 +23,20 @@ interface AssignPanelProps {
  */
 export function AssignPanel({ request, onAssigned, onOpenDetails }: AssignPanelProps) {
   const pending = request?.status === 'PENDING'
+  const [filterByType, setFilterByType] = useState(true)
+
+  const activeTypeFilter =
+    filterByType && request?.requestedAmbulanceType
+      ? request.requestedAmbulanceType
+      : undefined
+
   const nearby = useNearbyAmbulances(
-    { lat: request?.pickupLat ?? 0, lng: request?.pickupLng ?? 0, radiusKm: 10 },
+    {
+      lat: request?.pickupLat ?? 0,
+      lng: request?.pickupLng ?? 0,
+      radiusKm: 10,
+      type: activeTypeFilter,
+    },
     { enabled: !!request && pending && !!request.pickupLat && !!request.pickupLng },
   )
   const assign = useAssignAmbulance()
@@ -57,14 +70,34 @@ export function AssignPanel({ request, onAssigned, onOpenDetails }: AssignPanelP
           <div className="space-y-1.5">
             <div className="flex items-center justify-between gap-2">
               <p className="truncate text-sm font-bold text-ink">
-                {request.patient?.name ?? 'Patient'}
+                {request.patientName || request.patient?.name || 'Patient'}
               </p>
               <PriorityBadge priority={request.priority} />
             </div>
+            {request.requestedAmbulanceType && (
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-brand-soft px-2 py-0.5 text-xs font-semibold text-brand">
+                  Requested: {request.requestedAmbulanceType}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setFilterByType((prev) => !prev)}
+                  className="text-xs text-slate underline hover:text-ink"
+                >
+                  {filterByType ? 'Show all types' : `Filter ${request.requestedAmbulanceType}`}
+                </button>
+              </div>
+            )}
             <p className="flex items-start gap-1.5 text-xs text-slate">
               <MapPin className="mt-0.5 h-3 w-3 shrink-0" aria-hidden />
               {request.pickupAddress || 'Pickup address on file'}
             </p>
+            {request.notes && (
+              <p className="rounded-xl bg-gauze p-2 text-xs text-ink line-clamp-2">
+                <span className="font-semibold text-slate">Notes: </span>
+                {request.notes}
+              </p>
+            )}
             <Button
               variant="ghost"
               size="sm"
@@ -87,7 +120,7 @@ export function AssignPanel({ request, onAssigned, onOpenDetails }: AssignPanelP
 
           <section aria-label="Nearby ambulances">
             <p className="text-xs font-medium uppercase tracking-wide text-slate">
-              Nearby, closest first
+              {activeTypeFilter ? `${activeTypeFilter} units nearby` : 'Nearby, closest first'}
             </p>
             {nearby.isLoading ? (
               <div className="mt-2">
@@ -96,38 +129,58 @@ export function AssignPanel({ request, onAssigned, onOpenDetails }: AssignPanelP
             ) : nearby.isError ? (
               <p className="mt-2 text-sm text-signal">Could not load nearby ambulances.</p>
             ) : ranked.length === 0 ? (
-              <p className="mt-2 flex items-center gap-2 rounded-2xl border border-dashed border-hairline p-4 text-sm text-slate">
-                <Ambulance className="h-4 w-4 shrink-0" aria-hidden />
-                No available ambulances within 10 km.
-              </p>
+              <div className="mt-2 rounded-2xl border border-dashed border-hairline p-4 text-center text-sm text-slate">
+                <Ambulance className="mx-auto h-4 w-4 shrink-0" aria-hidden />
+                <p className="mt-1">
+                  No available {activeTypeFilter ? `${activeTypeFilter} ` : ''}ambulances within 10 km.
+                </p>
+                {activeTypeFilter && (
+                  <button
+                    type="button"
+                    onClick={() => setFilterByType(false)}
+                    className="mt-2 text-xs font-bold text-brand hover:underline"
+                  >
+                    View all ambulance types
+                  </button>
+                )}
+              </div>
             ) : (
               <ul className="mt-2 space-y-2">
-                {ranked.map((a, i) => (
-                  <li key={a.id}>
-                    <div className="flex flex-row items-center justify-between gap-3 rounded-2xl border border-hairline bg-gauze p-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-ink">
-                          <span className="font-mono">{a.plateNumber}</span>
-                          <span className="ml-2 font-normal text-slate">{a.type}</span>
-                        </p>
-                        <p className="truncate text-xs text-slate">
-                          {a.distanceKm} km
-                          {i === 0 ? ' · nearest' : ''} · {a.status.toLowerCase().replace(/_/g, ' ')}
-                        </p>
+                {ranked.map((a, i) => {
+                  const mismatch =
+                    request.requestedAmbulanceType && a.type !== request.requestedAmbulanceType
+                  return (
+                    <li key={a.id}>
+                      <div className="flex flex-row items-center justify-between gap-3 rounded-2xl border border-hairline bg-gauze p-3">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-ink">
+                            <span className="font-mono">{a.plateNumber}</span>
+                            <span className="ml-2 font-normal text-slate">{a.type}</span>
+                            {mismatch && (
+                              <span className="ml-2 rounded bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+                                differs
+                              </span>
+                            )}
+                          </p>
+                          <p className="truncate text-xs text-slate">
+                            {a.distanceKm} km
+                            {i === 0 ? ' · nearest' : ''} · {a.driver?.name ?? a.status.toLowerCase().replace(/_/g, ' ')}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => doAssign(a.id)}
+                          disabled={assign.isPending}
+                          aria-label={`Assign ${a.plateNumber}`}
+                          className="border-hairline text-ink hover:bg-paper"
+                        >
+                          Assign
+                        </Button>
                       </div>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => doAssign(a.id)}
-                        disabled={assign.isPending}
-                        aria-label={`Assign ${a.plateNumber}`}
-                        className="border-hairline text-ink hover:bg-paper"
-                      >
-                        Assign
-                      </Button>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  )
+                })}
               </ul>
             )}
           </section>

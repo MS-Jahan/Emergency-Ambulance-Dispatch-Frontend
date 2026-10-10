@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { User } from '@/types/api'
+import type { AmbulanceType, User } from '@/types/api'
 
 interface AuthState {
   user: User | null
@@ -57,11 +57,21 @@ interface WizardState {
   pickupLng: number | null
   priority: 'CRITICAL' | 'HIGH' | 'NORMAL'
   hospitalId: string | null
+  requestedAmbulanceType: AmbulanceType | null
+  patientName: string
+  patientAge: number | null
+  notes: string
+  callbackPhone: string
   step: 1 | 2 | 3
   setPickupAddress: (address: string) => void
   setPickupLocation: (lat: number, lng: number) => void
   setPriority: (priority: 'CRITICAL' | 'HIGH' | 'NORMAL') => void
   setHospitalId: (id: string | null) => void
+  setRequestedAmbulanceType: (type: AmbulanceType | null) => void
+  setPatientName: (name: string) => void
+  setPatientAge: (age: number | null) => void
+  setNotes: (notes: string) => void
+  setCallbackPhone: (phone: string) => void
   setStep: (step: 1 | 2 | 3) => void
   reset: () => void
 }
@@ -74,11 +84,21 @@ export const useRequestWizard = create<WizardState>()(
       pickupLng: null,
       priority: 'NORMAL',
       hospitalId: null,
+      requestedAmbulanceType: null,
+      patientName: '',
+      patientAge: null,
+      notes: '',
+      callbackPhone: '',
       step: 1,
       setPickupAddress: (pickupAddress) => set({ pickupAddress }),
       setPickupLocation: (pickupLat, pickupLng) => set({ pickupLat, pickupLng }),
       setPriority: (priority) => set({ priority }),
       setHospitalId: (hospitalId) => set({ hospitalId }),
+      setRequestedAmbulanceType: (requestedAmbulanceType) => set({ requestedAmbulanceType }),
+      setPatientName: (patientName) => set({ patientName }),
+      setPatientAge: (patientAge) => set({ patientAge }),
+      setNotes: (notes) => set({ notes }),
+      setCallbackPhone: (callbackPhone) => set({ callbackPhone }),
       setStep: (step) => set({ step }),
       reset: () =>
         set({
@@ -87,6 +107,11 @@ export const useRequestWizard = create<WizardState>()(
           pickupLng: null,
           priority: 'NORMAL',
           hospitalId: null,
+          requestedAmbulanceType: null,
+          patientName: '',
+          patientAge: null,
+          notes: '',
+          callbackPhone: '',
           step: 1,
         }),
     }),

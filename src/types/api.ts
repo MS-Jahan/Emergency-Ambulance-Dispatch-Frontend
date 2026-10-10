@@ -50,9 +50,20 @@ export interface Ambulance {
   homeHospital?: Hospital
 }
 
+export const AMBULANCE_FARES: Record<AmbulanceType, number> = {
+  BASIC: 15,
+  ICU: 35,
+  CARDIAC: 60,
+}
+
 // /ambulances/nearby returns each ambulance annotated with haversine distance.
 export interface NearbyAmbulance extends Ambulance {
   distanceKm: number
+  driver?: {
+    id: string
+    name: string
+    phone?: string | null
+  } | null
 }
 
 export interface Hospital {
@@ -73,6 +84,11 @@ export interface EmergencyRequest {
   pickupLng: number
   priority: RequestPriority
   status: RequestStatus
+  requestedAmbulanceType?: AmbulanceType | null
+  patientName?: string | null
+  patientAge?: number | null
+  notes?: string | null
+  callbackPhone?: string | null
   ambulanceId?: string
   ambulance?: Ambulance
   driverId?: string

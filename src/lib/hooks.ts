@@ -9,6 +9,7 @@ import type {
   PublicStats,
   ReportSummary,
   Ambulance,
+  AmbulanceType,
   AuditLog,
   DashboardStats,
   DriverProfile,
@@ -111,6 +112,11 @@ export function useCreateRequest() {
       pickupLng: number
       priority?: string
       destinationHospitalId?: string
+      requestedAmbulanceType?: AmbulanceType
+      patientName?: string
+      patientAge?: number
+      notes?: string
+      callbackPhone?: string
     }) =>
       api
         .post<{ request: EmergencyRequest }>('/requests', data)
@@ -369,16 +375,17 @@ export function useAdminRequests(
 }
 
 export function useNearbyAmbulances(
-  coords: { lat: number; lng: number; radiusKm?: number },
+  coords: { lat: number; lng: number; radiusKm?: number; type?: AmbulanceType },
   opts?: { enabled?: boolean },
 ) {
   const params = new URLSearchParams({
     lat: String(coords.lat),
     lng: String(coords.lng),
     ...(coords.radiusKm && { radiusKm: String(coords.radiusKm) }),
+    ...(coords.type && { type: coords.type }),
   })
   return useQuery({
-    queryKey: ['ambulances', 'nearby', coords.lat, coords.lng, coords.radiusKm ?? 10],
+    queryKey: ['ambulances', 'nearby', coords.lat, coords.lng, coords.radiusKm ?? 10, coords.type],
     queryFn: () =>
       api.get<{ items: NearbyAmbulance[] }>(`/ambulances/nearby?${params.toString()}`).then((d) => d.items),
     enabled: opts?.enabled ?? true,
