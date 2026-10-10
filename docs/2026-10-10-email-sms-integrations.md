@@ -134,13 +134,14 @@ Without sending real patient traffic:
 ## 9. Security notes
 
 - Keys live only in Vercel environment variables. Rotate them in the provider dashboard if they were ever pasted into a chat or a file.
-- Logs record the channel, the recipient domain or last four digits, and the provider status code, never keys or message bodies with tokens.
+- Logs record the channel, a masked recipient (`j***@example.com`, `***5678`), and the provider status code, never keys or message bodies with tokens.
+- Names in notification emails are HTML-escaped.
 - Reset tokens are stored hashed, expire in 30 minutes and are single use; the forgot endpoint never reveals whether an account exists.
 - Both channels use the existing rate limits; the admin test endpoints are admin only.
 - Messages contain no medical details and no street addresses.
 
 ## 10. Where the code is
 
-Backend: `src/config/env.ts` (variables), `src/lib/email.ts`, `src/lib/emailTemplates.ts`, `src/lib/sms.ts` (adapters and phone normalisation), `src/lib/notify.ts` (trip events), `src/modules/auth` (forgot and reset), `src/modules/public` (capabilities), `src/modules/admin` (test endpoints), migrations for `PasswordResetToken` and the `notifySms` and `notifyEmail` columns. Frontend: `/forgot-password`, `/reset-password`, the profile notification card, the admin Integrations card, hooks `usePublicCapabilities`, `useForgotPassword`, `useResetPassword`, `useAdminTestEmail`, `useAdminTestSms`.
+Backend: `src/config/env.ts` (variables), `src/lib/email.ts`, `src/lib/emailTemplates.ts`, `src/lib/sms.ts` (adapters and phone normalisation), `src/lib/mask.ts` (log masking), `src/lib/notify.ts` (trip events), `src/modules/auth` (forgot and reset), `src/modules/public` (capabilities), `src/modules/admin` (test endpoints), migrations for `PasswordResetToken` and the `notifySms` and `notifyEmail` columns. Frontend: `/forgot-password`, `/reset-password`, the profile notification card, the admin Integrations card, hooks `usePublicCapabilities`, `useForgotPassword`, `useResetPassword`, `useAdminTestEmail`, `useAdminTestSms`.
 
-The two migrations must be applied once with `bunx prisma migrate deploy` before the backend that needs them is pushed.
+Both migrations (`20261010160000_password_reset_token`, `20261010163000_user_notification_preferences`) are already applied to the database and the code is deployed. With no keys the live site reports `{ email: false, sms: false, passwordReset: false }` and shows none of the email or SMS UI except the admin Integrations card (status Not configured).

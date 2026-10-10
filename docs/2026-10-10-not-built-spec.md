@@ -185,7 +185,7 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 - **Effort:** 8 hours.
 
 ### C.4 Forgot password and reset password
-- **Status:** being built so that it works as soon as `RESEND_API_KEY` and `EMAIL_FROM` are set on the backend (no code change needed). Full plug-in steps, variable names and behaviour without keys are in `docs/2026-10-10-email-sms-integrations.md`. The "Forgot password?" link stays hidden until the backend reports email as configured.
+- **Status: BUILT, waiting only for keys.** Backend `POST /auth/forgot-password` and `/auth/reset-password`, `PasswordResetToken` table (migration applied), Resend client `src/lib/email.ts`; frontend `/forgot-password` and `/reset-password`. It works as soon as `RESEND_API_KEY` and `EMAIL_FROM` are set on the backend (no code change needed). Full plug-in steps, variable names and behaviour without keys are in `docs/2026-10-10-email-sms-integrations.md`. The "Forgot password?" link stays hidden until the backend reports email as configured.
 - **Original blocker:** an email provider and a verified sender address. Without keys the link cannot be delivered, so the endpoint answers the generic message and sends nothing.
 - **Data model:** `PasswordResetToken { id, userId, tokenHash (sha256, unique), expiresAt, usedAt?, createdAt }`, index on `userId`.
 - **API:**
@@ -197,7 +197,7 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 - **Effort:** 4 hours plus provider setup.
 
 ### C.5 Notifications (SMS or push)
-- **Status:** email and SMS (Twilio or a generic webhook bridge for local gateways) are being built behind environment variables, with patient preferences and an admin test card; see `docs/2026-10-10-email-sms-integrations.md`. Web Push (service worker, VAPID keys, `PushSubscription` table) is still not built.
+- **Status: email and SMS BUILT, waiting only for keys.** Twilio and a generic webhook adapter (for Bangladesh gateways), phone normalisation, trip event notifications gated by `User.notifySms` and `User.notifyEmail` (migration applied), contact alerts to `ADMIN_NOTIFY_EMAIL`, `GET /public/capabilities`, admin test endpoints and an Integrations card; see `docs/2026-10-10-email-sms-integrations.md`. Web Push (service worker, VAPID keys, `PushSubscription` table) is still not built.
 - **Original blocker:** a provider (Twilio, a Bangladesh SMS gateway, or Web Push with VAPID keys).
 - **Design:** one `notify(userId, event, payload)` service called from `request.service.ts` on assign, picked up, completed and cancelled; provider selected by env; failures are logged and never fail the request. Preferences: `User.notifyBySms Boolean @default(false)` (additive) edited on the profile page, with phone required. Web Push adds a `PushSubscription { id, userId, endpoint unique, p256dh, auth, createdAt }` table, a service worker `public/sw.js`, and an "Enable notifications" button on the profile.
 - **Templates:** short, no medical data ("Your ambulance DHK-2002 is on the way", "Your trip is complete, pay at <link>").
@@ -271,6 +271,7 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 | Item | Status |
 |---|---|
 | Profile menu crash (Base UI error 31) | fixed |
+| Public pages bounced logged-out visitors to /login (side effect of the session-expiry redirect) | fixed (frontend 50c4589); the 401 redirect now applies only under /dashboard, /driver, /admin |
 | Trip not-found card | done (frontend b705bf4) |
 | Hospital coordinates in request responses and Navigate link | done (backend 30baf75, frontend f443107) |
 | Request ambulance type and patient details | done (backend 39ea824, frontend 97fcfd4) |
@@ -292,8 +293,8 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 | C.1 patient extras | open |
 | C.2 driver applications | open |
 | C.3 live tracking | open |
-| C.4 forgot and reset password | code in progress; works once Resend keys are added |
-| C.5 notifications | email and SMS code in progress; works once keys are added; web push not built |
+| C.4 forgot and reset password | built (backend a782990, frontend 94a9bab); works once Resend keys are added |
+| C.5 notifications | email and SMS built (backend 8c11dc9, 52330a1, 9aacfce, 3831c14, 46fbcc0, hardening 3c3e8f1; frontend 4770862, edd0e39, 1d09a5a); works once keys are added; web push not built |
 | C.6 Google sign-in UI | open |
 | C.7 Bangla and English | open |
 | C.8 admin and data features | open |
