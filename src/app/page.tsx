@@ -22,10 +22,8 @@ import { TripLineDemo } from '@/components/public/trip-line-demo'
 import { FeatureCard } from '@/components/public/feature-card'
 import { MotionCard } from '@/components/motion-card'
 import { Button } from '@/components/ui/button'
-import { EmptyState } from '@/components/shared/empty-state'
-import { ListSkeleton } from '@/components/shared/skeletons'
-import { useHospitals } from '@/lib/hooks'
-import type { Hospital } from '@/types/api'
+import { NearbyHospitals } from '@/components/public/nearby-hospitals'
+import { DEMO_HOSPITALS } from '@/data/demo-hospitals'
 
 const HOW_IT_WORKS = [
   {
@@ -140,62 +138,28 @@ const ROLES = [
   },
 ]
 
-function HospitalTeaser({ hospital }: { hospital: Hospital }) {
-  return (
-    <div className="bg-paper border border-hairline rounded-lg p-4 space-y-1">
-      <div className="flex items-center gap-2">
-        <Building2 className="h-4 w-4 text-oxygen shrink-0" />
-        <h3 className="font-medium text-ink text-sm truncate">{hospital.name}</h3>
-      </div>
-      <p className="text-xs text-slate truncate">{hospital.address}</p>
-      <p className="text-xs text-slate flex items-center gap-1">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-oxygen" />
-        Accepting ambulance destinations
-      </p>
-    </div>
-  )
-}
+const STATS = [
+  { value: '< 3 min', label: 'median dispatch time' },
+  { value: '20', label: 'hospitals in the network' },
+  { value: '24/7', label: 'dispatcher coverage' },
+  { value: '3 taps', label: 'to raise a request' },
+]
+
+const DISTRICTS = Array.from(new Set(DEMO_HOSPITALS.map((h) => h.district)))
 
 function HospitalsSection() {
-  const hospitals = useHospitals()
-  const items = hospitals.data?.items.slice(0, 6) ?? []
-
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-8">
+    <section id="hospitals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-8">
       <MotionCard className="max-w-2xl space-y-3">
-        <h2 className="text-3xl font-bold tracking-tight text-ink">
-          Hospitals near you
+        <p className="text-sm font-semibold uppercase tracking-wider text-oxygen">Hospital network</p>
+        <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-ink">
+          Top hospitals around you
         </h2>
         <p className="text-slate">
-          Pick any partner hospital as your destination. Live from the dispatch
-          service — the same directory dispatchers use.
+          Ranked by distance from your approximate location. Allow location access for exact results.
         </p>
       </MotionCard>
-
-      {hospitals.isLoading ? (
-        <ListSkeleton rows={2} />
-      ) : items.length > 0 ? (
-        <MotionCard delay={100} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((h) => (
-            <HospitalTeaser key={h.id} hospital={h} />
-          ))}
-        </MotionCard>
-      ) : (
-        <div className="bg-paper border border-hairline rounded-lg p-6">
-          <EmptyState
-            icon={<Building2 className="h-6 w-6 text-slate" />}
-            title="Hospital directory loads with the dispatch service"
-            description="Sign in to browse partner hospitals and pick a destination for your trip."
-          />
-        </div>
-      )}
-
-      <Link
-        href="/hospitals"
-        className="inline-block text-sm font-medium text-ink hover:underline"
-      >
-        See all hospitals →
-      </Link>
+      <NearbyHospitals limit={5} />
     </section>
   )
 }
@@ -210,7 +174,7 @@ export default function Home() {
         <section className="bg-gradient-to-b from-gauze to-paper border-b border-hairline">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 grid lg:grid-cols-2 gap-12 items-center">
             <MotionCard className="space-y-6">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-ink leading-[1.05]">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-ink leading-[1.02]">
                 Ambulance in seconds
               </h1>
               <p className="text-lg text-slate max-w-prose">
@@ -218,23 +182,23 @@ export default function Home() {
                 to you, and pay only after you arrive. No phone queue. 24/7.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Link href="/register">
-                  <Button
-                    size="lg"
-                    className="h-14 px-8 bg-signal text-white hover:bg-signal/90 text-base"
-                  >
-                    <Siren className="h-5 w-5 mr-2" /> Request now
-                  </Button>
-                </Link>
-                <Link href="/login">
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="h-14 px-8 border-ink text-ink hover:bg-gauze text-base"
-                  >
-                    Sign in
-                  </Button>
-                </Link>
+                <Button
+                  nativeButton={false}
+                  render={<Link href="/register" />}
+                  size="lg"
+                  className="h-14 px-8 bg-signal text-white hover:bg-signal/90 text-base"
+                >
+                  <Siren className="h-5 w-5 mr-2" /> Request now
+                </Button>
+                <Button
+                  nativeButton={false}
+                  render={<Link href="/login" />}
+                  size="lg"
+                  variant="outline"
+                  className="h-14 px-8 border-ink/40 bg-transparent text-ink hover:bg-muted text-base"
+                >
+                  Sign in
+                </Button>
               </div>
               <p className="text-sm text-slate">
                 Free to request. You pay after the trip, never before.
@@ -245,6 +209,17 @@ export default function Home() {
               <TripLineDemo />
             </MotionCard>
           </div>
+        </section>
+
+        <section className="border-b border-hairline bg-paper">
+          <dl className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {STATS.map((st) => (
+              <div key={st.label}>
+                <dt className="text-3xl font-bold tabular-nums tracking-tight text-ink">{st.value}</dt>
+                <dd className="text-sm text-slate">{st.label}</dd>
+              </div>
+            ))}
+          </dl>
         </section>
 
         <HospitalsSection />
@@ -339,11 +314,14 @@ export default function Home() {
                       </li>
                     ))}
                   </ul>
-                  <Link href={role.href}>
-                    <Button variant="outline" className="border-ink text-ink hover:bg-gauze">
-                      {role.cta}
-                    </Button>
-                  </Link>
+                  <Button
+                    nativeButton={false}
+                    render={<Link href={role.href} />}
+                    variant="outline"
+                    className="border-ink/40 bg-transparent text-ink hover:bg-muted"
+                  >
+                    {role.cta}
+                  </Button>
                 </div>
 
                 <div
@@ -362,33 +340,44 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Coverage */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-6">
+          <h2 className="text-3xl font-bold tracking-tight text-ink">Covering districts nationwide</h2>
+          <p className="text-slate max-w-2xl">Demo network spans {DISTRICTS.length} districts, from Dhaka to Sylhet to Khulna.</p>
+          <ul className="flex flex-wrap gap-2">
+            {DISTRICTS.map((d) => (
+              <li key={d} className="rounded-full border border-hairline bg-paper px-3.5 py-1.5 text-sm text-ink">{d}</li>
+            ))}
+          </ul>
+        </section>
+
         {/* CTA */}
-        <section className="bg-ink">
+        <section className="bg-[#0D1B2A]">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-16 sm:py-20 text-center space-y-6">
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-paper">
+            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white">
               Ready when seconds matter
             </h2>
-            <p className="text-paper/70 text-lg">
+            <p className="text-white/70 text-lg">
               No credit card. No subscription. Available 24/7.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link href="/register">
-                <Button
-                  size="lg"
-                  className="h-14 px-8 bg-signal text-white hover:bg-signal/90 text-base"
-                >
-                  <Siren className="h-5 w-5 mr-2" /> Request now
-                </Button>
-              </Link>
-              <Link href="/login">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="h-14 px-8 border-paper/40 text-paper hover:bg-paper/10 text-base"
-                >
-                  Login
-                </Button>
-              </Link>
+              <Button
+                nativeButton={false}
+                render={<Link href="/register" />}
+                size="lg"
+                className="h-14 px-8 bg-signal text-white hover:bg-signal/90 text-base"
+              >
+                <Siren className="h-5 w-5 mr-2" /> Request now
+              </Button>
+              <Button
+                nativeButton={false}
+                render={<Link href="/login" />}
+                size="lg"
+                variant="outline"
+                className="h-14 px-8 border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white text-base"
+              >
+                Sign in
+              </Button>
             </div>
           </div>
         </section>

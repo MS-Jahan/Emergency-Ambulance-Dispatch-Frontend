@@ -4,7 +4,9 @@ import Link from 'next/link'
 import { Building2, MapPin, Phone, Siren } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 import { Button } from '@/components/ui/button'
-import { EmptyState } from '@/components/shared/empty-state'
+import { PublicFooter } from '@/components/public/public-footer'
+import { NearbyHospitals } from '@/components/public/nearby-hospitals'
+import { DEMO_HOSPITALS } from '@/data/demo-hospitals'
 import { ListSkeleton } from '@/components/shared/skeletons'
 import { useHospitals } from '@/lib/hooks'
 import type { Hospital } from '@/types/api'
@@ -34,49 +36,51 @@ function HospitalCard({ hospital }: { hospital: Hospital }) {
 
 export default function HospitalsPage() {
   const hospitals = useHospitals()
+  const live = hospitals.data?.items ?? []
 
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-5xl w-full px-4 py-12 space-y-6">
-        <section className="space-y-3">
-          <h1 className="text-3xl font-bold text-ink">Hospitals</h1>
+      <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-12 space-y-10">
+        <section className="space-y-3 max-w-2xl">
+          <h1 className="text-4xl font-bold tracking-tight text-ink">Hospitals</h1>
           <p className="text-slate">
-            Partner hospitals you can pick as the destination for a trip.
+            Partner hospitals you can pick as the destination for a trip. Nearest first.
           </p>
         </section>
 
+        <NearbyHospitals limit={DEMO_HOSPITALS.length} showAllLink={false} />
+
         {hospitals.isLoading ? (
-          <ListSkeleton rows={4} />
-        ) : hospitals.data && hospitals.data.items.length > 0 ? (
-          <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {hospitals.data.items.map((h) => (
-              <HospitalCard key={h.id} hospital={h} />
-            ))}
+          <ListSkeleton rows={2} />
+        ) : live.length > 0 ? (
+          <section className="space-y-4">
+            <h2 className="text-xl font-semibold text-ink">Live directory</h2>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {live.map((h) => (
+                <HospitalCard key={h.id} hospital={h} />
+              ))}
+            </div>
           </section>
         ) : (
-          <section className="bg-paper border border-hairline rounded-xl p-8">
-            <EmptyState
-              icon={<Building2 className="h-6 w-6 text-slate" />}
-              title="The live directory needs an account"
-              description="Hospital data comes from the dispatch service, which is only open to signed-in users. Create an account or sign in to browse hospitals and raise a request."
-            />
-            <div className="mt-4 flex justify-center">
-              <Button
-                nativeButton={false} render={<Link href="/login" />}
-                className="bg-signal text-white hover:bg-signal/90"
-              >
-                <Siren className="h-4 w-4 mr-1" /> Sign in
-              </Button>
+          <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-hairline bg-paper p-6">
+            <div className="space-y-1">
+              <h2 className="font-semibold text-ink">Want the live directory?</h2>
+              <p className="text-sm text-slate">
+                The list above is demo data. Sign in to see real partner hospitals and raise a request.
+              </p>
             </div>
+            <Button
+              nativeButton={false}
+              render={<Link href="/login" />}
+              className="bg-signal text-white hover:bg-signal/90"
+            >
+              <Siren className="h-4 w-4 mr-1" /> Sign in
+            </Button>
           </section>
         )}
       </main>
-      <footer className="border-t border-hairline bg-paper py-4">
-        <p className="text-center text-xs text-slate">
-          RapidAid — emergency ambulance dispatch
-        </p>
-      </footer>
+      <PublicFooter />
     </div>
   )
 }
