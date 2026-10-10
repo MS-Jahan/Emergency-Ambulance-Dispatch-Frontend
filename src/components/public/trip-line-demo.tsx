@@ -24,7 +24,7 @@ const DEMO_COPY: Record<RequestStatus, { title: string; note: string }> = {
 }
 
 /**
- * Auto-plays a sample trip through the real status machine.
+ * Auto-plays an illustrative trip through the real status machine.
  * Used on the landing hero to show how a request progresses.
  */
 export function TripLineDemo() {

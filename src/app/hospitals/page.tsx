@@ -8,11 +8,11 @@ import { ListSkeleton } from '@/components/shared/skeletons'
 export const metadata: Metadata = {
   title: 'Hospital Directory & Emergency Bases',
   description:
-    'Explore partner hospitals, trauma centers, and ICU facilities across Bangladesh. Filter by district or proximity.',
+    'Explore hospitals and emergency facilities. Filter by district or proximity.',
   openGraph: {
     title: 'Hospital Directory & Emergency Bases',
     description:
-      'Verified 24/7 partner hospitals and emergency transit facilities nationwide.',
+      'Hospitals and emergency facilities you can choose as a destination.',
   },
 }
 

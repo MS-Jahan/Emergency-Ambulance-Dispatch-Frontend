@@ -1,8 +1,17 @@
-'use client'
-
-import { Ambulance, ArrowRight, CheckCircle2, Navigation, Phone, Radio, Siren } from 'lucide-react'
+import { Ambulance, ArrowRight, Navigation, Phone, Radio, Siren } from 'lucide-react'
 import { Card } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+
+function IllustrationTag() {
+  return (
+    <span className="rounded-full border border-hairline bg-gauze px-2 py-0.5 text-[11px] font-semibold text-slate">
+      Illustration
+    </span>
+  )
+}
+
+function Bar({ className = 'w-full' }: { className?: string }) {
+  return <span aria-hidden className={`block h-2.5 rounded-full bg-hairline ${className}`} />
+}
 
 export function PatientSpotlightPreview() {
   return (
@@ -10,37 +19,35 @@ export function PatientSpotlightPreview() {
       <div className="flex items-center justify-between border-b border-hairline pb-3">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-signal/10 text-signal">
-            <Siren className="h-4 w-4" />
+            <Siren className="h-4 w-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">Trip #EA-4902</p>
-            <p className="text-[11px] text-slate">Dhanmondi 27 → Square Hospital</p>
+            <p className="text-xs font-bold text-ink">Your trip</p>
+            <p className="text-[11px] text-slate">Pickup address to hospital</p>
           </div>
         </div>
-        <span className="rounded-full bg-signal/10 px-2 py-0.5 text-[11px] font-semibold text-signal border border-signal/20">
-          Critical Priority
-        </span>
+        <IllustrationTag />
       </div>
 
       <div className="space-y-2 text-xs">
-        <div className="flex items-center justify-between text-slate">
-          <span>Assigned Ambulance:</span>
-          <span className="font-mono font-semibold text-ink">DHK-ICU-8821</span>
+        <div className="flex items-center justify-between gap-3 text-slate">
+          <span>Assigned ambulance</span>
+          <Bar className="w-24" />
         </div>
-        <div className="flex items-center justify-between text-slate">
-          <span>Estimated Arrival:</span>
-          <span className="font-semibold text-oxygen">4 mins away</span>
+        <div className="flex items-center justify-between gap-3 text-slate">
+          <span>Estimated arrival</span>
+          <Bar className="w-16" />
         </div>
       </div>
 
-      <div className="rounded-xl bg-gauze p-3 border border-hairline flex items-center justify-between">
+      <div className="rounded-xl bg-gauze p-3 border border-hairline flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-signal animate-ping" />
-          <span className="text-xs font-medium text-ink">Ambulance en route</span>
+          <span className="h-2 w-2 rounded-full bg-signal" aria-hidden />
+          <span className="text-xs font-medium text-ink">EN_ROUTE_PICKUP</span>
         </div>
-        <Button size="sm" variant="outline" className="h-8 text-xs">
-          <Phone className="h-3 w-3 mr-1 text-oxygen" /> Call driver
-        </Button>
+        <span className="inline-flex items-center gap-1 rounded-full border border-hairline px-3 py-1 text-xs text-ink">
+          <Phone className="h-3 w-3 text-oxygen" aria-hidden /> Call driver
+        </span>
       </div>
     </Card>
   )
@@ -52,32 +59,36 @@ export function DriverSpotlightPreview() {
       <div className="flex items-center justify-between border-b border-hairline pb-3">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber/10 text-amber">
-            <Ambulance className="h-4 w-4" />
+            <Ambulance className="h-4 w-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">Driver Console</p>
-            <p className="text-[11px] text-slate">Unit DHK-9012 · Basic Life Support</p>
+            <p className="text-xs font-bold text-ink">Driver console</p>
+            <p className="text-[11px] text-slate">Assigned ambulance</p>
           </div>
         </div>
-        <span className="rounded-full bg-oxygen/10 px-2 py-0.5 text-[11px] font-semibold text-oxygen border border-oxygen/20">
-          On Duty
-        </span>
+        <IllustrationTag />
       </div>
 
       <div className="p-3 bg-gauze rounded-xl border border-hairline space-y-2">
-        <p className="text-xs text-slate">Active Destination:</p>
-        <p className="text-sm font-semibold text-ink flex items-center gap-1.5">
-          <Navigation className="h-3.5 w-3.5 text-signal" />
-          Plot 42, Road 11, Banani
+        <p className="text-xs text-slate">Pickup address</p>
+        <p className="flex items-center gap-1.5">
+          <Navigation className="h-3.5 w-3.5 text-signal" aria-hidden />
+          <Bar className="w-40" />
         </p>
+        <p className="text-[11px] font-semibold text-ink">ASSIGNED</p>
       </div>
 
-      <Button className="w-full h-11 bg-amber text-white hover:bg-amber/90 font-medium text-sm">
-        Arrived at pickup location <ArrowRight className="h-4 w-4 ml-1.5" />
-      </Button>
+      <div
+        aria-hidden
+        className="flex h-11 w-full items-center justify-center rounded-full bg-amber text-sm font-medium text-white"
+      >
+        Next step: start driving to pickup <ArrowRight className="h-4 w-4 ml-1.5" />
+      </div>
     </Card>
   )
 }
+
+const BOARD_COLUMNS = ['Pending', 'In progress', 'Done']
 
 export function DispatcherSpotlightPreview() {
   return (
@@ -85,39 +96,29 @@ export function DispatcherSpotlightPreview() {
       <div className="flex items-center justify-between border-b border-hairline pb-3">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink/10 text-ink">
-            <Radio className="h-4 w-4" />
+            <Radio className="h-4 w-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">Central Dispatch Board</p>
-            <p className="text-[11px] text-slate">Live Incident Stream</p>
+            <p className="text-xs font-bold text-ink">Dispatch board</p>
+            <p className="text-[11px] text-slate">Three columns</p>
           </div>
         </div>
-        <span className="rounded-full bg-oxygen/10 px-2 py-0.5 text-[11px] font-semibold text-oxygen border border-oxygen/20">
-          Active Sync
-        </span>
+        <IllustrationTag />
       </div>
 
-      <div className="grid grid-cols-3 gap-2 text-center text-xs">
-        <div className="rounded-lg bg-amber/10 p-2 border border-amber/20">
-          <p className="text-lg font-bold text-amber tabular-nums">2</p>
-          <p className="text-[10px] text-slate uppercase">Pending</p>
-        </div>
-        <div className="rounded-lg bg-oxygen/10 p-2 border border-oxygen/20">
-          <p className="text-lg font-bold text-oxygen tabular-nums">5</p>
-          <p className="text-[10px] text-slate uppercase">En Route</p>
-        </div>
-        <div className="rounded-lg bg-gauze p-2 border border-hairline">
-          <p className="text-lg font-bold text-ink tabular-nums">18</p>
-          <p className="text-[10px] text-slate uppercase">Completed</p>
-        </div>
+      <div className="grid grid-cols-3 gap-2 text-xs">
+        {BOARD_COLUMNS.map((c) => (
+          <div key={c} className="rounded-lg bg-gauze p-2 border border-hairline space-y-2">
+            <p className="text-[10px] font-semibold uppercase text-slate">{c}</p>
+            <Bar />
+            <Bar className="w-2/3" />
+          </div>
+        ))}
       </div>
 
-      <div className="text-xs text-slate border-t border-hairline pt-2.5 flex items-center justify-between">
-        <span className="flex items-center gap-1 text-ink font-medium">
-          <CheckCircle2 className="h-3.5 w-3.5 text-oxygen" /> Auto-matched nearest unit
-        </span>
-        <span className="text-[11px] text-slate">100% Audit logged</span>
-      </div>
+      <p className="text-xs text-slate border-t border-hairline pt-2.5">
+        Nearby ambulances are listed by distance, then assigned in a click.
+      </p>
     </Card>
   )
 }
