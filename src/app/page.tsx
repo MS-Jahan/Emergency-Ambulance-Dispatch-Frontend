@@ -1,5 +1,4 @@
-'use client'
-
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import {
   Ambulance,
@@ -23,7 +22,25 @@ import { FeatureCard } from '@/components/public/feature-card'
 import { MotionCard } from '@/components/motion-card'
 import { Button } from '@/components/ui/button'
 import { NearbyHospitals } from '@/components/public/nearby-hospitals'
+import {
+  PatientSpotlightPreview,
+  DriverSpotlightPreview,
+  DispatcherSpotlightPreview,
+} from '@/components/public/role-previews'
 import { DEMO_HOSPITALS } from '@/data/demo-hospitals'
+
+export const metadata: Metadata = {
+  title: {
+    absolute: 'RapidAid — Emergency Ambulance Dispatch Platform',
+  },
+  description:
+    'Instant emergency ambulance dispatch across Bangladesh. 3 taps to request, live GPS tracking, and post-trip digital payments.',
+  openGraph: {
+    title: 'RapidAid — Emergency Ambulance Dispatch Platform',
+    description:
+      'Connecting patients, drivers, and hospitals with real-time emergency dispatch and response.',
+  },
+}
 
 const HOW_IT_WORKS = [
   {
@@ -107,6 +124,7 @@ const ROLES = [
     ],
     cta: 'Request an ambulance',
     href: '/register',
+    preview: <PatientSpotlightPreview />,
   },
   {
     icon: <Ambulance className="h-6 w-6 text-amber" />,
@@ -121,6 +139,7 @@ const ROLES = [
     ],
     cta: 'Drive with us',
     href: '/register',
+    preview: <DriverSpotlightPreview />,
   },
   {
     icon: <ShieldCheck className="h-6 w-6 text-oxygen" />,
@@ -135,14 +154,15 @@ const ROLES = [
     ],
     cta: 'Open the console',
     href: '/register',
+    preview: <DispatcherSpotlightPreview />,
   },
 ]
 
 const STATS = [
-  { value: '< 3 min', label: 'median dispatch time' },
-  { value: '20', label: 'hospitals in the network' },
-  { value: '24/7', label: 'dispatcher coverage' },
-  { value: '3 taps', label: 'to raise a request' },
+  { value: '3 taps', label: 'to request emergency dispatch' },
+  { value: '4 steps', label: 'transparent live trip line' },
+  { value: '24/7', label: 'central dispatcher coverage' },
+  { value: '৳0 advance', label: 'pay only after safe arrival' },
 ]
 
 const DISTRICTS = Array.from(new Set(DEMO_HOSPITALS.map((h) => h.district)))
@@ -261,11 +281,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Features grid */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-10">
+        {/* Features */}
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-12">
           <MotionCard className="max-w-2xl space-y-3">
             <h2 className="text-3xl font-bold tracking-tight text-ink">
-              One system, three seats
+              One system, three perspectives
             </h2>
             <p className="text-slate">
               Patients, drivers and dispatchers share one state machine. When a
@@ -333,7 +353,7 @@ export default function Home() {
                         : 'border-l-4 border-l-oxygen'
                   }`}
                 >
-                  <TripLineDemo />
+                  {role.preview}
                 </div>
               </MotionCard>
             ))}
@@ -343,7 +363,7 @@ export default function Home() {
         {/* Coverage */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-6">
           <h2 className="text-3xl font-bold tracking-tight text-ink">Covering districts nationwide</h2>
-          <p className="text-slate max-w-2xl">Demo network spans {DISTRICTS.length} districts, from Dhaka to Sylhet to Khulna.</p>
+          <p className="text-slate max-w-2xl">Demo network spans {DISTRICTS.length} districts across Bangladesh, from Dhaka to Chattogram, Sylhet, and Khulna.</p>
           <ul className="flex flex-wrap gap-2">
             {DISTRICTS.map((d) => (
               <li key={d} className="rounded-full border border-hairline bg-paper px-3.5 py-1.5 text-sm text-ink">{d}</li>

@@ -1,7 +1,19 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { PublicHeader } from '@/components/public/public-header'
 import { Button } from '@/components/ui/button'
+
+export const metadata: Metadata = {
+  title: 'Frequently Asked Questions',
+  description:
+    'Answers to common questions regarding ambulance dispatch triage, GPS tracking, driver verification, and online payment.',
+  openGraph: {
+    title: 'Frequently Asked Questions',
+    description:
+      'Everything you need to know about requesting, dispatching, and paying for emergency medical response.',
+  },
+}
 
 // Marketing content rarely changes — rebuild the static HTML hourly.
 export const revalidate = 3600

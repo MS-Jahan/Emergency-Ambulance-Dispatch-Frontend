@@ -1,155 +1,17 @@
-'use client'
+import type { Metadata } from 'next'
+import { LoginForm } from '@/components/auth/login-form'
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { AlertCircle, Car, Lock, Mail, ShieldCheck, User } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { AuthLayout } from '@/components/auth/auth-layout'
-import { useLogin, useDemoLogin } from '@/lib/hooks'
-import { toast } from 'sonner'
-
-const DEMO_ROLES = [
-  {
-    role: 'PATIENT' as const,
-    label: 'Patient',
-    icon: <User className="h-5 w-5" />,
-    className: 'bg-oxygen text-white hover:bg-oxygen/90',
+export const metadata: Metadata = {
+  title: 'Sign In',
+  description:
+    'Sign in to your RapidAid account or choose 1-click Demo Login for Patient, Driver, or Admin access.',
+  openGraph: {
+    title: 'Sign In',
+    description:
+      'Fast, reliable emergency medical dispatch portal with role-based dashboards.',
   },
-  {
-    role: 'DRIVER' as const,
-    label: 'Driver',
-    icon: <Car className="h-5 w-5" />,
-    className: 'bg-amber text-white hover:bg-amber/90',
-  },
-  {
-    role: 'ADMIN' as const,
-    label: 'Admin',
-    icon: <ShieldCheck className="h-5 w-5" />,
-    className: 'bg-ink text-paper hover:bg-ink/90',
-  },
-]
+}
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const loginMutation = useLogin()
-  const demoLoginMutation = useDemoLogin()
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email || !password) {
-      toast.error('Email and password required')
-      return
-    }
-    loginMutation.mutate({ email, password })
-  }
-
-  return (
-    <AuthLayout>
-      <div className="bg-paper border border-hairline rounded-lg p-6 sm:p-8 space-y-6">
-        <div className="space-y-1">
-          <h2 className="text-xl font-bold text-ink">Sign in to your account</h2>
-          <p className="text-sm text-slate">
-            New here?{' '}
-            <Link href="/register" className="font-medium text-oxygen hover:underline">
-              Create an account
-            </Link>
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-sm font-medium text-ink">
-              Email
-            </Label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate" />
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={loginMutation.isPending}
-                className="h-12 pl-10 bg-paper border-hairline text-ink"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-sm font-medium text-ink">
-              Password
-            </Label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate" />
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loginMutation.isPending}
-                className="h-12 pl-10 bg-paper border-hairline text-ink"
-              />
-            </div>
-          </div>
-
-          {loginMutation.error && (
-            <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 rounded text-red-700 dark:text-red-300 text-sm">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <p>{loginMutation.error.message}</p>
-            </div>
-          )}
-
-          <Button
-            type="submit"
-            disabled={loginMutation.isPending}
-            className="w-full h-12 bg-ink text-paper hover:bg-signal"
-          >
-            {loginMutation.isPending ? 'Signing in...' : 'Sign in'}
-          </Button>
-        </form>
-
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-hairline" />
-          </div>
-          <div className="relative flex justify-center">
-            <span className="bg-paper px-3 text-xs text-slate">or</span>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <p className="text-sm font-medium text-ink">Try a demo account</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            {DEMO_ROLES.map((demo) => (
-              <Button
-                key={demo.role}
-                type="button"
-                onClick={() => demoLoginMutation.mutate(demo.role)}
-                disabled={demoLoginMutation.isPending}
-                className={`h-14 rounded-md ${demo.className}`}
-              >
-                <span className="flex items-center gap-2">
-                  {demo.icon}
-                  <span className="text-sm font-medium">{demo.label}</span>
-                </span>
-              </Button>
-            ))}
-          </div>
-
-          {demoLoginMutation.error && (
-            <div className="flex gap-2 p-3 bg-red-50 dark:bg-red-950 rounded text-red-700 dark:text-red-300 text-sm">
-              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <p>{demoLoginMutation.error.message}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    </AuthLayout>
-  )
+  return <LoginForm />
 }

@@ -9,8 +9,18 @@ const schib = Schibsted_Grotesk({
 });
 
 export const metadata: Metadata = {
-  title: "Dispatch - Emergency Ambulance Service",
-  description: "Fast, reliable emergency ambulance dispatch in Dhaka",
+  title: {
+    default: "RapidAid — Emergency Ambulance Dispatch",
+    template: "%s | RapidAid",
+  },
+  description:
+    "Fast, reliable 24/7 nationwide emergency ambulance dispatch across Bangladesh. 3 taps to request, live GPS tracking, and post-trip digital payments.",
+  openGraph: {
+    title: "RapidAid — Emergency Ambulance Dispatch Platform",
+    description:
+      "Rapid emergency ambulance response and tracking across Bangladesh.",
+    siteName: "RapidAid Dispatch",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

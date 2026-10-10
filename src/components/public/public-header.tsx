@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Phone, Siren } from 'lucide-react'
+import Image from 'next/image'
+import { Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const NAV = [
@@ -15,9 +16,14 @@ export function PublicHeader() {
     <header className="sticky top-0 z-40 border-b border-hairline bg-paper/90 backdrop-blur supports-[backdrop-filter]:bg-paper/75">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2.5 text-ink">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-signal text-white">
-            <Siren className="h-5 w-5" />
-          </span>
+          <Image
+            src="/rapidaid-logo.svg"
+            alt="RapidAid Logo"
+            width={34}
+            height={34}
+            className="rounded-lg shadow-sm"
+            priority
+          />
           <span className="text-lg font-bold tracking-tight">RapidAid</span>
         </Link>
         <nav className="hidden md:flex items-center gap-7" aria-label="Primary">

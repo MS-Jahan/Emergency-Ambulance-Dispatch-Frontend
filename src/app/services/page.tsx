@@ -1,5 +1,17 @@
+import type { Metadata } from 'next'
 import { Activity, HeartPulse, Stethoscope } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
+
+export const metadata: Metadata = {
+  title: 'Emergency Medical Services & Fleet Classes',
+  description:
+    'Basic transport, ICU ventilators, and Cardiac care ambulances. Dynamic fleet matching based on emergency triage priority.',
+  openGraph: {
+    title: 'Emergency Medical Services & Fleet Classes',
+    description:
+      'Three specialized ambulance tiers for emergency transit, hospital transfers, and critical care.',
+  },
+}
 
 // Marketing content rarely changes — rebuild the static HTML hourly.
 export const revalidate = 3600

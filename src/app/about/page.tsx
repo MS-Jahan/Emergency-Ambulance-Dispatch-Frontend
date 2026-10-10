@@ -1,8 +1,21 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 
 import { Clock3, HeartPulse, MapPin, Radio, Siren } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 import { Button } from '@/components/ui/button'
+
+export const metadata: Metadata = {
+  title: 'About Our Mission',
+  description:
+    'Learn about RapidAid — our mission to connect patients, drivers, and hospitals with fast and reliable smart dispatching.',
+  openGraph: {
+    title: 'About Our Mission',
+    description:
+      'Faster emergency response through intelligent triage, live GPS dispatch, and transparent medical transit.',
+  },
+}
 
 // Marketing content rarely changes — rebuild the static HTML hourly.
 export const revalidate = 3600
@@ -13,6 +26,18 @@ export default function AboutPage() {
       <PublicHeader />
       <main className="flex-1 mx-auto max-w-3xl w-full px-4 py-12 space-y-10">
         <section className="space-y-4">
+          <div className="flex items-center gap-3">
+            <Image
+              src="/rapidaid-logo.svg"
+              alt="RapidAid Mark"
+              width={40}
+              height={40}
+              className="rounded-xl shadow-sm"
+            />
+            <span className="text-xs font-bold uppercase tracking-wider text-signal">
+              Nationwide Medical Transit
+            </span>
+          </div>
           <h1 className="text-3xl font-bold text-ink">
             An ambulance, minutes away, not an hour
           </h1>
