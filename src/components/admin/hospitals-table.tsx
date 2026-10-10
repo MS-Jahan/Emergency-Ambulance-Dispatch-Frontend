@@ -1,7 +1,11 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { Hospital, MapPin, Phone, Plus, Trash2 } from 'lucide-react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { Hospital, MapPin, Phone, Plus, Search, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -26,6 +30,16 @@ import {
 import { ApiError } from '@/lib/api'
 import type { Hospital as HospitalRow } from '@/types/api'
 
+const hospitalSchema = z.object({
+  name: z.string().min(2, 'Name must be at least 2 characters'),
+  address: z.string().min(4, 'Address must be at least 4 characters'),
+  lat: z.number().min(-90, 'Valid latitude required (-90 to 90)').max(90, 'Valid latitude required (-90 to 90)'),
+  lng: z.number().min(-180, 'Valid longitude required (-180 to 180)').max(180, 'Valid longitude required (-180 to 180)'),
+  phone: z.string().min(6, 'Phone must be at least 6 characters'),
+})
+
+type HospitalFormData = z.infer<typeof hospitalSchema>
+
 function HospitalForm({
   onSubmit,
   pending,
@@ -39,46 +53,46 @@ function HospitalForm({
   }) => Promise<void>
   pending: boolean
 }) {
-  const [name, setName] = useState('')
-  const [address, setAddress] = useState('')
-  const [lat, setLat] = useState('')
-  const [lng, setLng] = useState('')
-  const [phone, setPhone] = useState('')
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<HospitalFormData>({
+    resolver: zodResolver(hospitalSchema),
+    defaultValues: {
+      name: '',
+      address: '',
+      lat: 23.8103,
+      lng: 90.4125,
+      phone: '',
+    },
+  })
 
-  const num = (v: string) => Number(v.trim())
-  const valid =
-    name.trim().length >= 2 &&
-    address.trim().length >= 4 &&
-    Number.isFinite(num(lat)) &&
-    Number.isFinite(num(lng)) &&
-    phone.trim().length >= 6
+  const onFormSubmit = (data: HospitalFormData) => {
+    return onSubmit({
+      name: data.name.trim(),
+      address: data.address.trim(),
+      lat: Number(data.lat),
+      lng: Number(data.lng),
+      phone: data.phone.trim(),
+    })
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        if (!valid) return
-        void onSubmit({
-          name: name.trim(),
-          address: address.trim(),
-          lat: num(lat),
-          lng: num(lng),
-          phone: phone.trim(),
-        })
-      }}
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4" noValidate>
       <div>
         <Label htmlFor="h-name" className="text-sm font-medium text-ink">
           Name
         </Label>
         <Input
           id="h-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
           placeholder="Square General Hospital"
+          {...register('name')}
           className="mt-1 bg-paper border-hairline text-ink"
         />
+        {errors.name && (
+          <p className="mt-1 text-xs text-signal">{errors.name.message}</p>
+        )}
       </div>
       <div>
         <Label htmlFor="h-addr" className="text-sm font-medium text-ink">
@@ -86,11 +100,13 @@ function HospitalForm({
         </Label>
         <Input
           id="h-addr"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
           placeholder="123 Road, Dhaka"
+          {...register('address')}
           className="mt-1 bg-paper border-hairline text-ink"
         />
+        {errors.address && (
+          <p className="mt-1 text-xs text-signal">{errors.address.message}</p>
+        )}
       </div>
       <div className="grid grid-cols-3 gap-3">
         <div>
@@ -99,12 +115,14 @@ function HospitalForm({
           </Label>
           <Input
             id="h-lat"
-            value={lat}
-            onChange={(e) => setLat(e.target.value)}
             placeholder="23.81"
             inputMode="decimal"
+            {...register('lat', { valueAsNumber: true })}
             className="mt-1 bg-paper border-hairline text-ink"
           />
+          {errors.lat && (
+            <p className="mt-1 text-xs text-signal">{errors.lat.message}</p>
+          )}
         </div>
         <div>
           <Label htmlFor="h-lng" className="text-sm font-medium text-ink">
@@ -112,12 +130,14 @@ function HospitalForm({
           </Label>
           <Input
             id="h-lng"
-            value={lng}
-            onChange={(e) => setLng(e.target.value)}
             placeholder="90.41"
             inputMode="decimal"
+            {...register('lng', { valueAsNumber: true })}
             className="mt-1 bg-paper border-hairline text-ink"
           />
+          {errors.lng && (
+            <p className="mt-1 text-xs text-signal">{errors.lng.message}</p>
+          )}
         </div>
         <div>
           <Label htmlFor="h-phone" className="text-sm font-medium text-ink">
@@ -125,16 +145,18 @@ function HospitalForm({
           </Label>
           <Input
             id="h-phone"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
             placeholder="+880..."
+            {...register('phone')}
             className="mt-1 bg-paper border-hairline text-ink"
           />
+          {errors.phone && (
+            <p className="mt-1 text-xs text-signal">{errors.phone.message}</p>
+          )}
         </div>
       </div>
       <Button
         type="submit"
-        disabled={pending || !valid}
+        disabled={pending}
         className="w-full bg-ink text-paper hover:bg-ink/90"
       >
         {pending ? 'Saving...' : 'Create hospital'}
@@ -144,6 +166,10 @@ function HospitalForm({
 }
 
 export function HospitalsTable() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const q = searchParams.get('q') ?? ''
+
   const hospitals = useHospitals()
   const ambulances = useAdminAmbulances()
   const create = useCreateHospital()
@@ -152,7 +178,27 @@ export function HospitalsTable() {
   const [creating, setCreating] = useState(false)
   const [deleting, setDeleting] = useState<HospitalRow | null>(null)
 
-  const items = hospitals.data?.items ?? []
+  const items = useMemo(() => {
+    const list = hospitals.data?.items ?? []
+    if (!q.trim()) return list
+    const lower = q.toLowerCase()
+    return list.filter(
+      (h) =>
+        h.name.toLowerCase().includes(lower) ||
+        h.address.toLowerCase().includes(lower),
+    )
+  }, [hospitals.data?.items, q])
+
+  const setQ = (val: string) => {
+    const sp = new URLSearchParams(searchParams.toString())
+    if (val.trim()) {
+      sp.set('q', val)
+    } else {
+      sp.delete('q')
+    }
+    router.push(`/admin/resources?${sp.toString()}`)
+  }
+
   // Units based at each hospital, counted client-side from the fleet feed.
   const fleetByHospital = useMemo(() => {
     const counts = new Map<string, number>()
@@ -178,13 +224,28 @@ export function HospitalsTable() {
     <div className="space-y-3">
       <div className="flex items-center gap-2 flex-wrap justify-between">
         <p className="text-sm text-slate">Hospitals ({items.length})</p>
-        <Button
-          size="sm"
-          onClick={() => setCreating(true)}
-          className="bg-signal text-white hover:bg-signal/90"
-        >
-          <Plus className="h-4 w-4 mr-1" /> Add hospital
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate"
+              aria-hidden
+            />
+            <Input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search hospitals"
+              aria-label="Search hospitals"
+              className="h-9 w-44 pl-8 bg-paper border-hairline text-ink"
+            />
+          </div>
+          <Button
+            size="sm"
+            onClick={() => setCreating(true)}
+            className="bg-signal text-white hover:bg-signal/90"
+          >
+            <Plus className="h-4 w-4 mr-1" /> Add hospital
+          </Button>
+        </div>
       </div>
 
       {hospitals.isLoading ? (

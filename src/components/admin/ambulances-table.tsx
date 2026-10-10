@@ -1,6 +1,10 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Ambulance, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -37,6 +41,18 @@ import type { Ambulance as AmbulanceRow } from '@/types/api'
 const TYPES = ['BASIC', 'ICU', 'CARDIAC'] as const
 const STATUSES = ['AVAILABLE', 'ON_TRIP', 'MAINTENANCE'] as const
 
+const ambulanceSchema = z.object({
+  plateNumber: z
+    .string()
+    .min(4, 'Plate number must be at least 4 characters')
+    .max(20, 'Plate number cannot exceed 20 characters'),
+  type: z.enum(['BASIC', 'ICU', 'CARDIAC']),
+  status: z.enum(['AVAILABLE', 'ON_TRIP', 'MAINTENANCE']).optional(),
+  homeHospitalId: z.string().optional(),
+})
+
+type AmbulanceFormData = z.infer<typeof ambulanceSchema>
+
 // Brand palette: teal available, amber on trip, red maintenance.
 const STATUS_PILL: Record<string, string> = {
   AVAILABLE: 'bg-oxygen/10 text-oxygen border-oxygen/30',
@@ -67,43 +83,70 @@ function AmbulanceForm({
   submitLabel: string
 }) {
   const hospitals = useHospitals()
-  const [plate, setPlate] = useState(initial?.plateNumber ?? '')
-  const [type, setType] = useState<string>(initial?.type ?? 'BASIC')
-  const [status, setStatus] = useState<string>(initial?.status ?? 'AVAILABLE')
-  const [hospitalId, setHospitalId] = useState<string>(
-    initial?.homeHospitalId ?? 'none',
-  )
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<AmbulanceFormData>({
+    resolver: zodResolver(ambulanceSchema),
+    defaultValues: {
+      plateNumber: initial?.plateNumber ?? '',
+      type: (initial?.type as 'BASIC' | 'ICU' | 'CARDIAC') ?? 'BASIC',
+      status: (initial?.status as 'AVAILABLE' | 'ON_TRIP' | 'MAINTENANCE') ?? 'AVAILABLE',
+      homeHospitalId: initial?.homeHospitalId ?? 'none',
+    },
+  })
+
+  // Watch selected values for controlled Radix/Base Select components
+  const selectedType = watch('type')
+  const selectedStatus = watch('status')
+  const selectedHospital = watch('homeHospitalId')
+
+  const onFormSubmit = (data: AmbulanceFormData) => {
+    return onSubmit({
+      ...(initial ? {} : { plateNumber: data.plateNumber.toUpperCase() }),
+      type: data.type,
+      ...(initial ? { status: data.status } : {}),
+      homeHospitalId:
+        data.homeHospitalId === 'none' || !data.homeHospitalId
+          ? null
+          : data.homeHospitalId,
+    })
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault()
-        void onSubmit({
-          ...(initial ? {} : { plateNumber: plate }),
-          type,
-          ...(initial ? { status } : {}),
-          homeHospitalId: hospitalId === 'none' ? null : hospitalId,
-        })
-      }}
-      className="space-y-4"
-    >
+    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4" noValidate>
       <div>
         <Label htmlFor="plate" className="text-sm font-medium text-ink">
           Plate number
         </Label>
         <Input
           id="plate"
-          value={plate}
-          onChange={(e) => setPlate(e.target.value.toUpperCase())}
           placeholder="DHK-1234"
           disabled={!!initial}
+          {...register('plateNumber', {
+            onChange: (e) => {
+              setValue('plateNumber', e.target.value.toUpperCase())
+            },
+          })}
           className="mt-1 bg-paper border-hairline text-ink"
         />
+        {errors.plateNumber && (
+          <p className="mt-1 text-xs text-signal">{errors.plateNumber.message}</p>
+        )}
       </div>
+
       <div className="grid grid-cols-2 gap-3">
         <div>
           <Label className="text-sm font-medium text-ink">Type</Label>
-          <Select value={type} onValueChange={(v) => setType(v ?? 'BASIC')}>
+          <Select
+            value={selectedType}
+            onValueChange={(v) =>
+              setValue('type', (v ?? 'BASIC') as 'BASIC' | 'ICU' | 'CARDIAC')
+            }
+          >
             <SelectTrigger className="mt-1 w-full bg-paper border-hairline">
               <SelectValue />
             </SelectTrigger>
@@ -116,10 +159,19 @@ function AmbulanceForm({
             </SelectContent>
           </Select>
         </div>
+
         {initial && (
           <div>
             <Label className="text-sm font-medium text-ink">Status</Label>
-            <Select value={status} onValueChange={(v) => setStatus(v ?? 'AVAILABLE')}>
+            <Select
+              value={selectedStatus}
+              onValueChange={(v) =>
+                setValue(
+                  'status',
+                  (v ?? 'AVAILABLE') as 'AVAILABLE' | 'ON_TRIP' | 'MAINTENANCE',
+                )
+              }
+            >
               <SelectTrigger className="mt-1 w-full bg-paper border-hairline">
                 <SelectValue />
               </SelectTrigger>
@@ -134,11 +186,12 @@ function AmbulanceForm({
           </div>
         )}
       </div>
+
       <div>
         <Label className="text-sm font-medium text-ink">Home hospital</Label>
         <Select
-          value={hospitalId}
-          onValueChange={(v) => setHospitalId(v ?? 'none')}
+          value={selectedHospital ?? 'none'}
+          onValueChange={(v) => setValue('homeHospitalId', v ?? 'none')}
         >
           <SelectTrigger className="mt-1 w-full bg-paper border-hairline">
             <SelectValue />
@@ -153,9 +206,10 @@ function AmbulanceForm({
           </SelectContent>
         </Select>
       </div>
+
       <Button
         type="submit"
-        disabled={pending || (!initial && plate.trim().length < 4)}
+        disabled={pending}
         className="w-full bg-ink text-paper hover:bg-ink/90"
       >
         {pending ? 'Saving...' : submitLabel}
@@ -165,6 +219,10 @@ function AmbulanceForm({
 }
 
 export function AmbulancesTable() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const typeFilter = searchParams.get('type') ?? 'all'
+
   const ambulances = useAdminAmbulances()
   const create = useCreateAmbulance()
   const update = useUpdateAmbulance()
@@ -173,7 +231,6 @@ export function AmbulancesTable() {
   const [creating, setCreating] = useState(false)
   const [editing, setEditing] = useState<AmbulanceRow | null>(null)
   const [deleting, setDeleting] = useState<AmbulanceRow | null>(null)
-  const [typeFilter, setTypeFilter] = useState('all')
 
   const items = useMemo(
     () => ambulances.data?.items ?? [],
@@ -187,6 +244,16 @@ export function AmbulancesTable() {
         : items.filter((a) => a.type === typeFilter),
     [items, typeFilter],
   )
+
+  const setType = (val: string) => {
+    const sp = new URLSearchParams(searchParams.toString())
+    if (val === 'all') {
+      sp.delete('type')
+    } else {
+      sp.set('type', val)
+    }
+    router.push(`/admin/resources?${sp.toString()}`)
+  }
 
   const doDelete = async () => {
     if (!deleting) return
@@ -206,7 +273,7 @@ export function AmbulancesTable() {
           Ambulances ({total} total)
         </p>
         <div className="flex items-center gap-2 flex-wrap">
-          <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v ?? 'all')}>
+          <Select value={typeFilter} onValueChange={(v) => setType(v ?? 'all')}>
             <SelectTrigger className="w-32 bg-paper border-hairline" aria-label="Filter by type">
               <SelectValue />
             </SelectTrigger>

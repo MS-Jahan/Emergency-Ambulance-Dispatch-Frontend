@@ -145,8 +145,23 @@ export function useCancelRequest() {
   return useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
       api.post(`/requests/${id}/cancel`, { cancelReason: reason }),
-    onSuccess: () => {
+    onMutate: async ({ id, reason }) => {
+      await queryClient.cancelQueries({ queryKey: ['requests', id] })
+      const prevDetail = queryClient.getQueryData(['requests', id])
+      queryClient.setQueryData(['requests', id], (old: EmergencyRequest | undefined) =>
+        old ? { ...old, status: 'CANCELLED' as RequestStatus, cancelReason: reason } : old,
+      )
+      return { prevDetail }
+    },
+    onError: (_err, { id }, context) => {
+      if (context?.prevDetail) {
+        queryClient.setQueryData(['requests', id], context.prevDetail)
+      }
+    },
+    onSettled: (_data, _err, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['requests'] })
+      queryClient.invalidateQueries({ queryKey: ['requests', id] })
+      queryClient.invalidateQueries({ queryKey: ['admin', 'requests'] })
     },
   })
 }
@@ -188,7 +203,20 @@ export function useUpdateDriverStatus() {
   return useMutation({
     mutationFn: (status: string) =>
       api.patch('/driver/status', { status }),
-    onSuccess: () => {
+    onMutate: async (status: string) => {
+      await queryClient.cancelQueries({ queryKey: ['driver', 'me'] })
+      const prevProfile = queryClient.getQueryData<DriverProfile>(['driver', 'me'])
+      queryClient.setQueryData(['driver', 'me'], (old: DriverProfile | undefined) =>
+        old ? { ...old, status: status as DriverProfile['status'] } : old,
+      )
+      return { prevProfile }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.prevProfile) {
+        queryClient.setQueryData(['driver', 'me'], context.prevProfile)
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['driver', 'me'] })
     },
   })
@@ -218,8 +246,24 @@ export function useUpdateRequestStatus() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: RequestStatus }) =>
       api.patch(`/requests/${id}/status`, { status }),
-    onSuccess: () => {
+    onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ['requests', id] })
+      await queryClient.cancelQueries({ queryKey: ['requests', 'assigned'] })
+      const prevDetail = queryClient.getQueryData(['requests', id])
+      queryClient.setQueryData(['requests', id], (old: EmergencyRequest | undefined) =>
+        old ? { ...old, status } : old,
+      )
+      return { prevDetail }
+    },
+    onError: (_err, { id }, context) => {
+      if (context?.prevDetail) {
+        queryClient.setQueryData(['requests', id], context.prevDetail)
+      }
+    },
+    onSettled: (_data, _err, { id }) => {
       queryClient.invalidateQueries({ queryKey: ['requests'] })
+      queryClient.invalidateQueries({ queryKey: ['requests', id] })
+      queryClient.invalidateQueries({ queryKey: ['requests', 'assigned'] })
     },
   })
 }
@@ -327,7 +371,31 @@ export function useUpdateAmbulance() {
       status?: string
       homeHospitalId?: string | null
     }) => api.patch<Ambulance>(`/ambulances/${id}`, data),
-    onSuccess: () => {
+    onMutate: async ({ id, ...data }) => {
+      await queryClient.cancelQueries({ queryKey: ['ambulances'] })
+      const prevAmbulances = queryClient.getQueriesData({ queryKey: ['ambulances'] })
+      queryClient.setQueriesData(
+        { queryKey: ['ambulances'] },
+        (old: PaginatedData<Ambulance> | undefined) => {
+          if (!old?.items) return old
+          return {
+            ...old,
+            items: old.items.map((item) =>
+              item.id === id ? { ...item, ...data } : item,
+            ),
+          }
+        },
+      )
+      return { prevAmbulances }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.prevAmbulances) {
+        for (const [key, val] of context.prevAmbulances) {
+          queryClient.setQueryData(key, val)
+        }
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['ambulances'] })
     },
   })

@@ -1,12 +1,51 @@
 'use client'
 
+import { Suspense } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AmbulancesTable } from '@/components/admin/ambulances-table'
 import { HospitalsTable } from '@/components/admin/hospitals-table'
 import { UsersTable } from '@/components/admin/users-table'
 import { AuditLogTable } from '@/components/admin/audit-log-table'
+import { ListSkeleton } from '@/components/shared/skeletons'
+
+function ResourcesContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const currentTab = searchParams.get('tab') ?? 'ambulances'
+
+  const onTabChange = (val: string | null) => {
+    if (!val) return
+    const sp = new URLSearchParams()
+    sp.set('tab', val)
+    router.push(`/admin/resources?${sp.toString()}`)
+  }
+
+  return (
+    <Tabs value={currentTab} onValueChange={onTabChange}>
+      <TabsList className="mb-4 flex-wrap h-auto">
+        <TabsTrigger value="ambulances">Ambulances</TabsTrigger>
+        <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
+        <TabsTrigger value="users">Users</TabsTrigger>
+        <TabsTrigger value="audit">Audit logs</TabsTrigger>
+      </TabsList>
+      <TabsContent value="ambulances">
+        <AmbulancesTable />
+      </TabsContent>
+      <TabsContent value="hospitals">
+        <HospitalsTable />
+      </TabsContent>
+      <TabsContent value="users">
+        <UsersTable />
+      </TabsContent>
+      <TabsContent value="audit">
+        <AuditLogTable />
+      </TabsContent>
+    </Tabs>
+  )
+}
 
 export default function AdminResourcesPage() {
   return (
@@ -26,26 +65,9 @@ export default function AdminResourcesPage() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
-        <Tabs defaultValue="ambulances">
-          <TabsList className="mb-4 flex-wrap h-auto">
-            <TabsTrigger value="ambulances">Ambulances</TabsTrigger>
-            <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
-            <TabsTrigger value="users">Users</TabsTrigger>
-            <TabsTrigger value="audit">Audit logs</TabsTrigger>
-          </TabsList>
-          <TabsContent value="ambulances">
-            <AmbulancesTable />
-          </TabsContent>
-          <TabsContent value="hospitals">
-            <HospitalsTable />
-          </TabsContent>
-          <TabsContent value="users">
-            <UsersTable />
-          </TabsContent>
-          <TabsContent value="audit">
-            <AuditLogTable />
-          </TabsContent>
-        </Tabs>
+        <Suspense fallback={<ListSkeleton rows={6} />}>
+          <ResourcesContent />
+        </Suspense>
       </main>
     </div>
   )

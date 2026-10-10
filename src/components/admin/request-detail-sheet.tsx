@@ -1,6 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 import { Ambulance, Loader2, MapPin, Phone, X } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -19,6 +22,69 @@ import {
 import { ApiError } from '@/lib/api'
 import type { EmergencyRequest } from '@/types/api'
 
+const cancelSchema = z.object({
+  reason: z.string().min(3, 'Cancellation reason must be at least 3 characters'),
+})
+type CancelFormData = z.infer<typeof cancelSchema>
+
+function CancelRequestForm({
+  onCancel,
+  onKeep,
+  pending,
+}: {
+  onCancel: (reason: string) => Promise<void>
+  onKeep: () => void
+  pending: boolean
+}) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CancelFormData>({
+    resolver: zodResolver(cancelSchema),
+    defaultValues: { reason: '' },
+  })
+
+  return (
+    <Card className="space-y-3 p-4 border-signal/40">
+      <p className="text-sm font-semibold text-signal">Cancel this request?</p>
+      <form onSubmit={handleSubmit((d) => onCancel(d.reason))} className="space-y-3">
+        <div>
+          <Input
+            placeholder="Reason (e.g. duplicate request)"
+            aria-label="Cancellation reason"
+            {...register('reason')}
+            className="bg-paper border-hairline text-ink"
+          />
+          {errors.reason && (
+            <p className="mt-1 text-xs text-signal">{errors.reason.message}</p>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onKeep}
+            className="border-hairline text-ink hover:bg-gauze"
+          >
+            Keep request
+          </Button>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={pending}
+            className="bg-signal text-white hover:bg-signal/90"
+          >
+            {pending && <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />}
+            Confirm cancel
+          </Button>
+        </div>
+      </form>
+    </Card>
+  )
+}
+
 interface RequestDetailSheetProps {
   request: EmergencyRequest
   onClose: () => void
@@ -33,7 +99,6 @@ interface RequestDetailSheetProps {
 export function RequestDetailSheet({ request, onClose, onAction }: RequestDetailSheetProps) {
   const [reassigning, setReassigning] = useState(false)
   const [cancelling, setCancelling] = useState(false)
-  const [reason, setReason] = useState('')
 
   const nearby = useNearbyAmbulances(
     { lat: request.pickupLat, lng: request.pickupLng, radiusKm: 10 },
@@ -71,9 +136,9 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
     }
   }
 
-  const doCancel = async () => {
+  const doCancel = async (reasonText: string) => {
     try {
-      await cancel.mutateAsync({ id: request.id, reason: reason.trim() || 'Cancelled by dispatch' })
+      await cancel.mutateAsync({ id: request.id, reason: reasonText })
       toast.success('Request cancelled')
       onAction?.(request.id)
       onClose()
@@ -226,35 +291,11 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
 
           {/* Cancel — inline reason form */}
           {cancelling && (
-            <Card className="space-y-3 p-4 border-signal/40">
-              <p className="text-sm font-semibold text-signal">Cancel this request?</p>
-              <Input
-                value={reason}
-                onChange={(e) => setReason(e.target.value)}
-                placeholder="Reason (e.g. duplicate request)"
-                aria-label="Cancellation reason"
-                className="bg-paper border-hairline text-ink"
-              />
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCancelling(false)}
-                  className="border-hairline text-ink hover:bg-gauze"
-                >
-                  Keep request
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={doCancel}
-                  disabled={cancel.isPending}
-                  className="bg-signal text-white hover:bg-signal/90"
-                >
-                  {cancel.isPending && <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />}
-                  Confirm cancel
-                </Button>
-              </div>
-            </Card>
+            <CancelRequestForm
+              onCancel={doCancel}
+              onKeep={() => setCancelling(false)}
+              pending={cancel.isPending}
+            />
           )}
         </div>
 

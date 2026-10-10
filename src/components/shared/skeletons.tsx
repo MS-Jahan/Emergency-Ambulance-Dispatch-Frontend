@@ -48,3 +48,19 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
     </div>
   )
 }
+
+export function DetailSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-7 w-48" />
+        <Skeleton className="h-4 w-72" />
+      </div>
+      <div className="rounded-xl border border-hairline bg-paper p-6 space-y-4">
+        <Skeleton className="h-5 w-1/3" />
+        <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-10 w-full" />
+      </div>
+    </div>
+  )
+}

@@ -1,14 +1,22 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { RadioTower } from 'lucide-react'
 import { Card } from '@/components/ui/card'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { RequestRow } from '@/components/admin/request-row'
 import { RequestDetailSheet } from '@/components/admin/request-detail-sheet'
 import { CardSkeleton } from '@/components/shared/skeletons'
 import { EmptyState } from '@/components/shared/empty-state'
 import { useAdminRequests } from '@/lib/hooks'
-import type { EmergencyRequest } from '@/types/api'
+import type { EmergencyRequest, RequestPriority } from '@/types/api'
 
 const IN_PROGRESS: EmergencyRequest['status'][] = [
   'ASSIGNED',
@@ -19,18 +27,25 @@ const IN_PROGRESS: EmergencyRequest['status'][] = [
 
 const CLOSED: EmergencyRequest['status'][] = ['COMPLETED', 'CANCELLED']
 
+const PRIORITIES: ('ALL' | RequestPriority)[] = ['ALL', 'CRITICAL', 'HIGH', 'NORMAL']
+
 interface Column {
   title: string
   dot: string
   rows: EmergencyRequest[]
 }
 
-/**
- * Live dispatch board: three columns (pending / in progress / closed),
- * 5s polling, click a card for the dispatch detail sheet.
- */
-export default function DispatchBoardPage() {
-  const board = useAdminRequests(1, 100, undefined, { refetchInterval: 5000 })
+function DispatchBoardContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const priorityFilter = searchParams.get('priority') ?? 'ALL'
+
+  const board = useAdminRequests(
+    1,
+    100,
+    priorityFilter !== 'ALL' ? { priority: priorityFilter } : undefined,
+    { refetchInterval: 5000 },
+  )
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const [pulseId, setPulseId] = useState<string | null>(null)
 
@@ -46,6 +61,16 @@ export default function DispatchBoardPage() {
     const timer = setInterval(() => setNow(Date.now()), 30_000)
     return () => clearInterval(timer)
   }, [])
+
+  const setPriority = (val: string | null) => {
+    const sp = new URLSearchParams(searchParams.toString())
+    if (!val || val === 'ALL') {
+      sp.delete('priority')
+    } else {
+      sp.set('priority', val)
+    }
+    router.push(`/admin/dispatch?${sp.toString()}`)
+  }
 
   const items = board.data?.items ?? []
   const columns: Column[] = [
@@ -76,10 +101,24 @@ export default function DispatchBoardPage() {
             Live queue — refreshes every 5 seconds
           </p>
         </div>
-        <span className="inline-flex items-center gap-1.5 text-xs text-slate">
-          <RadioTower className="h-3.5 w-3.5 text-signal" />
-          {columns[0].rows.length} waiting · {columns[1].rows.length} active
-        </span>
+        <div className="flex items-center gap-3 flex-wrap">
+          <Select value={priorityFilter} onValueChange={setPriority}>
+            <SelectTrigger className="w-36 bg-paper border-hairline" aria-label="Filter by priority">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PRIORITIES.map((p) => (
+                <SelectItem key={p} value={p}>
+                  {p === 'ALL' ? 'All priorities' : p.toLowerCase()}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="inline-flex items-center gap-1.5 text-xs text-slate">
+            <RadioTower className="h-3.5 w-3.5 text-signal" />
+            {columns[0].rows.length} waiting · {columns[1].rows.length} active
+          </span>
+        </div>
       </div>
 
       {board.isLoading ? (
@@ -138,5 +177,21 @@ export default function DispatchBoardPage() {
         />
       )}
     </div>
+  )
+}
+
+export default function DispatchBoardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="grid gap-4 lg:grid-cols-3">
+          <CardSkeleton />
+          <CardSkeleton />
+          <CardSkeleton />
+        </div>
+      }
+    >
+      <DispatchBoardContent />
+    </Suspense>
   )
 }

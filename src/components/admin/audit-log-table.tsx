@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { ScrollText } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import {
@@ -33,6 +34,9 @@ function ageLabel(iso: string, now: number): string {
 }
 
 export function AuditLogTable() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const kind = searchParams.get('actor') ?? 'all'
   const logs = useAuditLogs()
 
   // Parent-owned clock for relative times; interval callback is async so
@@ -43,9 +47,18 @@ export function AuditLogTable() {
     return () => clearInterval(timer)
   }, [])
 
-  const [kind, setKind] = useState('all')
   const items = logs.data?.items ?? []
   const rows = kind === 'all' ? items : items.filter((l) => l.actor.role === kind)
+
+  const setKind = (val: string) => {
+    const sp = new URLSearchParams(searchParams.toString())
+    if (val === 'all') {
+      sp.delete('actor')
+    } else {
+      sp.set('actor', val)
+    }
+    router.push(`/admin/resources?${sp.toString()}`)
+  }
 
   return (
     <div className="space-y-3">
