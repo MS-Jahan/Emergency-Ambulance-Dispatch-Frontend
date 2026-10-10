@@ -2,6 +2,7 @@
 
 import { FieldError } from '@/components/shared/field-error'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import {
   Ambulance,
@@ -205,7 +206,7 @@ function PayNowCard({ requestId }: { requestId: string }) {
           type="button"
           variant="outline"
           render={
-            <a href="/dashboard/payments" />
+            <Link href="/dashboard/payments" />
           }
           className="h-11 flex-1"
         >

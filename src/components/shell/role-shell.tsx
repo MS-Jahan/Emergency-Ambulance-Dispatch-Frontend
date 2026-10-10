@@ -216,10 +216,10 @@ export function RoleShell({ variant, children }: RoleShellProps) {
   const bottomTabs = variant === 'sidebar'
 
   return (
-    <div className="min-h-screen bg-gauze">
+    <div className="min-h-screen bg-gauze print:bg-white print:min-h-0">
       {/* Top bar */}
       <header
-        className={`sticky top-0 z-30 border-b border-hairline bg-paper ${
+        className={`sticky top-0 z-30 border-b border-hairline bg-paper print:hidden ${
           isRail ? 'pl-16 lg:pl-0' : ''
         }`}
       >
@@ -258,14 +258,14 @@ export function RoleShell({ variant, children }: RoleShellProps) {
 
       <div className={isRail ? 'flex' : ''}>
         {isRail && (
-          <aside className="hidden lg:flex fixed inset-y-16 left-0 w-16 flex-col items-center bg-paper border-r border-hairline">
+          <aside className="hidden lg:flex fixed inset-y-16 left-0 w-16 flex-col items-center bg-paper border-r border-hairline print:hidden">
             <NavLinks items={nav} layout="rail" />
           </aside>
         )}
 
         {/* Mobile drawer (admin rail) */}
         {isRail && mobileOpen && (
-          <div className="lg:hidden fixed inset-0 z-20" onClick={() => setMobileOpen(false)}>
+          <div className="lg:hidden fixed inset-0 z-20 print:hidden" onClick={() => setMobileOpen(false)}>
             <div className="absolute inset-0 bg-ink/40" />
             <aside
               className="absolute top-16 left-0 bottom-0 w-60 bg-paper border-r border-hairline p-3"
@@ -277,9 +277,9 @@ export function RoleShell({ variant, children }: RoleShellProps) {
         )}
 
         <main
-          className={`min-w-0 flex-1 pb-24 lg:pb-8 ${isRail ? 'lg:pl-16' : ''}`}
+          className={`min-w-0 flex-1 pb-24 lg:pb-8 print:p-0 print:pb-0 ${isRail ? 'lg:pl-16 print:pl-0' : ''}`}
         >
-          <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6">{children}</div>
+          <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 print:max-w-none print:p-0 print:m-0">{children}</div>
         </main>
       </div>
 
@@ -287,7 +287,7 @@ export function RoleShell({ variant, children }: RoleShellProps) {
       {bottomTabs && (
         <nav
           aria-label="Main"
-          className="lg:hidden md:hidden fixed bottom-0 inset-x-0 z-30 flex justify-around border-t border-hairline bg-paper px-2 py-2"
+          className="lg:hidden md:hidden fixed bottom-0 inset-x-0 z-30 flex justify-around border-t border-hairline bg-paper px-2 py-2 print:hidden"
         >
           <NavLinks items={nav} layout="tabs" />
         </nav>

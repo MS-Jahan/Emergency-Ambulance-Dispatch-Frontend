@@ -2,7 +2,8 @@
 
 import { Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { CreditCard, ExternalLink, Search } from 'lucide-react'
+import Link from 'next/link'
+import { CreditCard, ExternalLink, Receipt, Search } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -174,17 +175,32 @@ function PaymentsContent() {
                       {initiate.isPending ? 'Starting...' : 'Pay'}
                     </Button>
                   ) : (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      render={
-                        <a href={`/dashboard/requests/${payment.requestId}`} />
-                      }
-                      className="h-9 px-3 text-brand"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" aria-hidden />
-                      Trip
-                    </Button>
+                    <>
+                      {payment.status === 'PAID' && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          render={
+                            <Link href={`/dashboard/payments/${payment.id}`} />
+                          }
+                          className="h-9 px-3 gap-1 text-ink"
+                        >
+                          <Receipt className="h-3.5 w-3.5 text-oxygen" aria-hidden />
+                          Receipt
+                        </Button>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        render={
+                          <Link href={`/dashboard/requests/${payment.requestId}`} />
+                        }
+                        className="h-9 px-3 text-brand"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+                        Trip
+                      </Button>
+                    </>
                   )}
                 </div>
               </div>

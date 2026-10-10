@@ -1,9 +1,9 @@
 'use client'
 
-import { FieldError } from '@/components/shared/field-error'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import dynamic from 'next/dynamic'
-import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { FieldError } from '@/components/shared/field-error'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -125,14 +125,22 @@ const HEADINGS: Record<1 | 2 | 3, string> = {
   3: 'Review & confirm',
 }
 
-export default function NewRequestPage() {
+function NewRequestContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const hospitalParam = searchParams.get('hospital')
   const wizard = useRequestWizard()
   const hospitals = useHospitals()
   const createRequest = useCreateRequest()
   const faresQuery = useFares()
   const fares = faresQuery.data?.rates ?? AMBULANCE_FARES
   const [locating, setLocating] = useState(false)
+
+  useEffect(() => {
+    if (hospitalParam) {
+      useRequestWizard.getState().setHospitalId(hospitalParam)
+    }
+  }, [hospitalParam])
 
   const step = wizard.step as 1 | 2 | 3
   const hasPin = wizard.pickupLat != null && wizard.pickupLng != null
@@ -565,5 +573,17 @@ export default function NewRequestPage() {
         </RequestWizardStep>
       </MotionCard>
     </div>
+  )
+}
+
+export default function NewRequestPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="mx-auto max-w-2xl h-96 w-full animate-pulse rounded-3xl border border-hairline bg-paper" />
+      }
+    >
+      <NewRequestContent />
+    </Suspense>
   )
 }

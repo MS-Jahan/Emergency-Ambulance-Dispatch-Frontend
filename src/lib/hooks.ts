@@ -36,7 +36,7 @@ export function roleHome(role: Role): string {
   return '/dashboard'
 }
 
-export function useLogin() {
+export function useLogin(redirectPath?: string | null) {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
 
@@ -45,12 +45,16 @@ export function useLogin() {
       api.authPost<{ user: User }>('/login', data),
     onSuccess: (data) => {
       setUser(data.user)
-      router.push(roleHome(data.user.role))
+      const target =
+        redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
+          ? redirectPath
+          : roleHome(data.user.role)
+      router.push(target)
     },
   })
 }
 
-export function useRegister() {
+export function useRegister(redirectPath?: string | null) {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
 
@@ -63,12 +67,16 @@ export function useRegister() {
     }) => api.authPost<{ user: User }>('/register', data),
     onSuccess: (data) => {
       setUser(data.user)
-      router.push(roleHome(data.user.role))
+      const target =
+        redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
+          ? redirectPath
+          : roleHome(data.user.role)
+      router.push(target)
     },
   })
 }
 
-export function useDemoLogin() {
+export function useDemoLogin(redirectPath?: string | null) {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
 
@@ -77,7 +85,11 @@ export function useDemoLogin() {
       api.authPost<{ user: User }>('/demo', { role }),
     onSuccess: (data) => {
       setUser(data.user)
-      router.push(roleHome(data.user.role))
+      const target =
+        redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
+          ? redirectPath
+          : roleHome(data.user.role)
+      router.push(target)
     },
   })
 }
@@ -212,6 +224,15 @@ export function useInitiatePayment() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['payments'] })
     },
+  })
+}
+
+export function usePayment(id?: string) {
+  return useQuery({
+    queryKey: ['payments', id],
+    queryFn: () =>
+      api.get<{ payment: Payment }>(`/payments/${id}`).then((d) => d.payment),
+    enabled: !!id,
   })
 }
 

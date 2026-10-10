@@ -7,8 +7,9 @@ import { Button } from '@/components/ui/button'
 import { DEMO_HOSPITALS } from '@/data/demo-hospitals'
 import { DHAKA, nearest, type Coords } from '@/lib/geo'
 import { useHospitals } from '@/lib/hooks'
+import { cn } from '@/lib/utils'
 
-interface NearbyHospital extends Coords {
+export interface NearbyHospital extends Coords {
   id: string
   name: string
   phone: string
@@ -25,7 +26,15 @@ type Origin = { coords: Coords; label: string; source: 'ip' | 'device' | 'defaul
 const inBangladesh = ({ lat, lng }: Coords) =>
   lat > 20.5 && lat < 26.7 && lng > 88 && lng < 92.8
 
-export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: number; showAllLink?: boolean }) {
+export function NearbyHospitals({
+  limit = 5,
+  showAllLink = true,
+  onSelectHospital,
+}: {
+  limit?: number
+  showAllLink?: boolean
+  onSelectHospital?: (hospital: NearbyHospital) => void
+}) {
   const [origin, setOrigin] = useState<Origin>({ coords: DHAKA, label: 'Dhaka', source: 'default' })
   const [locating, setLocating] = useState(false)
   const [denied, setDenied] = useState(false)
@@ -117,7 +126,23 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
         {ranked.map(({ item: h, km }, i) => (
           <li
             key={h.id}
-            className="group flex flex-col gap-3 rounded-2xl border border-hairline bg-paper p-4 transition-colors hover:border-brand"
+            onClick={onSelectHospital ? () => onSelectHospital(h) : undefined}
+            role={onSelectHospital ? 'button' : undefined}
+            tabIndex={onSelectHospital ? 0 : undefined}
+            onKeyDown={
+              onSelectHospital
+                ? (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      onSelectHospital(h)
+                    }
+                  }
+                : undefined
+            }
+            className={cn(
+              'group flex flex-col gap-3 rounded-2xl border border-hairline bg-paper p-4 transition-colors hover:border-brand',
+              onSelectHospital && 'cursor-pointer focus-visible:outline-2 focus-visible:outline-brand',
+            )}
           >
             <div className="flex items-center justify-between">
               <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-soft text-xs font-bold tabular-nums text-brand">

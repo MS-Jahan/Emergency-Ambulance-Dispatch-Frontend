@@ -51,8 +51,20 @@ function SuccessInner() {
         </>
       )}
 
+      {payment.data?.status === 'PAID' && (
+        <Button
+          nativeButton={false}
+          render={<Link href={`/dashboard/payments/${payment.data.id}`} />}
+          className="w-full h-11"
+        >
+          View receipt
+        </Button>
+      )}
+
       <Button
-        nativeButton={false} render={<Link href="/dashboard/payments" />}
+        nativeButton={false}
+        variant={payment.data?.status === 'PAID' ? 'outline' : 'default'}
+        render={<Link href="/dashboard/payments" />}
         className="w-full h-11"
       >
         Payment history

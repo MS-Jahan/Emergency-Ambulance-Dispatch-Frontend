@@ -274,3 +274,31 @@ svg.lucide {
 .dark .text-amber { color: #fbbf24; }
 :root[data-theme="dark"] .text-signal,
 .dark .text-signal { color: #f87171; }
+
+@media print {
+  @page {
+    margin: 12mm;
+    size: auto;
+  }
+
+  html,
+  body {
+    background-color: #ffffff !important;
+    color: #111827 !important;
+  }
+
+  :root[data-theme="dark"],
+  .dark {
+    --background: #ffffff !important;
+    --paper: #ffffff !important;
+    --ink: #111827 !important;
+    --slate: #4b5563 !important;
+    --hairline: #e5e7eb !important;
+    --gauze: #ffffff !important;
+  }
+
+  .no-print,
+  [data-no-print] {
+    display: none !important;
+  }
+}

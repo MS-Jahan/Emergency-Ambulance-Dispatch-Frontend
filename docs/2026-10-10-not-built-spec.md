@@ -229,8 +229,8 @@ After each item: `bun run typecheck && bun run lint && bun run test` in the back
 | 5.2 forgot/reset password | blocked on email provider |
 | 6 driver applications | open |
 | 7 realtime | open |
-| 8 receipts | open |
+| 8 receipts | done (backend 00c4a64) |
 | 9 fares | done (backend 363833d) |
 | 10 maintenance | done (backend 363833d) |
 | 11 notifications | blocked on provider |
-| 12 small items | open |
+| 12 small items | hospital drawer & session expiry done |

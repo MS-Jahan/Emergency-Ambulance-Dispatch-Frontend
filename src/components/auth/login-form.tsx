@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useSearchParams } from 'next/navigation'
 import { AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -41,6 +42,9 @@ const DEMO_ROLES = [
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const searchParams = useSearchParams()
+  const next = searchParams.get('next')
+
   const {
     register,
     handleSubmit,
@@ -53,8 +57,8 @@ export function LoginForm() {
     },
   })
 
-  const loginMutation = useLogin()
-  const demoLoginMutation = useDemoLogin()
+  const loginMutation = useLogin(next)
+  const demoLoginMutation = useDemoLogin(next)
 
   const onSubmit = (data: LoginFormValues) => {
     loginMutation.mutate(data)

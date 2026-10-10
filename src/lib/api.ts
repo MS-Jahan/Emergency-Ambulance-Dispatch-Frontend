@@ -17,6 +17,15 @@ export class ApiError extends Error {
 }
 
 async function handleResponse<T>(response: Response): Promise<T> {
+  if (response.status === 401 && typeof window !== 'undefined') {
+    const pathname = window.location.pathname
+    if (!pathname.startsWith('/login') && !pathname.startsWith('/register')) {
+      const next = pathname + window.location.search
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign(`/login?next=${encodeURIComponent(next)}`)
+    }
+  }
+
   const data: ApiResponse<T> = await response.json()
 
   if (!response.ok) {

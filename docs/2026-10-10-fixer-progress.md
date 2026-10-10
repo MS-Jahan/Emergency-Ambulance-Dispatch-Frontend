@@ -3,3 +3,4 @@
 14:38 item 3 done: ambulance type selection and patient intake fields across request flow, commits backend 39ea824 frontend 97fcfd4, checks passed
 14:55 item 4 done: contact form storage and admin messages management, commits backend ee5f570, checks passed
 15:12 item 5 done: password change, driver ambulance maintenance toggle, and shared fares estimator, commits backend 363833d, checks passed
+15:31 item 6 done: printable receipts, hospital detail drawer with directions & wizard prefill, and session-expiry redirect with next parameter, commits backend 00c4a64, checks passed

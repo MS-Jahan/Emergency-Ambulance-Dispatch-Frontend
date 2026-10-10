@@ -54,7 +54,12 @@ export function proxy(request: NextRequest) {
     if (authRoutes.includes(pathname)) {
       return NextResponse.next()
     }
-    return NextResponse.redirect(new URL('/login', request.url))
+    const loginUrl = new URL('/login', request.url)
+    const nextPath = pathname + request.nextUrl.search
+    if (nextPath && nextPath !== '/') {
+      loginUrl.searchParams.set('next', nextPath)
+    }
+    return NextResponse.redirect(loginUrl)
   }
 
   // Has token: can't access auth routes
@@ -68,7 +73,12 @@ export function proxy(request: NextRequest) {
 
   if (!role) {
     // Token invalid, redirect to login
-    const response = NextResponse.redirect(new URL('/login', request.url))
+    const loginUrl = new URL('/login', request.url)
+    const nextPath = pathname + request.nextUrl.search
+    if (nextPath && nextPath !== '/') {
+      loginUrl.searchParams.set('next', nextPath)
+    }
+    const response = NextResponse.redirect(loginUrl)
     response.cookies.delete('accessToken')
     response.cookies.delete('refreshToken')
     return response
