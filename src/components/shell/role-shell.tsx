@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -175,12 +176,15 @@ function UserMenu({ user }: { user: User | null }) {
         }
       />
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>
-          <p className="truncate">{user?.name ?? 'Signed in'}</p>
-          <p className="text-xs font-normal text-slate truncate">
-            {user?.email}
-          </p>
-        </DropdownMenuLabel>
+        {/* GroupLabel must live inside a Group, otherwise Base UI throws error #31 */}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel>
+            <p className="truncate">{user?.name ?? 'Signed in'}</p>
+            <p className="text-xs font-normal text-slate truncate">
+              {user?.email}
+            </p>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => logoutMutation.mutate()}
