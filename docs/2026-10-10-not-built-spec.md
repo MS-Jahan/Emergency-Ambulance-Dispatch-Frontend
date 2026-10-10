@@ -220,7 +220,7 @@ After each item: `bun run typecheck && bun run lint && bun run test` in the back
 |---|---|
 | 1.1 profile menu crash | fixed and pushed |
 | 1.1 not-yours trip empty state | done (fc16291) |
-| 1.2 hospital coordinates in request responses | open |
+| 1.2 hospital coordinates in request responses | done (backend 30baf75, frontend ea21fc9) |
 | 1.3 Stripe business name | owner action in Stripe dashboard |
 | 2 contact | open |
 | 3 request fields | open |

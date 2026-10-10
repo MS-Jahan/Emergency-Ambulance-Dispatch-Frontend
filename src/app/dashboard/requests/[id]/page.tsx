@@ -462,16 +462,17 @@ export default function RequestDetailPage() {
                   ? `${req.destinationHospital.name}${req.destinationHospital.address ? ` · ${req.destinationHospital.address}` : ''}`
                   : 'To be decided'}
               </p>
-              {req.destinationHospital && (
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${req.destinationHospital.lat},${req.destinationHospital.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-0.5 inline-flex flex-shrink-0 items-center gap-1 text-xs font-bold text-brand hover:underline"
-                >
-                  Navigate <ExternalLink className="h-3 w-3" aria-hidden />
-                </a>
-              )}
+              {typeof req.destinationHospital?.lat === 'number' &&
+                typeof req.destinationHospital?.lng === 'number' && (
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${req.destinationHospital.lat},${req.destinationHospital.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-0.5 inline-flex flex-shrink-0 items-center gap-1 text-xs font-bold text-brand hover:underline"
+                  >
+                    Navigate <ExternalLink className="h-3 w-3" aria-hidden />
+                  </a>
+                )}
             </div>
           </div>
         </Card>

@@ -108,7 +108,18 @@ function AssignmentCard({
           <Phone className="h-4 w-4" aria-hidden />
           Call
         </button>
-        <button type="button" onClick={onNavigate} className={outline}>
+        <button
+          type="button"
+          onClick={onNavigate}
+          disabled={
+            trip.status === 'EN_ROUTE_HOSPITAL'
+              ? typeof trip.destinationHospital?.lat !== 'number' ||
+                typeof trip.destinationHospital?.lng !== 'number'
+              : typeof trip.pickupLat !== 'number' ||
+                typeof trip.pickupLng !== 'number'
+          }
+          className={outline}
+        >
           Navigate
           <ExternalLink className="h-4 w-4" aria-hidden />
         </button>
@@ -266,11 +277,28 @@ export default function DriverPage() {
 
   const navigateToPickup = () => {
     if (!active) return
-    window.open(
-      `https://www.google.com/maps/dir/?api=1&destination=${active.pickupLat},${active.pickupLng}`,
-      '_blank',
-      'noopener,noreferrer',
-    )
+    if (
+      active.status === 'EN_ROUTE_HOSPITAL' &&
+      typeof active.destinationHospital?.lat === 'number' &&
+      typeof active.destinationHospital?.lng === 'number'
+    ) {
+      window.open(
+        `https://www.google.com/maps/dir/?api=1&destination=${active.destinationHospital.lat},${active.destinationHospital.lng}`,
+        '_blank',
+        'noopener,noreferrer',
+      )
+      return
+    }
+    if (
+      typeof active.pickupLat === 'number' &&
+      typeof active.pickupLng === 'number'
+    ) {
+      window.open(
+        `https://www.google.com/maps/dir/?api=1&destination=${active.pickupLat},${active.pickupLng}`,
+        '_blank',
+        'noopener,noreferrer',
+      )
+    }
   }
 
   const callPatient = () => {
