@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { PriorityBadge } from '@/components/shared/priority-badge'
+import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ListSkeleton } from '@/components/shared/skeletons'
 import {
@@ -143,94 +144,94 @@ function ReportsContent() {
     <div className="space-y-8">
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="gap-1 border-hairline bg-paper p-5">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Total Logged Incidents</span>
-            <Activity className="h-4 w-4 text-ink" />
+            <span>Total incidents</span>
+            <Activity className="h-4 w-4 text-brand" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl text-ink tabular-nums">
             {totalReqs}
           </p>
-          <p className="text-[11px] text-slate">Across all response districts</p>
+          <p className="text-xs text-slate">All requests on record</p>
         </Card>
 
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="gap-1 border-hairline bg-paper p-5">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Successful Deliveries</span>
+            <span>Completion rate</span>
             <CheckCircle2 className="h-4 w-4 text-oxygen" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl text-ink tabular-nums">
             {completionRate}%
           </p>
-          <p className="text-[11px] text-slate">
-            {completedReqs} completed emergency trips
+          <p className="text-xs text-slate">
+            {completedReqs} completed trips
           </p>
         </Card>
 
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="gap-1 border-hairline bg-paper p-5">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Cancellation Rate</span>
-            <XCircle className="h-4 w-4 text-signal" />
+            <span>Cancellation rate</span>
+            <XCircle className="h-4 w-4 text-slate" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl text-ink tabular-nums">
             {cancellationRate}%
           </p>
-          <p className="text-[11px] text-slate">
-            {cancelledReqs} withdrawn by caller/admin
+          <p className="text-xs text-slate">
+            {cancelledReqs} cancelled
           </p>
         </Card>
 
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="gap-1 border-hairline bg-paper p-5">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Fleet Availability</span>
-            <Ambulance className="h-4 w-4 text-amber" />
+            <span>Fleet available</span>
+            <Ambulance className="h-4 w-4 text-oxygen" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl text-ink tabular-nums">
             {stats?.ambulances.available ?? 0} / {stats?.ambulances.total ?? 0}
           </p>
-          <p className="text-[11px] text-slate">Units ready for immediate dispatch</p>
+          <p className="text-xs text-slate">Units ready to dispatch</p>
         </Card>
       </div>
 
       {/* Priority Distribution */}
       <div className="grid gap-4 sm:grid-cols-3">
-        <Card className="p-4 border-l-4 border-l-signal border-hairline bg-paper space-y-1">
+        <Card className="gap-1 border-l-4 border-l-signal border-hairline bg-paper p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-signal uppercase tracking-wider">
               Critical
             </span>
             <Flame className="h-4 w-4 text-signal" />
           </div>
-          <p className="text-xl font-bold text-ink tabular-nums">
-            {priorityCounts.CRITICAL} incidents
+          <p className="font-heading text-2xl text-ink tabular-nums">
+            {priorityCounts.CRITICAL} {priorityCounts.CRITICAL === 1 ? 'incident' : 'incidents'}
           </p>
-          <p className="text-xs text-slate">Immediate life-threat protocol</p>
+          <p className="text-xs text-slate">Life-threatening</p>
         </Card>
 
-        <Card className="p-4 border-l-4 border-l-amber border-hairline bg-paper space-y-1">
+        <Card className="gap-1 border-l-4 border-l-amber border-hairline bg-paper p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-amber uppercase tracking-wider">
-              High Priority
+            <span className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wider">
+              High
             </span>
-            <AlertTriangle className="h-4 w-4 text-amber" />
+            <AlertTriangle className="h-4 w-4 text-amber-700 dark:text-amber-300" />
           </div>
-          <p className="text-xl font-bold text-ink tabular-nums">
-            {priorityCounts.HIGH} incidents
+          <p className="font-heading text-2xl text-ink tabular-nums">
+            {priorityCounts.HIGH} {priorityCounts.HIGH === 1 ? 'incident' : 'incidents'}
           </p>
-          <p className="text-xs text-slate">Urgent trauma or cardiac transport</p>
+          <p className="text-xs text-slate">Urgent</p>
         </Card>
 
-        <Card className="p-4 border-l-4 border-l-oxygen border-hairline bg-paper space-y-1">
+        <Card className="gap-1 border-l-4 border-l-oxygen border-hairline bg-paper p-5">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-oxygen uppercase tracking-wider">
               Normal
             </span>
             <Clock className="h-4 w-4 text-oxygen" />
           </div>
-          <p className="text-xl font-bold text-ink tabular-nums">
-            {priorityCounts.NORMAL} incidents
+          <p className="font-heading text-2xl text-ink tabular-nums">
+            {priorityCounts.NORMAL} {priorityCounts.NORMAL === 1 ? 'incident' : 'incidents'}
           </p>
-          <p className="text-xs text-slate">Standard non-acute transit</p>
+          <p className="text-xs text-slate">Standard</p>
         </Card>
       </div>
 
@@ -238,8 +239,8 @@ function ReportsContent() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           <div className="space-y-0.5">
-            <h2 className="text-lg font-semibold text-ink">
-              Incident Registry & Audit Trail
+            <h2 className="text-xl">
+              Incident registry
             </h2>
             <p className="text-xs text-slate">
               Filtered records ({filteredRequests.length} of {requests.length})
@@ -256,13 +257,17 @@ function ReportsContent() {
                 value={q}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search ID, pickup, hospital"
-                className="h-9 bg-paper border-hairline text-ink pl-8 text-xs"
+                className="h-10 bg-paper border-hairline text-ink pl-9 text-sm"
               />
             </div>
 
             <Select value={statusFilter} onValueChange={setStatus}>
-              <SelectTrigger className="w-36 h-9 bg-paper border-hairline text-ink text-xs">
-                <SelectValue placeholder="Status" />
+              <SelectTrigger className="w-40 h-10 bg-paper border-hairline text-ink text-sm">
+                <SelectValue placeholder="Status">
+                  {statusFilter === 'ALL'
+                    ? 'All statuses'
+                    : statusFilter.charAt(0) + statusFilter.slice(1).toLowerCase().replaceAll('_', ' ')}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">All statuses</SelectItem>
@@ -281,7 +286,7 @@ function ReportsContent() {
               size="sm"
               variant="outline"
               disabled={filteredRequests.length === 0}
-              className="h-9 border-hairline gap-1.5 text-xs text-ink hover:bg-muted"
+              className="h-10 gap-1.5 border-hairline px-4 text-ink hover:bg-muted"
             >
               <ArrowDownToLine className="h-3.5 w-3.5" /> Export CSV
             </Button>
@@ -295,16 +300,16 @@ function ReportsContent() {
             description="Adjust your search query or status filter to see incident entries."
           />
         ) : (
-          <div className="rounded-xl border border-hairline bg-paper overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-gauze border-b border-hairline text-slate font-medium">
+          <div className="overflow-x-auto rounded-2xl border border-hairline bg-paper">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-gauze border-b border-hairline text-xs uppercase tracking-wide text-slate font-semibold">
                 <tr>
-                  <th className="py-3 px-4">Incident ID</th>
+                  <th className="py-3 px-4">Incident</th>
                   <th className="py-3 px-4">Priority</th>
                   <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Pickup Location</th>
-                  <th className="py-3 px-4">Hospital Destination</th>
-                  <th className="py-3 px-4">Timestamp</th>
+                  <th className="py-3 px-4">Pickup</th>
+                  <th className="py-3 px-4">Hospital</th>
+                  <th className="py-3 px-4">Requested</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-hairline">
@@ -317,9 +322,7 @@ function ReportsContent() {
                       <PriorityBadge priority={req.priority} />
                     </td>
                     <td className="py-3 px-4">
-                      <span className="font-semibold text-ink">
-                        {req.status}
-                      </span>
+                      <StatusBadge status={req.status} />
                     </td>
                     <td className="py-3 px-4 max-w-xs truncate text-slate">
                       {req.pickupAddress}
@@ -353,21 +356,18 @@ export default function AdminReportsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">
-            Operational Reports & Analytics
-          </h1>
-          <p className="text-sm text-slate">
-            System performance KPIs, incident volume breakdown, and exportable audit records.
+          <h1>Reports</h1>
+          <p className="mt-1 text-sm text-slate">
+            Incident volume, outcomes and exportable records.
           </p>
         </div>
         <div className="flex gap-2">
           <Button
             nativeButton={false}
             render={<Link href="/admin/dispatch" />}
-            size="sm"
-            className="bg-signal text-white hover:bg-signal/90 text-xs h-9"
+            className="h-10 px-5"
           >
-            Live Dispatch Board
+            Dispatch board
           </Button>
         </div>
       </div>

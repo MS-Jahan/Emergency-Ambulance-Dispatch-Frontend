@@ -23,7 +23,7 @@ interface DayPoint {
 /**
  * Requests-per-day over the last 14 days. No backend time-series endpoint
  * exists, so the series is derived client-side from the admin request feed
- * (newest first, limit 200) bucketed by local calendar day.
+ * (newest first, limit 100) bucketed by local calendar day.
  */
 export function buildSeries(items: EmergencyRequest[], today: Date): DayPoint[] {
   const buckets = new Map<string, number>()
@@ -55,7 +55,8 @@ export function RequestsAreaChart({ items }: { items: EmergencyRequest[] }) {
 
   return (
     <Card className="p-5 border border-hairline">
-      <p className="text-sm font-semibold text-ink">Requests — last 14 days</p>
+      <h2 className="text-lg">Requests over time</h2>
+      <p className="text-xs text-slate">Last 14 days</p>
       {empty ? (
         <div className="mt-6 flex h-56 items-center justify-center text-sm text-slate">
           No requests in this window yet.
@@ -66,14 +67,14 @@ export function RequestsAreaChart({ items }: { items: EmergencyRequest[] }) {
             <AreaChart data={series} margin={{ top: 8, right: 8, bottom: 0, left: -20 }}>
               <defs>
                 <linearGradient id="requestFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#0E8C86" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="#0E8C86" stopOpacity={0.02} />
+                  <stop offset="0%" stopColor="var(--brand)" stopOpacity={0.35} />
+                  <stop offset="100%" stopColor="var(--brand)" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--hairline)" vertical={false} />
               <XAxis
                 dataKey="label"
-                tick={{ fontSize: 11, fill: '#64748B' }}
+                tick={{ fontSize: 11, fill: 'var(--slate)' }}
                 tickLine={false}
                 axisLine={false}
                 interval="preserveStartEnd"
@@ -81,23 +82,30 @@ export function RequestsAreaChart({ items }: { items: EmergencyRequest[] }) {
               />
               <YAxis
                 allowDecimals={false}
-                tick={{ fontSize: 11, fill: '#64748B' }}
+                tick={{ fontSize: 11, fill: 'var(--slate)' }}
                 tickLine={false}
                 axisLine={false}
               />
               <Tooltip
-                cursor={{ stroke: '#CBD5E1' }}
+                cursor={{ stroke: 'var(--hairline)' }}
                 formatter={(value) => [`${value} requests`, undefined]}
-                labelStyle={{ color: '#0D1B2A', fontWeight: 600 }}
+                contentStyle={{
+                  background: 'var(--paper)',
+                  border: '1px solid var(--hairline)',
+                  borderRadius: 12,
+                  color: 'var(--ink)',
+                }}
+                labelStyle={{ color: 'var(--ink)', fontWeight: 600 }}
+                itemStyle={{ color: 'var(--ink)' }}
               />
               <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#0E8C86"
+                stroke="var(--brand)"
                 strokeWidth={2}
                 fill="url(#requestFill)"
                 dot={false}
-                activeDot={{ r: 4, fill: '#0E8C86' }}
+                activeDot={{ r: 4, fill: 'var(--brand)' }}
               />
             </AreaChart>
           </ResponsiveContainer>

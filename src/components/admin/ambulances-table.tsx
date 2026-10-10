@@ -8,7 +8,14 @@ import { z } from 'zod'
 import { Ambulance, Pencil, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import {
   Dialog,
   DialogContent,
@@ -56,7 +63,7 @@ type AmbulanceFormData = z.infer<typeof ambulanceSchema>
 // Brand palette: teal available, amber on trip, red maintenance.
 const STATUS_PILL: Record<string, string> = {
   AVAILABLE: 'bg-oxygen/10 text-oxygen border-oxygen/30',
-  ON_TRIP: 'bg-amber/10 text-amber-700 dark:text-amber border-amber/30',
+  ON_TRIP: 'bg-amber/10 text-amber-700 dark:text-amber-300 border-amber/30',
   MAINTENANCE: 'bg-signal/10 text-signal border-signal/30',
 }
 
@@ -210,7 +217,7 @@ function AmbulanceForm({
       <Button
         type="submit"
         disabled={pending}
-        className="w-full bg-ink text-paper hover:bg-ink/90"
+        className="w-full bg-brand text-brand-foreground hover:bg-brand/90"
       >
         {pending ? 'Saving...' : submitLabel}
       </Button>
@@ -275,7 +282,9 @@ export function AmbulancesTable() {
         <div className="flex items-center gap-2 flex-wrap">
           <Select value={typeFilter} onValueChange={(v) => setType(v ?? 'all')}>
             <SelectTrigger className="w-32 bg-paper border-hairline" aria-label="Filter by type">
-              <SelectValue />
+              <SelectValue>
+                {typeFilter === 'all' ? 'All types' : typeFilter}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All types</SelectItem>
@@ -289,7 +298,7 @@ export function AmbulancesTable() {
           <Button
             size="sm"
             onClick={() => setCreating(true)}
-            className="bg-signal text-white hover:bg-signal/90"
+            className="bg-brand text-brand-foreground hover:bg-brand/90"
           >
             <Plus className="h-4 w-4 mr-1" /> Add ambulance
           </Button>
@@ -309,52 +318,69 @@ export function AmbulancesTable() {
           }
         />
       ) : (
-        <ul className="space-y-2">
-          {rows.map((a) => (
-            <li key={a.id}>
-              <Card className="flex items-center justify-between gap-3 p-3 border border-hairline transition-colors hover:border-ink/30">
-                <div className="flex items-center gap-3 min-w-0 flex-wrap">
-                  <span className="font-mono text-sm font-bold text-ink">
+        <div className="overflow-hidden rounded-2xl border border-hairline bg-paper">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-hairline hover:bg-transparent">
+                <TableHead className="px-4 text-xs uppercase tracking-wide text-slate">Plate</TableHead>
+                <TableHead className="text-xs uppercase tracking-wide text-slate">Type</TableHead>
+                <TableHead className="text-xs uppercase tracking-wide text-slate">Status</TableHead>
+                <TableHead className="hidden text-xs uppercase tracking-wide text-slate sm:table-cell">Home hospital</TableHead>
+                <TableHead className="px-4 text-right text-xs uppercase tracking-wide text-slate">
+                  <span className="sr-only">Actions</span>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {rows.map((a) => (
+                <TableRow key={a.id} className="border-hairline">
+                  <TableCell className="px-4 py-3 font-mono text-sm font-bold text-ink">
                     {a.plateNumber}
-                  </span>
-                  <span
-                    className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${TYPE_PILL[a.type] ?? 'bg-gauze text-slate border-hairline'}`}
-                  >
-                    {a.type}
-                  </span>
-                  <span
-                    className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_PILL[a.status] ?? 'bg-gauze text-slate border-hairline'}`}
-                  >
-                    {a.status.replaceAll('_', ' ').toLowerCase()}
-                  </span>
-                  <span className="hidden text-xs text-slate sm:inline">
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${TYPE_PILL[a.type] ?? 'bg-gauze text-slate border-hairline'}`}
+                    >
+                      {a.type}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${STATUS_PILL[a.status] ?? 'bg-gauze text-slate border-hairline'}`}
+                    >
+                      {a.status.replaceAll('_', ' ').toLowerCase()}
+                    </span>
+                  </TableCell>
+                  <TableCell className="hidden text-sm text-slate sm:table-cell">
                     {a.homeHospital?.name ?? 'No base'}
-                  </span>
-                </div>
-                <span className="inline-flex gap-1 flex-shrink-0">
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    aria-label={`Edit ${a.plateNumber}`}
-                    onClick={() => setEditing(a)}
-                    className="text-slate hover:bg-gauze"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    aria-label={`Delete ${a.plateNumber}`}
-                    onClick={() => setDeleting(a)}
-                    className="text-signal hover:bg-signal/10"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </span>
-              </Card>
-            </li>
-          ))}
-        </ul>
+                  </TableCell>
+                  <TableCell className="px-4 text-right">
+                    <span className="inline-flex gap-1">
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Edit ${a.plateNumber}`}
+                        onClick={() => setEditing(a)}
+                        className="text-slate hover:bg-gauze"
+                      >
+                        <Pencil className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        aria-label={`Delete ${a.plateNumber}`}
+                        onClick={() => setDeleting(a)}
+                        className="text-signal hover:bg-signal/10"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </Button>
+                    </span>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
 
       {creating && (

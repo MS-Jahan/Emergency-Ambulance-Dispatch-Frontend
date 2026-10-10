@@ -1,14 +1,10 @@
 import { RoleShell } from '@/components/shell/role-shell'
 
-// Driver console is used at night on the road: dark by default.
+// Follows the theme the user picked (html[data-theme]); no forced wrapper.
 export default function DriverLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <div className="dark">
-      <RoleShell variant="minimal">{children}</RoleShell>
-    </div>
-  )
+  return <RoleShell variant="minimal">{children}</RoleShell>
 }

@@ -27,6 +27,8 @@ export function waitLabel(requestedAt: string, now: number): string {
   const mins = Math.max(0, Math.floor((now - new Date(requestedAt).getTime()) / 60000))
   if (mins < 1) return 'just now'
   if (mins === 1) return '1 min'
+  if (mins >= 1440) return `${Math.floor(mins / 1440)} d`
+  if (mins >= 60) return `${Math.floor(mins / 60)} h`
   return `${mins} min`
 }
 
@@ -52,9 +54,9 @@ export function RequestRow({ request, now, onClick, pulsing }: RequestRowProps) 
       tabIndex={0}
       aria-label={`Request from ${request.patient?.name ?? 'Patient'}`}
       className={cn(
-        'p-3 border border-hairline space-y-2 text-left cursor-pointer',
-        'transition-all hover:border-ink/30 hover:shadow-sm hover:-translate-y-0.5',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oxygen',
+        'rounded-2xl border border-hairline bg-gauze p-4 text-left cursor-pointer',
+        'transition-all hover:border-brand/40 hover:shadow-sm hover:-translate-y-0.5',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
         pulsing && 'row-pulse',
       )}
       onClick={onClick}
@@ -92,7 +94,7 @@ export function RequestRow({ request, now, onClick, pulsing }: RequestRowProps) 
           )}
           {request.ambulance && (
             <span className="flex items-center gap-1.5 min-w-0">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-ink text-[10px] font-semibold text-paper">
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand-soft text-[10px] font-bold text-brand">
                 {driverInitials(request.driver?.name)}
               </span>
               <span className="truncate font-mono text-xs text-slate">

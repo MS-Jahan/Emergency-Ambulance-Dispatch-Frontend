@@ -157,10 +157,10 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
         type="button"
         aria-label="Close details"
         onClick={onClose}
-        className="absolute inset-0 h-full w-full cursor-default bg-ink/40"
+        className="absolute inset-0 h-full w-full cursor-default bg-console/60"
       />
 
-      <div className="absolute inset-y-0 right-0 flex w-full flex-col border-l border-hairline bg-paper shadow-xl sm:w-[40%] sm:max-w-xl">
+      <div className="absolute inset-y-0 right-0 flex w-full flex-col rounded-l-3xl border-l border-hairline bg-paper shadow-xl sm:w-[40%] sm:max-w-xl">
         {/* Header */}
         <div className="flex items-start justify-between gap-3 border-b border-hairline px-5 py-4">
           <div className="min-w-0">
@@ -188,7 +188,7 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
             {request.patient?.phone && (
               <a
                 href={`tel:${request.patient.phone}`}
-                className="mt-1 flex w-fit items-center gap-1.5 text-sm text-oxygen hover:underline"
+                className="mt-1 flex w-fit items-center gap-1.5 text-sm text-brand hover:underline"
               >
                 <Phone className="h-3.5 w-3.5" aria-hidden />
                 {request.patient.phone}
@@ -211,7 +211,7 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
           {request.ambulance && !showNearby && (
             <Card className="flex items-center justify-between gap-3 p-4">
               <div className="flex items-center gap-3 min-w-0">
-                <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-ink text-xs font-semibold text-paper">
+                <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand">
                   {driverInitials(request.driver?.name)}
                 </span>
                 <div className="min-w-0">
@@ -260,7 +260,7 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
                     .map((a) => (
                     <li
                       key={a.id}
-                      className="flex items-center justify-between gap-3 rounded-lg border border-hairline p-3"
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-hairline p-3"
                     >
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-ink">
@@ -275,7 +275,7 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
                         size="sm"
                         onClick={() => doAssign(a.id)}
                         disabled={assign.isPending}
-                        className="bg-oxygen text-paper hover:bg-oxygen/90"
+                        className="bg-oxygen text-white hover:bg-oxygen/90"
                       >
                         {assign.isPending && (
                           <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />

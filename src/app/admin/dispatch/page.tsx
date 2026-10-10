@@ -2,8 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { RadioTower } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import { AlertTriangle, RadioTower, Search } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { RequestRow } from '@/components/admin/request-row'
+import { RequestRow, waitLabel } from '@/components/admin/request-row'
 import { RequestDetailSheet } from '@/components/admin/request-detail-sheet'
 import { CardSkeleton } from '@/components/shared/skeletons'
 import { EmptyState } from '@/components/shared/empty-state'
@@ -39,6 +39,7 @@ function DispatchBoardContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const priorityFilter = searchParams.get('priority') ?? 'ALL'
+  const q = searchParams.get('q') ?? ''
 
   const board = useAdminRequests(
     1,
@@ -72,7 +73,34 @@ function DispatchBoardContent() {
     router.push(`/admin/dispatch?${sp.toString()}`)
   }
 
-  const items = board.data?.items ?? []
+  const setQuery = (val: string) => {
+    const sp = new URLSearchParams(searchParams.toString())
+    if (val.trim()) {
+      sp.set('q', val)
+    } else {
+      sp.delete('q')
+    }
+    router.replace(`/admin/dispatch?${sp.toString()}`)
+  }
+
+  const allItems = board.data?.items ?? []
+  const needle = q.trim().toLowerCase()
+  const items = needle
+    ? allItems.filter(
+        (r) =>
+          (r.patient?.name ?? '').toLowerCase().includes(needle) ||
+          r.pickupAddress.toLowerCase().includes(needle),
+      )
+    : allItems
+  // Real data only: critical requests that still have no ambulance.
+  const unassignedCritical = allItems.filter(
+    (r) => r.status === 'PENDING' && r.priority === 'CRITICAL',
+  )
+  const oldestCritical = unassignedCritical.reduce<string | null>(
+    (oldest, r) =>
+      oldest === null || r.requestedAt < oldest ? r.requestedAt : oldest,
+    null,
+  )
   const columns: Column[] = [
     {
       title: 'Pending',
@@ -80,13 +108,13 @@ function DispatchBoardContent() {
       rows: items.filter((r) => r.status === 'PENDING'),
     },
     {
-      title: 'In Progress',
+      title: 'In progress',
       dot: 'bg-oxygen',
       rows: items.filter((r) => IN_PROGRESS.includes(r.status)),
     },
     {
       title: 'Completed',
-      dot: 'bg-slate-300',
+      dot: 'bg-slate',
       rows: items.filter((r) => CLOSED.includes(r.status)),
     },
   ]
@@ -94,17 +122,32 @@ function DispatchBoardContent() {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Dispatch board</h1>
-          <p className="text-sm text-slate mt-1">
-            Live queue — refreshes every 5 seconds
+          <h1>Dispatch</h1>
+          <p className="mt-1 text-sm text-slate">
+            Live queue, refreshes every 5 seconds
           </p>
         </div>
-        <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate"
+              aria-hidden
+            />
+            <Input
+              value={q}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search patient or address"
+              aria-label="Search requests"
+              className="h-10 w-56 bg-paper pl-10"
+            />
+          </div>
           <Select value={priorityFilter} onValueChange={setPriority}>
-            <SelectTrigger className="w-36 bg-paper border-hairline" aria-label="Filter by priority">
-              <SelectValue />
+            <SelectTrigger className="h-10 w-40 bg-paper border-hairline" aria-label="Filter by priority">
+              <SelectValue>
+                {priorityFilter === 'ALL' ? 'All priorities' : priorityFilter.toLowerCase()}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {PRIORITIES.map((p) => (
@@ -114,12 +157,20 @@ function DispatchBoardContent() {
               ))}
             </SelectContent>
           </Select>
-          <span className="inline-flex items-center gap-1.5 text-xs text-slate">
-            <RadioTower className="h-3.5 w-3.5 text-signal" />
-            {columns[0].rows.length} waiting · {columns[1].rows.length} active
-          </span>
         </div>
       </div>
+
+      {unassignedCritical.length > 0 && oldestCritical && (
+        <div
+          role="status"
+          className="flex items-center gap-2 rounded-2xl bg-amber px-5 py-3 font-bold text-white"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
+          {unassignedCritical.length} critical request
+          {unassignedCritical.length === 1 ? '' : 's'} unassigned, oldest waiting{' '}
+          {waitLabel(oldestCritical, now)}
+        </div>
+      )}
 
       {board.isLoading ? (
         <div className="grid gap-4 lg:grid-cols-3">
@@ -139,19 +190,19 @@ function DispatchBoardContent() {
             <section
               key={col.title}
               aria-label={`${col.title} requests`}
-              className="flex flex-col min-w-0"
+              className="flex min-w-0 flex-col rounded-3xl border border-hairline bg-paper p-4"
             >
-              <div className="sticky top-14 z-20 flex items-center justify-between bg-gauze py-2">
-                <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink">
+              <div className="flex items-center justify-between pb-2">
+                <h2 className="flex items-center gap-2 text-base font-extrabold text-ink">
                   <span className={`h-2 w-2 rounded-full ${col.dot}`} aria-hidden />
-                  {col.title} ({col.rows.length})
+                  {col.title} · {col.rows.length}
                 </h2>
               </div>
-              <div className="mt-1 max-h-[calc(100vh-16rem)] space-y-3 overflow-y-auto pr-1">
+              <div className="mt-1 max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto pr-1">
                 {col.rows.length === 0 ? (
-                  <Card className="p-4 border border-dashed border-hairline">
-                    <p className="text-sm text-slate text-center">Empty</p>
-                  </Card>
+                  <p className="rounded-2xl border border-dashed border-hairline p-4 text-center text-sm text-slate">
+                    Empty
+                  </p>
                 ) : (
                   col.rows.map((r) => (
                     <RequestRow

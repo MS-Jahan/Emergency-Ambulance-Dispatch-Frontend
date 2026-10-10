@@ -107,7 +107,10 @@ export function useCreateRequest() {
       pickupLng: number
       priority?: string
       destinationHospitalId?: string
-    }) => api.post<EmergencyRequest>('/requests', data),
+    }) =>
+      api
+        .post<{ request: EmergencyRequest }>('/requests', data)
+        .then((d) => d.request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['requests'] })
     },
@@ -133,7 +136,7 @@ export function useRequestDetail(
   return useQuery({
     queryKey: ['requests', id],
     queryFn: () =>
-      api.get<{ data: EmergencyRequest }>(`/requests/${id}`).then((d) => d.data),
+      api.get<{ request: EmergencyRequest }>(`/requests/${id}`).then((d) => d.request),
     enabled: !!id,
     refetchInterval: opts?.refetchInterval as never,
   })
@@ -193,7 +196,7 @@ export function useMyDriverProfile() {
   return useQuery({
     queryKey: ['driver', 'me'],
     queryFn: () =>
-      api.get<{ data: DriverProfile }>('/driver/me').then((d) => d.data),
+      api.get<{ profile: DriverProfile }>('/driver/me').then((d) => d.profile),
   })
 }
 
@@ -272,7 +275,14 @@ export function useUpdateRequestStatus() {
 export function useDashboardStats() {
   return useQuery({
     queryKey: ['admin', 'stats'],
-    queryFn: () => api.get<DashboardStats>('/admin/dashboard-stats'),
+    queryFn: () =>
+      api
+        .get<{ stats: DashboardStats }>('/admin/dashboard-stats')
+        .then((d) => ({
+          ...d.stats,
+          // backend serialises the revenue sum as a string
+          revenue: { paidTotal: Number(d.stats.revenue.paidTotal) },
+        })),
   })
 }
 

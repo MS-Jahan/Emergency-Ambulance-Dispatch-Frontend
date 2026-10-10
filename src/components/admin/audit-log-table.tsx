@@ -19,7 +19,7 @@ import type { Role } from '@/types/api'
 
 const ACTOR_PILL: Record<Role, string> = {
   PATIENT: 'bg-oxygen/10 text-oxygen border-oxygen/30',
-  DRIVER: 'bg-amber/10 text-amber-700 dark:text-amber border-amber/30',
+  DRIVER: 'bg-amber/10 text-amber-700 dark:text-amber-300 border-amber/30',
   ADMIN: 'bg-ink/5 text-ink border-hairline',
 }
 
@@ -66,7 +66,9 @@ export function AuditLogTable() {
         <p className="text-sm text-slate">Audit log ({rows.length} shown)</p>
         <Select value={kind} onValueChange={(v) => setKind(v ?? 'all')}>
           <SelectTrigger className="w-32 bg-paper border-hairline" aria-label="Filter by actor role">
-            <SelectValue />
+            <SelectValue>
+              {{ all: 'All actors', PATIENT: 'Patients', DRIVER: 'Drivers', ADMIN: 'Admins' }[kind] ?? kind}
+            </SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All actors</SelectItem>
@@ -89,13 +91,13 @@ export function AuditLogTable() {
         <ul className="space-y-2">
           {rows.map((l) => (
             <li key={l.id}>
-              <Card className="p-3 border border-hairline transition-colors hover:border-ink/30">
+              <Card className="p-4 border border-hairline transition-colors hover:border-brand/40">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs text-slate w-16 flex-shrink-0">
                     {ageLabel(l.createdAt, now)}
                   </span>
                   <span
-                    className={`rounded-full border px-2 py-0.5 text-[11px] font-medium ${ACTOR_PILL[l.actor.role]}`}
+                    className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${ACTOR_PILL[l.actor.role]}`}
                   >
                     {l.actor.role}
                   </span>
@@ -110,7 +112,7 @@ export function AuditLogTable() {
                         moved request{' '}
                         <a
                           href={`/admin/dispatch`}
-                          className="font-mono text-oxygen hover:underline"
+                          className="font-mono text-brand hover:underline"
                         >
                           {l.requestId.slice(0, 8)}
                         </a>{' '}
@@ -121,7 +123,7 @@ export function AuditLogTable() {
                         created request{' '}
                         <a
                           href={`/admin/dispatch`}
-                          className="font-mono text-oxygen hover:underline"
+                          className="font-mono text-brand hover:underline"
                         >
                           {l.requestId.slice(0, 8)}
                         </a>{' '}

@@ -1,15 +1,16 @@
 'use client'
 
 import { Suspense } from 'react'
-import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { AmbulancesTable } from '@/components/admin/ambulances-table'
 import { HospitalsTable } from '@/components/admin/hospitals-table'
 import { UsersTable } from '@/components/admin/users-table'
 import { AuditLogTable } from '@/components/admin/audit-log-table'
 import { ListSkeleton } from '@/components/shared/skeletons'
+
+const TAB =
+  'h-9 flex-none rounded-full px-4 text-slate hover:text-ink data-active:bg-brand data-active:text-brand-foreground data-active:shadow-none'
 
 function ResourcesContent() {
   const router = useRouter()
@@ -25,11 +26,11 @@ function ResourcesContent() {
 
   return (
     <Tabs value={currentTab} onValueChange={onTabChange}>
-      <TabsList className="mb-4 flex-wrap h-auto">
-        <TabsTrigger value="ambulances">Ambulances</TabsTrigger>
-        <TabsTrigger value="hospitals">Hospitals</TabsTrigger>
-        <TabsTrigger value="users">Users</TabsTrigger>
-        <TabsTrigger value="audit">Audit logs</TabsTrigger>
+      <TabsList className="mb-4 h-auto flex-wrap gap-1 rounded-full bg-paper p-1 ring-1 ring-hairline">
+        <TabsTrigger value="ambulances" className={TAB}>Ambulances</TabsTrigger>
+        <TabsTrigger value="hospitals" className={TAB}>Hospitals</TabsTrigger>
+        <TabsTrigger value="users" className={TAB}>Users</TabsTrigger>
+        <TabsTrigger value="audit" className={TAB}>Audit logs</TabsTrigger>
       </TabsList>
       <TabsContent value="ambulances">
         <AmbulancesTable />
@@ -49,26 +50,16 @@ function ResourcesContent() {
 
 export default function AdminResourcesPage() {
   return (
-    <div className="min-h-screen bg-gauze">
-      <header className="border-b border-hairline bg-paper">
-        <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between gap-4">
-          <div>
-            <Link
-              href="/admin"
-              className="inline-flex items-center gap-1 text-xs text-slate hover:text-ink"
-            >
-              <ArrowLeft className="h-3 w-3" /> Admin
-            </Link>
-            <h1 className="text-lg font-semibold text-ink">Resources</h1>
-          </div>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-6">
-        <Suspense fallback={<ListSkeleton rows={6} />}>
-          <ResourcesContent />
-        </Suspense>
-      </main>
+    <div className="space-y-6">
+      <div>
+        <h1>Resources</h1>
+        <p className="mt-1 text-sm text-slate">
+          Ambulances, hospitals, users and the audit trail
+        </p>
+      </div>
+      <Suspense fallback={<ListSkeleton rows={6} />}>
+        <ResourcesContent />
+      </Suspense>
     </div>
   )
 }

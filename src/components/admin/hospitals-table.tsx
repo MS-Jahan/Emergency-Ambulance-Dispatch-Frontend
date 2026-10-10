@@ -157,7 +157,7 @@ function HospitalForm({
       <Button
         type="submit"
         disabled={pending}
-        className="w-full bg-ink text-paper hover:bg-ink/90"
+        className="w-full bg-brand text-brand-foreground hover:bg-brand/90"
       >
         {pending ? 'Saving...' : 'Create hospital'}
       </Button>
@@ -241,7 +241,7 @@ export function HospitalsTable() {
           <Button
             size="sm"
             onClick={() => setCreating(true)}
-            className="bg-signal text-white hover:bg-signal/90"
+            className="bg-brand text-brand-foreground hover:bg-brand/90"
           >
             <Plus className="h-4 w-4 mr-1" /> Add hospital
           </Button>
@@ -260,7 +260,7 @@ export function HospitalsTable() {
         <ul className="space-y-2">
           {items.map((h) => (
             <li key={h.id}>
-              <Card className="p-3 border border-hairline transition-colors hover:border-ink/30">
+              <Card className="p-4 border border-hairline transition-colors hover:border-brand/40">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-ink">{h.name}</p>
@@ -285,7 +285,7 @@ export function HospitalsTable() {
                   {h.phone && (
                     <a
                       href={`tel:${h.phone}`}
-                      className="inline-flex items-center gap-1.5 text-xs text-oxygen hover:underline"
+                      className="inline-flex items-center gap-1.5 text-xs text-brand hover:underline"
                     >
                       <Phone className="h-3 w-3" aria-hidden />
                       {h.phone}

@@ -46,7 +46,7 @@ type CreateDriverFormData = z.infer<typeof createDriverSchema>
 // Brand palette per role.
 const ROLE_PILL: Record<Role, string> = {
   PATIENT: 'bg-oxygen/10 text-oxygen border-oxygen/30',
-  DRIVER: 'bg-amber/10 text-amber-700 dark:text-amber border-amber/30',
+  DRIVER: 'bg-amber/10 text-amber-700 dark:text-amber-300 border-amber/30',
   ADMIN: 'bg-ink/5 text-ink border-hairline',
 }
 
@@ -185,7 +185,7 @@ function CreateDriverDialog({
           <Button
             type="submit"
             disabled={createDriver.isPending}
-            className="w-full bg-ink text-paper hover:bg-ink/90"
+            className="w-full bg-brand text-brand-foreground hover:bg-brand/90"
           >
             {createDriver.isPending ? 'Creating...' : 'Create driver'}
           </Button>
@@ -261,7 +261,9 @@ export function UsersTable() {
           </div>
           <Select value={roleFilter} onValueChange={(v) => setRole(v ?? 'all')}>
             <SelectTrigger className="w-32 bg-paper border-hairline" aria-label="Filter by role">
-              <SelectValue />
+              <SelectValue>
+                {roleFilter === 'all' ? 'All roles' : roleFilter}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All roles</SelectItem>
@@ -275,7 +277,7 @@ export function UsersTable() {
           <Button
             size="sm"
             onClick={() => setCreatingDriver(true)}
-            className="bg-signal text-white hover:bg-signal/90"
+            className="bg-brand text-brand-foreground hover:bg-brand/90"
           >
             Create driver
           </Button>
@@ -296,7 +298,7 @@ export function UsersTable() {
         <ul className="space-y-2">
           {items.map((u) => (
             <li key={u.id}>
-              <Card className="flex items-center justify-between gap-3 p-3 border border-hairline transition-colors hover:border-ink/30">
+              <Card className="flex items-center justify-between gap-3 p-4 border border-hairline transition-colors hover:border-brand/40">
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-ink truncate">{u.name}</p>
                   <p className="truncate text-xs text-slate">
@@ -307,7 +309,7 @@ export function UsersTable() {
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span
-                    className={`hidden sm:inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium ${ROLE_PILL[u.role]}`}
+                    className={`hidden sm:inline-block rounded-full border px-2.5 py-0.5 text-xs font-semibold ${ROLE_PILL[u.role]}`}
                   >
                     {u.role}
                   </span>

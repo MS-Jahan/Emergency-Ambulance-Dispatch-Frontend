@@ -1,86 +1,119 @@
 'use client'
 
 import Link from 'next/link'
-import {
-  Ambulance,
-  ArrowRight,
-  Banknote,
-  ClipboardList,
-  Users,
-} from 'lucide-react'
+import { AlertTriangle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { StatCard } from '@/components/shared/stat-card'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { StatusDonut, StatusDonutCard } from '@/components/shared/status-donut'
 import { RequestsAreaChart } from '@/components/admin/requests-area-chart'
 import { StatGridSkeleton, ListSkeleton } from '@/components/shared/skeletons'
 import { useAdminRequests, useDashboardStats } from '@/lib/hooks'
+import { cn } from '@/lib/utils'
+
+function KpiTile({
+  label,
+  value,
+  tone = 'ink',
+}: {
+  label: string
+  value: string | number
+  tone?: 'ink' | 'amber' | 'oxygen' | 'slate'
+}) {
+  const toneClass = {
+    ink: 'text-ink',
+    amber: 'text-amber-700 dark:text-amber-300',
+    oxygen: 'text-oxygen dark:text-emerald-400',
+    slate: 'text-slate',
+  }[tone]
+  return (
+    <Card className="gap-1 border border-hairline p-5">
+      <p className={cn('font-heading text-4xl leading-none tabular-nums', toneClass)}>
+        {value}
+      </p>
+      <p className="text-sm text-slate">{label}</p>
+    </Card>
+  )
+}
 
 export default function AdminDashboardPage() {
   const stats = useDashboardStats()
   const pending = useAdminRequests(1, 5, { status: 'PENDING' })
-  const recent = useAdminRequests(1, 200)
+  const recent = useAdminRequests(1, 100)
+  const inProgress = stats.data
+    ? Math.max(
+        0,
+        stats.data.requests.total -
+          stats.data.requests.pending -
+          stats.data.requests.completed -
+          stats.data.requests.cancelled,
+      )
+    : 0
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-3 flex-wrap">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-ink">Overview</h1>
-          <p className="text-sm text-slate mt-1">
+          <h1>Overview</h1>
+          <p className="mt-1 text-sm text-slate">
             Live fleet and request activity
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button
-            nativeButton={false} render={<Link href="/admin/resources" />}
+            nativeButton={false}
+            render={<Link href="/admin/resources" />}
             variant="outline"
-            className="border-hairline text-ink"
+            className="h-10 border-hairline px-5 text-ink"
           >
             Resources
           </Button>
           <Button
-            nativeButton={false} render={<Link href="/admin/dispatch" />}
-            className="bg-signal text-white hover:bg-signal/90"
+            nativeButton={false}
+            render={<Link href="/admin/dispatch" />}
+            className="h-10 px-5"
           >
-            Dispatch board <ArrowRight className="h-4 w-4 ml-1" />
+            Dispatch board <ArrowRight className="ml-1 h-4 w-4" />
           </Button>
         </div>
       </div>
 
+      {stats.data && stats.data.requests.pending > 0 && (
+        <Link
+          href="/admin/dispatch"
+          role="status"
+          className="flex items-center gap-2 rounded-2xl bg-amber px-5 py-3 font-bold text-white hover:bg-amber/90"
+        >
+          <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
+          {stats.data.requests.pending} request
+          {stats.data.requests.pending === 1 ? '' : 's'} waiting for dispatch
+        </Link>
+      )}
+
       {stats.isLoading ? (
         <StatGridSkeleton />
       ) : stats.data ? (
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatCard
-            label="Patients"
-            value={stats.data.users.patients}
-            hint={`${stats.data.users.drivers} drivers`}
-            icon={<Users className="h-5 w-5" />}
-            accent="ink"
-          />
-          <StatCard
-            label="Ambulances available"
-            value={stats.data.ambulances.available}
-            hint={`of ${stats.data.ambulances.total} total`}
-            icon={<Ambulance className="h-5 w-5" />}
-            accent="oxygen"
-          />
-          <StatCard
-            label="Pending requests"
-            value={stats.data.requests.pending}
-            hint={`${stats.data.requests.total} all time`}
-            icon={<ClipboardList className="h-5 w-5" />}
-            accent="signal"
-          />
-          <StatCard
-            label="Revenue collected"
-            value={`৳${stats.data.revenue.paidTotal.toLocaleString()}`}
-            hint={`${stats.data.requests.completed} trips completed`}
-            icon={<Banknote className="h-5 w-5" />}
-            accent="amber"
-          />
-        </div>
+        <>
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-6">
+            <KpiTile label="Total" value={stats.data.requests.total} />
+            <KpiTile label="Pending" value={stats.data.requests.pending} tone="amber" />
+            <KpiTile label="Active" value={inProgress} />
+            <KpiTile label="Completed" value={stats.data.requests.completed} tone="oxygen" />
+            <KpiTile label="Cancelled" value={stats.data.requests.cancelled} tone="slate" />
+            <KpiTile
+              label={`Ambulances free of ${stats.data.ambulances.total}`}
+              value={stats.data.ambulances.available}
+              tone="oxygen"
+            />
+          </div>
+          <p className="text-sm text-slate">
+            Revenue collected{' '}
+            <span className="font-semibold text-ink">
+              ${stats.data.revenue.paidTotal.toLocaleString()}
+            </span>{' '}
+            · {stats.data.users.patients} patients · {stats.data.users.drivers} drivers
+          </p>
+        </>
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -95,28 +128,22 @@ export default function AdminDashboardPage() {
                 {
                   label: 'Pending',
                   value: stats.data.requests.pending,
-                  color: '#E9A21B',
+                  color: 'var(--amber)',
                 },
                 {
                   label: 'In progress',
-                  value: Math.max(
-                    0,
-                    stats.data.requests.total -
-                      stats.data.requests.pending -
-                      stats.data.requests.completed -
-                      stats.data.requests.cancelled,
-                  ),
-                  color: '#14B8A6',
+                  value: inProgress,
+                  color: 'var(--slate)',
                 },
                 {
                   label: 'Completed',
                   value: stats.data.requests.completed,
-                  color: '#0E8C86',
+                  color: 'var(--oxygen)',
                 },
                 {
                   label: 'Cancelled',
                   value: stats.data.requests.cancelled,
-                  color: '#E0312B',
+                  color: 'var(--hairline)',
                 },
               ]}
             />
@@ -126,14 +153,12 @@ export default function AdminDashboardPage() {
         </StatusDonutCard>
       </div>
 
-      <Card className="p-5 border border-hairline">
-        <div className="flex items-center justify-between mb-4">
-          <p className="text-sm font-semibold text-ink">
-            Waiting for dispatch
-          </p>
+      <Card className="border border-hairline p-5">
+        <div className="mb-2 flex items-center justify-between">
+          <h2 className="text-xl">Waiting for dispatch</h2>
           <Link
             href="/admin/dispatch"
-            className="text-xs font-medium text-oxygen hover:underline"
+            className="text-sm font-semibold text-brand hover:underline"
           >
             Open board →
           </Link>
@@ -150,7 +175,7 @@ export default function AdminDashboardPage() {
               <li key={r.id}>
                 <Link
                   href="/admin/dispatch"
-                  className="flex items-center justify-between gap-3 rounded-lg border border-hairline p-3 hover:bg-gauze/50 transition-colors"
+                  className="flex items-center justify-between gap-3 rounded-2xl border border-hairline bg-gauze p-3 hover:border-brand/40 transition-colors"
                 >
                   <div className="min-w-0">
                     <p className="text-sm text-ink truncate">

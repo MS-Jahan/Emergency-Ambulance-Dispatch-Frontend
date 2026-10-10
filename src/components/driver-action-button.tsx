@@ -21,7 +21,8 @@ interface DriverActionButtonProps {
 
 /**
  * The driver's one big action: advance the trip to its next status.
- * 64px tall, signal red — reachable and readable at a glance while driving.
+ * 76px tall brand pill (red stays reserved for emergencies) — reachable and
+ * readable at a glance while driving.
  */
 export function DriverActionButton({
   status,
@@ -37,18 +38,18 @@ export function DriverActionButton({
       onClick={onClick}
       disabled={loading}
       className={cn(
-        'flex h-16 w-full items-center justify-center gap-2 rounded-xl',
-        'bg-signal text-base font-semibold text-white',
-        'shadow-lg shadow-signal/25 transition-transform',
-        'hover:bg-signal/90 active:scale-[0.98]',
+        'flex h-[76px] w-full items-center justify-center gap-3 rounded-full',
+        'bg-brand text-xl font-extrabold text-brand-foreground',
+        'shadow-lg transition-transform outline-none',
+        'hover:bg-brand/90 active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-ring/50',
         'disabled:cursor-not-allowed disabled:opacity-70 disabled:active:scale-100',
         className,
       )}
     >
       {loading ? (
-        <Loader2 className="h-5 w-5 animate-spin" aria-hidden />
+        <Loader2 className="h-6 w-6 animate-spin" aria-hidden />
       ) : (
-        <Navigation className="h-5 w-5" aria-hidden />
+        <Navigation className="h-6 w-6" aria-hidden />
       )}
       {loading ? 'Updating…' : label}
     </button>

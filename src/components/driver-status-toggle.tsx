@@ -13,7 +13,7 @@ interface DriverStatusToggleProps {
 
 /**
  * The driver's primary control: one large switch for duty status.
- * Sized for gloved hands and glances — 64×32 track, unmistakable color.
+ * Label on the left, 64x34 track on the right, sized for gloved hands.
  */
 export function DriverStatusToggle({
   status,
@@ -22,9 +22,20 @@ export function DriverStatusToggle({
   subtext,
 }: DriverStatusToggleProps) {
   const online = status !== 'OFFLINE'
+  const label = loading
+    ? 'Switching…'
+    : status === 'ON_TRIP'
+      ? 'On trip'
+      : online
+        ? 'Online'
+        : 'Offline'
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <p className="text-lg font-extrabold text-ink">{label}</p>
+        {subtext && <p className="text-sm text-slate">{subtext}</p>}
+      </div>
       <button
         type="button"
         role="switch"
@@ -33,22 +44,19 @@ export function DriverStatusToggle({
         disabled={loading || status === 'ON_TRIP'}
         onClick={() => onChange(!online)}
         className={cn(
-          'relative h-8 w-16 rounded-full transition-colors duration-200',
+          'relative h-[34px] w-16 shrink-0 rounded-full transition-colors duration-200',
+          'outline-none focus-visible:ring-3 focus-visible:ring-ring/60',
           'disabled:cursor-not-allowed disabled:opacity-60',
-          online ? 'bg-emerald-500' : 'bg-slate-300',
+          online ? 'bg-oxygen' : 'bg-slate',
         )}
       >
         <span
           className={cn(
-            'absolute top-1 h-6 w-6 rounded-full bg-white shadow transition-transform duration-200',
-            online ? 'translate-x-9' : 'translate-x-1',
+            'absolute left-0 top-1 h-[26px] w-[26px] rounded-full bg-white shadow transition-transform duration-200',
+            online ? 'translate-x-[34px]' : 'translate-x-1',
           )}
         />
       </button>
-      <p className="text-sm font-semibold text-ink">
-        {loading ? 'Switching…' : online ? "You're Online" : "You're Offline"}
-      </p>
-      {subtext && <p className="text-xs text-slate">{subtext}</p>}
     </div>
   )
 }

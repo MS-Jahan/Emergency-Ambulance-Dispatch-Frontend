@@ -8,13 +8,11 @@ import {
   AlertCircle,
   Ambulance,
   Building2,
-  CheckCircle2,
   Gauge,
   IdCard,
   Mail,
   MapPin,
   Phone,
-  ShieldCheck,
   User,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -71,25 +69,25 @@ export default function DriverProfilePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-ink">
-          Driver Credentials & Profile
+        <h1 className="text-3xl sm:text-4xl">
+          Profile
         </h1>
         <p className="text-sm text-slate">
-          Manage your duty credentials, emergency contact details, and assigned fleet unit.
+          Your contact details, licence and assigned ambulance.
         </p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-3">
         {/* Profile Card & Edit Form */}
         <div className="md:col-span-2 space-y-6">
-          <Card className="p-6 border-hairline bg-paper space-y-6">
+          <Card className="p-6 border-hairline bg-paper gap-6">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-oxygen/10 text-oxygen font-bold text-lg">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand font-heading text-lg">
                   {profile.user.name.slice(0, 2).toUpperCase()}
                 </div>
                 <div>
-                  <h2 className="text-base font-bold text-ink">
+                  <h2 className="text-xl">
                     {profile.user.name}
                   </h2>
                   <p className="text-xs text-slate flex items-center gap-1">
@@ -99,31 +97,31 @@ export default function DriverProfilePage() {
               </div>
 
               <span
-                className={`rounded-full px-2.5 py-0.5 text-xs font-semibold flex items-center gap-1 ${
+                className={`rounded-full px-3 py-1 text-xs font-bold flex items-center gap-1 ${
                   profile.status === 'AVAILABLE'
                     ? 'bg-oxygen/10 text-oxygen border border-oxygen/20'
                     : profile.status === 'ON_TRIP'
-                      ? 'bg-amber/10 text-amber border border-amber/20'
+                      ? 'bg-amber/15 text-amber border border-amber/30'
                       : 'bg-slate/10 text-slate border border-slate/20'
                 }`}
               >
                 <Gauge className="h-3 w-3" />
-                {profile.status}
+                {profile.status.replaceAll('_', ' ')}
               </span>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-2">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="dp-name" className="text-xs font-medium text-ink">
-                    Full Name
+                  <Label htmlFor="dp-name" className="text-sm font-medium text-ink">
+                    Full name
                   </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate" />
                     <Input
                       id="dp-name"
                       {...register('name')}
-                      className="pl-9 h-10 bg-paper border-hairline text-ink text-sm"
+                      className="pl-9 h-11 bg-paper border-hairline text-ink text-sm"
                     />
                   </div>
                   {errors.name && (
@@ -132,15 +130,15 @@ export default function DriverProfilePage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <Label htmlFor="dp-phone" className="text-xs font-medium text-ink">
-                    Contact Phone
+                  <Label htmlFor="dp-phone" className="text-sm font-medium text-ink">
+                    Contact phone
                   </Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate" />
                     <Input
                       id="dp-phone"
                       {...register('phone')}
-                      className="pl-9 h-10 bg-paper border-hairline text-ink text-sm"
+                      className="pl-9 h-11 bg-paper border-hairline text-ink text-sm"
                     />
                   </div>
                   {errors.phone && (
@@ -153,7 +151,7 @@ export default function DriverProfilePage() {
                 <Button
                   type="submit"
                   disabled={!isDirty || updateProfile.isPending}
-                  className="bg-ink text-paper hover:bg-ink/90 text-xs h-9 px-4"
+                  className="h-10 px-5"
                 >
                   {updateProfile.isPending ? 'Saving...' : 'Save changes'}
                 </Button>
@@ -166,44 +164,43 @@ export default function DriverProfilePage() {
             <div className="flex items-center justify-between border-b border-hairline pb-3">
               <div className="flex items-center gap-2">
                 <Ambulance className="h-5 w-5 text-oxygen" />
-                <h3 className="font-semibold text-ink text-sm">
-                  Assigned Ambulance Unit
+                <h3 className="text-base">
+                  Assigned ambulance
                 </h3>
               </div>
               {ambulance ? (
-                <span className="text-xs font-semibold text-oxygen bg-oxygen/10 px-2 py-0.5 rounded-full">
-                  Unit Active
+                <span className="text-xs font-semibold text-oxygen bg-oxygen/10 px-3 py-1 rounded-full">
+                  Assigned
                 </span>
               ) : (
-                <span className="text-xs font-semibold text-slate bg-slate/10 px-2 py-0.5 rounded-full">
-                  No Vehicle Assigned
+                <span className="text-xs font-semibold text-slate bg-slate/10 px-3 py-1 rounded-full">
+                  No vehicle
                 </span>
               )}
             </div>
 
             {ambulance ? (
               <div className="grid gap-3 sm:grid-cols-2 text-xs">
-                <div className="p-3 bg-gauze rounded-lg border border-hairline space-y-1">
-                  <span className="text-slate block">Plate Registration</span>
+                <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1">
+                  <span className="text-slate block">Plate</span>
                   <span className="font-mono font-bold text-ink text-sm">
                     {ambulance.plateNumber}
                   </span>
                 </div>
 
-                <div className="p-3 bg-gauze rounded-lg border border-hairline space-y-1">
-                  <span className="text-slate block">Fleet Class</span>
+                <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1">
+                  <span className="text-slate block">Type</span>
                   <span className="font-semibold text-ink text-sm">
-                    {ambulance.type} Life Support
+                    {ambulance.type}
                   </span>
                 </div>
 
-                <div className="p-3 bg-gauze rounded-lg border border-hairline space-y-1 sm:col-span-2">
+                <div className="p-3 bg-gauze rounded-2xl border border-hairline space-y-1 sm:col-span-2">
                   <span className="text-slate flex items-center gap-1">
-                    <Building2 className="h-3 w-3" /> Home Hospital Base
+                    <Building2 className="h-3 w-3" /> Home hospital
                   </span>
                   <span className="font-medium text-ink">
-                    {ambulance.homeHospital?.name ??
-                      'Central City Emergency Hub'}
+                    {ambulance.homeHospital?.name ?? 'Not set'}
                   </span>
                 </div>
               </div>
@@ -219,51 +216,42 @@ export default function DriverProfilePage() {
         {/* Verification & License Details */}
         <div className="space-y-6">
           <Card className="p-5 border-hairline bg-paper space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate flex items-center gap-1.5">
-              <IdCard className="h-4 w-4 text-ink" /> License Verification
+            <h3 className="text-base flex items-center gap-1.5">
+              <IdCard className="h-4 w-4 text-brand" /> Licence
             </h3>
 
             <div className="space-y-3 text-xs">
               <div>
-                <span className="text-slate block">Commercial Driver License</span>
+                <span className="text-slate block">Licence number</span>
                 <span className="font-mono font-semibold text-ink text-sm">
                   {profile.licenseNumber}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 pt-1 text-oxygen">
-                <CheckCircle2 className="h-4 w-4" />
-                <span className="font-medium">Verified by Department</span>
-              </div>
-
-              <div className="flex items-center gap-2 text-slate">
-                <ShieldCheck className="h-4 w-4 text-ink" />
-                <span>Background Verified</span>
-              </div>
             </div>
           </Card>
 
           <Card className="p-5 border-hairline bg-paper space-y-3">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-ink" /> GPS Telemetry
+            <h3 className="text-base flex items-center gap-1.5">
+              <MapPin className="h-4 w-4 text-brand" /> Location
             </h3>
 
             {profile.currentLat && profile.currentLng ? (
               <div className="space-y-1 text-xs">
-                <p className="text-slate">Latest reported coordinates:</p>
+                <p className="text-slate">Latest reported position:</p>
                 <p className="font-mono text-ink tabular-nums font-semibold">
                   {profile.currentLat.toFixed(5)}, {profile.currentLng.toFixed(5)}
                 </p>
                 <p className="text-[11px] text-slate pt-1">
-                  Transmitted automatically while On Duty.
+                  Shared automatically while you are online.
                 </p>
               </div>
             ) : (
               <div className="flex items-start gap-2 text-xs text-slate">
                 <AlertCircle className="h-4 w-4 text-amber shrink-0 mt-0.5" />
                 <span>
-                  Telemetry offline. Switch to Available on your Duty console to
-                  broadcast live location to dispatchers.
+                  No location reported yet. Go online on the duty screen to share
+                  your location with dispatchers.
                 </span>
               </div>
             )}

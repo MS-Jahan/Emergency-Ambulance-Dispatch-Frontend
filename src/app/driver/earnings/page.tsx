@@ -11,7 +11,6 @@ import {
   FileText,
   MapPin,
   Search,
-  Star,
   TrendingUp,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -106,65 +105,65 @@ function EarningsContent() {
     <div className="space-y-8">
       {/* Top metrics strip */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="p-5 border-hairline bg-paper gap-1">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Fares Completed</span>
+            <span>Fares completed</span>
             <Banknote className="h-4 w-4 text-oxygen" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl font-normal text-ink tabular-nums">
             ${totalEarnings.toLocaleString()}
           </p>
-          <p className="text-[11px] text-slate">Sum of fares on completed trips</p>
+          <p className="text-xs text-slate">Sum of fares on completed trips</p>
         </Card>
 
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="p-5 border-hairline bg-paper gap-1">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Completed Trips</span>
+            <span>Completed trips</span>
             <CheckCircle2 className="h-4 w-4 text-oxygen" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl font-normal text-ink tabular-nums">
             {completedRequests.length}
           </p>
-          <p className="text-[11px] text-slate">
+          <p className="text-xs text-slate">
             {allRequests.length} total assigned dispatches
           </p>
         </Card>
 
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="p-5 border-hairline bg-paper gap-1">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Active Trips</span>
-            <Star className="h-4 w-4 text-amber" />
+            <span>Active trips</span>
+            <Clock className="h-4 w-4 text-amber" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl font-normal text-ink tabular-nums">
             {allRequests.filter((r) => r.status !== 'COMPLETED' && r.status !== 'CANCELLED').length}
           </p>
-          <p className="text-[11px] text-slate">Assigned and not yet completed</p>
+          <p className="text-xs text-slate">Assigned and not yet completed</p>
         </Card>
 
-        <Card className="p-4 border-hairline bg-paper space-y-1">
+        <Card className="p-5 border-hairline bg-paper gap-1">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Avg. Trip Value</span>
+            <span>Avg. trip fare</span>
             <TrendingUp className="h-4 w-4 text-oxygen" />
           </div>
-          <p className="text-2xl font-bold tracking-tight text-ink tabular-nums">
+          <p className="font-heading text-3xl font-normal text-ink tabular-nums">
             $
             {completedRequests.length > 0
               ? Math.round(totalEarnings / completedRequests.length)
               : 0}
           </p>
-          <p className="text-[11px] text-slate">By ambulance type</p>
+          <p className="text-xs text-slate">By ambulance type</p>
         </Card>
       </div>
 
       {/* Trips list with search & filter */}
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
-          <h2 className="text-lg font-semibold text-ink">
-            Completed Trips ({filteredTrips.length})
+          <h2 className="text-xl">
+            Completed trips ({filteredTrips.length})
           </h2>
 
           <div className="flex flex-wrap gap-2 sm:gap-3">
-            <div className="relative flex-1 sm:w-60">
+            <div className="relative min-w-0 flex-1 basis-full sm:basis-auto sm:w-60">
               <Search
                 className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate"
                 aria-hidden
@@ -173,13 +172,17 @@ function EarningsContent() {
                 value={q}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search pickup or hospital"
-                className="h-9 bg-paper border-hairline text-ink pl-8 text-xs"
+                className="h-10 bg-paper border-hairline text-ink pl-9 text-sm"
               />
             </div>
 
             <Select value={priorityFilter} onValueChange={setPriority}>
-              <SelectTrigger className="w-36 h-9 bg-paper border-hairline text-ink text-xs">
-                <SelectValue placeholder="Priority" />
+              <SelectTrigger className="w-40 h-10 bg-paper border-hairline text-ink text-sm">
+                <SelectValue placeholder="Priority">
+                  {priorityFilter === 'ALL'
+                    ? 'All priorities'
+                    : priorityFilter.charAt(0) + priorityFilter.slice(1).toLowerCase()}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">All priorities</SelectItem>
@@ -197,7 +200,7 @@ function EarningsContent() {
             title="No completed trips found"
             description={
               completedRequests.length === 0
-                ? 'Your completed patient transit missions and payouts will appear here.'
+                ? 'Your completed trips and their fares will appear here.'
                 : 'No trips match the active search or priority filter.'
             }
           />
@@ -217,7 +220,7 @@ function EarningsContent() {
 
               return (
                 <li key={req.id}>
-                  <Card className="p-4 border-hairline bg-paper hover:border-ink/20 transition-colors">
+                  <Card className="p-5 border-hairline bg-paper hover:border-brand/40 transition-colors">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       <div className="space-y-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
@@ -231,7 +234,7 @@ function EarningsContent() {
                           </span>
                         </div>
                         <p className="text-sm font-medium text-ink flex items-start gap-1.5 pt-1">
-                          <MapPin className="h-3.5 w-3.5 text-signal shrink-0 mt-0.5" />
+                          <MapPin className="h-3.5 w-3.5 text-brand shrink-0 mt-0.5" />
                           <span>{req.pickupAddress}</span>
                         </p>
                         {req.destinationHospital && (
@@ -244,7 +247,7 @@ function EarningsContent() {
 
                       <div className="sm:text-right shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-hairline flex sm:flex-col items-center sm:items-end justify-between">
                         <span className="text-xs text-slate">Trip fare</span>
-                        <span className="text-lg font-bold text-ink tabular-nums">
+                        <span className="font-heading text-xl text-ink tabular-nums">
                           ${payout}
                         </span>
                       </div>
@@ -265,20 +268,20 @@ export default function DriverEarningsPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">
-            Earnings & Trip History
+          <h1 className="text-3xl sm:text-4xl">
+            Earnings
           </h1>
           <p className="text-sm text-slate">
-            Summary of completed transit missions and performance payouts.
+            Completed trips and the fares charged on them.
           </p>
         </div>
         <Button
           nativeButton={false}
           render={<Link href="/driver" />}
           variant="outline"
-          className="h-9 text-xs border-hairline self-start sm:self-auto"
+          className="h-10 border-hairline self-start sm:self-auto"
         >
-          Back to Duty Console
+          Back to duty
         </Button>
       </div>
 
