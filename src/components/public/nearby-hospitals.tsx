@@ -84,7 +84,7 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
           variant="outline"
           onClick={useMyLocation}
           disabled={locating}
-          className="h-10 gap-2 border-ink/30 text-ink"
+          className="h-10 gap-2 px-4"
         >
           <LocateFixed className="h-4 w-4" />
           {locating ? 'Locating…' : origin.source === 'device' ? 'Refresh location' : 'Use my location'}
@@ -100,25 +100,25 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
         {ranked.map(({ item: h, km }, i) => (
           <li
             key={h.id}
-            className="group flex flex-col gap-3 rounded-xl border border-hairline bg-paper p-4 transition-shadow hover:shadow-md"
+            className="group flex flex-col gap-3 rounded-2xl border border-hairline bg-paper p-4 transition-colors hover:border-brand"
           >
             <div className="flex items-center justify-between">
-              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink text-xs font-bold tabular-nums text-paper">
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-soft text-xs font-bold tabular-nums text-brand">
                 {i + 1}
               </span>
-              <span className="text-xs font-semibold tabular-nums text-oxygen">
+              <span className="text-xs font-semibold tabular-nums text-ink">
                 {km < 10 ? km.toFixed(1) : Math.round(km)} km
               </span>
             </div>
             <div className="space-y-1">
-              <h3 className="text-sm font-semibold leading-snug text-ink">{h.name}</h3>
+              <h3 className="text-base leading-snug text-ink">{h.name}</h3>
               <p className="flex items-center gap-1 text-xs text-slate">
                 <MapPin className="h-3 w-3 shrink-0" /> {h.district}
               </p>
             </div>
             <div className="mt-auto flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate">
               <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" />{h.beds}</span>
-              {h.icu && <span className="flex items-center gap-1 text-signal"><Siren className="h-3 w-3" />ICU</span>}
+              {h.icu && <span className="flex items-center gap-1 rounded-full bg-oxygen/15 px-2 py-0.5 font-semibold text-ink"><Siren className="h-3 w-3" />ICU</span>}
               <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{h.phone.slice(-8)}</span>
             </div>
           </li>
@@ -126,7 +126,7 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
       </ol>
 
       {showAllLink && (
-        <Link href="/hospitals" className="inline-flex items-center gap-1 text-sm font-semibold text-ink hover:underline">
+        <Link href="/hospitals" className="inline-flex items-center gap-1 text-sm font-semibold text-brand hover:underline">
           <Building2 className="h-4 w-4" /> See all hospitals <ArrowRight className="h-4 w-4" />
         </Link>
       )}

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Activity, HeartPulse, Stethoscope } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
+import { PublicFooter } from '@/components/public/public-footer'
 
 export const metadata: Metadata = {
   title: 'Emergency Medical Services & Fleet Classes',
@@ -18,25 +19,28 @@ export const revalidate = 3600
 
 const SERVICES = [
   {
-    icon: <Stethoscope className="h-6 w-6 text-oxygen" />,
+    tone: 'text-oxygen',
+    icon: <Stethoscope className="h-6 w-6" />,
     name: 'Basic transport',
-    price: '৳15',
+    price: '$15',
     blurb:
       'Stretcher transport with a trained driver for stable patients — hospital transfers, discharges, routine runs.',
     eta: 'Widest availability',
   },
   {
-    icon: <HeartPulse className="h-6 w-6 text-signal" />,
+    tone: 'text-brand',
+    icon: <HeartPulse className="h-6 w-6" />,
     name: 'ICU support',
-    price: '৳35',
+    price: '$35',
     blurb:
       'Ventilator-ready ambulance with monitoring equipment on board for patients who need continuous support in transit.',
     eta: 'Priority assignment',
   },
   {
-    icon: <Activity className="h-6 w-6 text-amber-500" />,
+    tone: 'text-amber',
+    icon: <Activity className="h-6 w-6" />,
     name: 'Cardiac care',
-    price: '৳60',
+    price: '$60',
     blurb:
       'Defibrillator and cardiac monitoring with the highest dispatch priority — chest pain and cardiac events go to the front of the queue.',
     eta: 'Highest priority',
@@ -47,10 +51,10 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-4 py-12 space-y-8">
+      <main className="flex-1 mx-auto max-w-5xl w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10">
         <section className="space-y-3">
-          <h1 className="text-3xl font-bold text-ink">Services</h1>
-          <p className="text-slate leading-relaxed">
+          <h1 className="text-4xl sm:text-5xl text-ink max-w-2xl">Three ambulances. One right choice.</h1>
+          <p className="text-slate leading-relaxed max-w-2xl">
             Three vehicle classes cover the range from stable transport to
             critical care. Requests marked CRITICAL skip the queue entirely.
           </p>
@@ -60,34 +64,36 @@ export default function ServicesPage() {
           {SERVICES.map((s) => (
             <div
               key={s.name}
-              className="bg-paper border border-hairline rounded-xl p-5 flex flex-col gap-3"
+              className="bg-paper border border-hairline rounded-2xl p-6 flex flex-col gap-3"
             >
-              {s.icon}
-              <h2 className="font-semibold text-ink">{s.name}</h2>
-              <p className="text-2xl font-bold text-ink tabular-nums">
+              <span className={`flex h-11 w-11 items-center justify-center rounded-full bg-brand-soft ${s.tone}`}>
+                {s.icon}
+              </span>
+              <h2 className="text-2xl text-ink">{s.name}</h2>
+              <p className="font-heading text-3xl text-ink tabular-nums">
                 {s.price}
-                <span className="text-xs font-normal text-slate ml-1">per trip</span>
+                <span className="font-sans text-xs font-normal text-slate ml-1">per trip</span>
               </p>
               <p className="text-sm text-slate flex-1">{s.blurb}</p>
-              <p className="text-xs font-medium text-oxygen">{s.eta}</p>
+              <p className="text-xs font-semibold text-ink">{s.eta}</p>
             </div>
           ))}
         </section>
 
-        <section className="bg-paper border border-hairline rounded-xl p-6 space-y-4">
-          <h2 className="text-lg font-semibold text-ink">Priority levels</h2>
+        <section className="bg-paper border border-hairline rounded-2xl p-6 sm:p-8 space-y-4">
+          <h2 className="text-2xl text-ink">Priority levels</h2>
           <div className="space-y-3 text-sm text-slate">
             <p>
-              <span className="font-semibold text-signal">CRITICAL</span> —
+              <span className="font-semibold text-signal">CRITICAL</span>:
               life-threatening. Assigned first, dispatched before anything else
               in the queue.
             </p>
             <p>
-              <span className="font-semibold text-amber-500">HIGH</span> —
+              <span className="font-semibold text-amber">HIGH</span>:
               urgent but stable. Ahead of normal requests in assignment order.
             </p>
             <p>
-              <span className="font-semibold text-oxygen">NORMAL</span> —
+              <span className="font-semibold text-oxygen">NORMAL</span>:
               standard transport, first-come first-served.
             </p>
           </div>
@@ -97,11 +103,7 @@ export default function ServicesPage() {
           </p>
         </section>
       </main>
-      <footer className="border-t border-hairline bg-paper py-4">
-        <p className="text-center text-xs text-slate">
-          RapidAid — emergency ambulance dispatch
-        </p>
-      </footer>
+      <PublicFooter />
     </div>
   )
 }

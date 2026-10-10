@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 
 import { PublicHeader } from '@/components/public/public-header'
+import { PublicFooter } from '@/components/public/public-footer'
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
@@ -53,11 +54,9 @@ export default function FaqPage() {
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-4 py-12 space-y-8">
+      <main className="flex-1 mx-auto max-w-3xl w-full px-4 sm:px-6 py-12 sm:py-16 space-y-8">
         <section className="space-y-3">
-          <h1 className="text-3xl font-bold text-ink">
-            Frequently asked questions
-          </h1>
+          <h1 className="text-4xl sm:text-5xl text-ink">Questions</h1>
           <p className="text-slate">
             Short answers about requests, priorities, and paying.
           </p>
@@ -67,11 +66,11 @@ export default function FaqPage() {
           {FAQS.map((item) => (
             <details
               key={item.q}
-              className="bg-paper border border-hairline rounded-xl px-5 py-4 group"
+              className="bg-paper border border-hairline rounded-2xl px-5 py-4 group"
             >
-              <summary className="flex items-center justify-between gap-4 cursor-pointer font-medium text-ink list-none marker:hidden [&::-webkit-details-marker]:hidden">
+              <summary className="flex items-center justify-between gap-4 cursor-pointer font-semibold text-ink list-none marker:hidden [&::-webkit-details-marker]:hidden">
                 {item.q}
-                <span className="text-slate text-lg leading-none group-open:rotate-45 transition-transform">
+                <span aria-hidden className="text-brand text-xl leading-none group-open:rotate-45 transition-transform">
                   +
                 </span>
               </summary>
@@ -80,23 +79,19 @@ export default function FaqPage() {
           ))}
         </section>
 
-        <section className="flex flex-col sm:flex-row items-center gap-4 justify-between bg-ink text-paper rounded-xl p-6">
-          <p className="text-sm">
+        <section className="flex flex-col sm:flex-row items-center gap-4 justify-between bg-brand text-brand-foreground rounded-3xl p-6 sm:p-8">
+          <p className="font-heading text-xl">
             Question not covered here? Get in touch and we will answer.
           </p>
           <Button
             nativeButton={false} render={<Link href="/contact" />}
-            className="bg-signal text-white hover:bg-signal/90 shrink-0"
+            className="h-11 px-6 bg-ink text-gauze hover:bg-ink/90 shrink-0"
           >
             Contact us
           </Button>
         </section>
       </main>
-      <footer className="border-t border-hairline bg-paper py-4">
-        <p className="text-center text-xs text-slate">
-          RapidAid — emergency ambulance dispatch
-        </p>
-      </footer>
+      <PublicFooter />
     </div>
   )
 }

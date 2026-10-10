@@ -13,9 +13,9 @@ function CancelInner() {
   const payment = usePaymentBySession(sessionId, 'cancel')
 
   return (
-    <div className="w-full max-w-md bg-paper border border-hairline rounded-2xl p-8 text-center space-y-4">
-      <Undo2 className="h-12 w-12 text-slate mx-auto" />
-      <h1 className="text-xl font-semibold text-ink">Checkout cancelled</h1>
+    <div className="w-full max-w-md bg-paper border border-hairline rounded-3xl p-8 text-center space-y-4">
+      <Undo2 className="h-14 w-14 text-amber mx-auto" />
+      <h1 className="text-3xl text-ink">Checkout cancelled</h1>
       <p className="text-sm text-slate">
         Nothing was charged. Start a new payment from your payment history
         whenever you&apos;re ready.
@@ -27,7 +27,7 @@ function CancelInner() {
       )}
       <Button
         nativeButton={false} render={<Link href="/dashboard/payments" />}
-        className="w-full bg-ink text-paper hover:bg-ink/90"
+        className="w-full h-11"
       >
         Payment history
       </Button>
@@ -37,7 +37,7 @@ function CancelInner() {
 
 export default function PaymentCancelPage() {
   return (
-    <main className="min-h-screen bg-gradient-to-br from-gauze to-paper flex items-center justify-center px-4 py-12">
+    <main className="min-h-screen bg-gauze flex items-center justify-center px-4 py-12">
       <Suspense fallback={null}>
         <CancelInner />
       </Suspense>

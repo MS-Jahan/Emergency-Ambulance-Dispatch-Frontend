@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 
 export function PatientSpotlightPreview() {
   return (
-    <Card className="border border-hairline p-5 shadow-sm space-y-4 bg-paper">
+    <Card className="border border-hairline p-5 space-y-4 bg-paper rounded-2xl">
       <div className="flex items-center justify-between border-b border-hairline pb-3">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-signal/10 text-signal">
@@ -33,12 +33,12 @@ export function PatientSpotlightPreview() {
         </div>
       </div>
 
-      <div className="rounded-lg bg-gauze p-3 border border-hairline flex items-center justify-between">
+      <div className="rounded-xl bg-gauze p-3 border border-hairline flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-2 w-2 rounded-full bg-signal animate-ping" />
           <span className="text-xs font-medium text-ink">Ambulance en route</span>
         </div>
-        <Button size="sm" variant="outline" className="h-8 text-xs border-hairline">
+        <Button size="sm" variant="outline" className="h-8 text-xs">
           <Phone className="h-3 w-3 mr-1 text-oxygen" /> Call driver
         </Button>
       </div>
@@ -48,10 +48,10 @@ export function PatientSpotlightPreview() {
 
 export function DriverSpotlightPreview() {
   return (
-    <Card className="border border-hairline p-5 shadow-sm space-y-4 bg-paper">
+    <Card className="border border-hairline p-5 space-y-4 bg-paper rounded-2xl">
       <div className="flex items-center justify-between border-b border-hairline pb-3">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber/10 text-amber-700 dark:text-amber">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber/10 text-amber">
             <Ambulance className="h-4 w-4" />
           </span>
           <div>
@@ -64,7 +64,7 @@ export function DriverSpotlightPreview() {
         </span>
       </div>
 
-      <div className="p-3 bg-gauze rounded-lg border border-hairline space-y-2">
+      <div className="p-3 bg-gauze rounded-xl border border-hairline space-y-2">
         <p className="text-xs text-slate">Active Destination:</p>
         <p className="text-sm font-semibold text-ink flex items-center gap-1.5">
           <Navigation className="h-3.5 w-3.5 text-signal" />
@@ -81,7 +81,7 @@ export function DriverSpotlightPreview() {
 
 export function DispatcherSpotlightPreview() {
   return (
-    <Card className="border border-hairline p-5 shadow-sm space-y-4 bg-paper">
+    <Card className="border border-hairline p-5 space-y-4 bg-paper rounded-2xl">
       <div className="flex items-center justify-between border-b border-hairline pb-3">
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-ink/10 text-ink">
@@ -99,7 +99,7 @@ export function DispatcherSpotlightPreview() {
 
       <div className="grid grid-cols-3 gap-2 text-center text-xs">
         <div className="rounded-lg bg-amber/10 p-2 border border-amber/20">
-          <p className="text-lg font-bold text-amber-700 dark:text-amber tabular-nums">2</p>
+          <p className="text-lg font-bold text-amber tabular-nums">2</p>
           <p className="text-[10px] text-slate uppercase">Pending</p>
         </div>
         <div className="rounded-lg bg-oxygen/10 p-2 border border-oxygen/20">

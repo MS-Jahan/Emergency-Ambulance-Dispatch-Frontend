@@ -48,12 +48,12 @@ export function ContactForm() {
     reset()
   }
 
-  const inputCls = 'mt-1 bg-paper border-hairline text-ink'
+  const inputCls = 'mt-1 bg-gauze border-hairline text-ink'
 
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="bg-paper border border-hairline rounded-xl p-5 space-y-4"
+      className="bg-paper border border-hairline rounded-2xl p-5 sm:p-6 space-y-4"
       noValidate
     >
       <div>
@@ -96,7 +96,7 @@ export function ContactForm() {
           rows={5}
           placeholder="How can our support team assist you?"
           {...register('message')}
-          className="mt-1 w-full rounded-md border border-hairline bg-paper px-3 py-2 text-sm text-ink placeholder:text-slate focus:outline-none focus:ring-2 focus:ring-oxygen/40"
+          className="mt-1 w-full rounded-2xl border border-hairline bg-gauze px-3 py-2 text-sm text-ink placeholder:text-slate focus:outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
         />
         {errors.message && (
           <p className="mt-1 text-xs text-signal">{errors.message.message}</p>
@@ -106,7 +106,7 @@ export function ContactForm() {
       <Button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-ink text-paper hover:bg-ink/90"
+        className="w-full h-11"
       >
         Send message
       </Button>

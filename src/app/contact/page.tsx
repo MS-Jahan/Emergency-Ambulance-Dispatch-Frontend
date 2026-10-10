@@ -22,10 +22,10 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-4 py-12 space-y-8">
+      <main className="flex-1 mx-auto max-w-5xl w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-8">
         <section className="space-y-3">
-          <h1 className="text-3xl font-bold text-ink">Contact us</h1>
-          <p className="text-slate">
+          <h1 className="text-4xl sm:text-5xl text-ink">Talk to us</h1>
+          <p className="text-slate max-w-2xl">
             Questions about the service, billing, fleet operations, or hospital
             partnerships — our support team is available around the clock.
           </p>
@@ -33,21 +33,21 @@ export default function ContactPage() {
 
         <section className="grid gap-6 md:grid-cols-[1fr_1.2fr]">
           <div className="space-y-4">
-            <div className="bg-paper border border-hairline rounded-xl p-5 flex gap-3">
-              <Mail className="h-5 w-5 text-oxygen shrink-0" />
+            <div className="bg-paper border border-hairline rounded-2xl p-5 flex gap-3">
+              <Mail className="h-5 w-5 text-brand shrink-0" />
               <div>
                 <p className="text-sm font-medium text-ink">Email</p>
                 <p className="text-sm text-slate">{SUPPORT_EMAIL}</p>
               </div>
             </div>
-            <div className="bg-paper border border-hairline rounded-xl p-5 flex gap-3">
-              <Phone className="h-5 w-5 text-signal shrink-0" />
+            <div className="bg-paper border border-hairline rounded-2xl p-5 flex gap-3">
+              <Phone className="h-5 w-5 text-brand shrink-0" />
               <div>
                 <p className="text-sm font-medium text-ink">Support line</p>
                 <p className="text-sm text-slate">{SUPPORT_PHONE}</p>
               </div>
             </div>
-            <div className="bg-paper border border-hairline rounded-xl p-5 flex gap-3">
+            <div className="bg-paper border border-hairline rounded-2xl p-5 flex gap-3">
               <MapPin className="h-5 w-5 text-slate shrink-0" />
               <div>
                 <p className="text-sm font-medium text-ink">Central Headquarters</p>

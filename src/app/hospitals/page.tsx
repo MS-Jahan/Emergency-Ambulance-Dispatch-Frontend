@@ -22,7 +22,7 @@ export default function HospitalsPage() {
       <PublicHeader />
       <main className="flex-1 mx-auto max-w-7xl w-full px-4 sm:px-6 lg:px-8 py-12 space-y-10">
         <section className="space-y-3 max-w-2xl">
-          <h1 className="text-4xl font-bold tracking-tight text-ink">Hospitals</h1>
+          <h1 className="text-4xl sm:text-5xl text-ink">Hospitals</h1>
           <p className="text-slate">
             Partner hospitals and medical centers in our emergency network. Ranked by proximity to your current location.
           </p>

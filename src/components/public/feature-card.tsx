@@ -3,10 +3,10 @@ import { cn } from '@/lib/utils'
 type AccentColor = 'signal' | 'oxygen' | 'amber' | 'ink'
 
 const ACCENT_CLASSES: Record<AccentColor, string> = {
-  signal: 'border-l-signal',
-  oxygen: 'border-l-oxygen',
-  amber: 'border-l-amber',
-  ink: 'border-l-ink',
+  signal: 'text-signal',
+  oxygen: 'text-oxygen',
+  amber: 'text-amber',
+  ink: 'text-brand',
 }
 
 interface FeatureCardProps {
@@ -18,7 +18,7 @@ interface FeatureCardProps {
 }
 
 /**
- * Feature card with a colored left accent. 1px hairline border, no shadow.
+ * Rounded feature card with a tinted icon chip.
  */
 export function FeatureCard({
   icon,
@@ -30,13 +30,19 @@ export function FeatureCard({
   return (
     <div
       className={cn(
-        'bg-paper border border-hairline border-l-4 rounded-lg p-5 sm:p-6 space-y-3',
-        ACCENT_CLASSES[accentColor],
+        'h-full bg-paper border border-hairline rounded-2xl p-5 sm:p-6 space-y-3',
         className,
       )}
     >
-      <div className="text-oxygen">{icon}</div>
-      <h3 className="font-semibold text-ink">{title}</h3>
+      <div
+        className={cn(
+          'flex h-11 w-11 items-center justify-center rounded-full bg-brand-soft',
+          ACCENT_CLASSES[accentColor],
+        )}
+      >
+        {icon}
+      </div>
+      <h3 className="text-lg text-ink">{title}</h3>
       <p className="text-sm text-slate">{description}</p>
     </div>
   )

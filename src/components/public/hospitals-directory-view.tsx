@@ -22,11 +22,11 @@ import type { Hospital } from '@/types/api'
 
 function HospitalCard({ hospital }: { hospital: Hospital }) {
   return (
-    <div className="bg-paper border border-hairline rounded-xl p-5 space-y-3 transition-colors hover:border-ink/20">
+    <div className="bg-paper border border-hairline rounded-2xl p-5 space-y-3 transition-colors hover:border-brand">
       <div className="flex items-start gap-3">
         <Building2 className="h-5 w-5 text-oxygen shrink-0 mt-0.5" />
         <div className="min-w-0">
-          <h2 className="font-semibold text-ink truncate">{hospital.name}</h2>
+          <h2 className="text-lg text-ink truncate">{hospital.name}</h2>
           <p className="text-sm text-slate line-clamp-1">{hospital.address}</p>
         </div>
       </div>
@@ -113,7 +113,7 @@ export function HospitalsDirectoryView() {
       <section className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
           <div className="flex items-center gap-2.5 flex-wrap">
-            <h2 className="text-xl font-semibold text-ink">Hospital directory</h2>
+            <h2 className="text-2xl text-ink">Hospital directory</h2>
             {isDemo && (
               <span className="rounded-full border border-amber/50 bg-amber/10 px-2.5 py-0.5 text-xs font-semibold text-ink">
                 Demo data
@@ -123,14 +123,14 @@ export function HospitalsDirectoryView() {
           <div className="flex flex-wrap gap-2 sm:gap-3">
             <div className="relative flex-1 sm:w-64">
               <Search
-                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate"
                 aria-hidden
               />
               <Input
                 value={q}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search hospital or area"
-                className="h-10 bg-paper border-hairline text-ink pl-9"
+                className="h-10 bg-paper border-hairline text-ink pl-9 rounded-full"
                 aria-label="Search hospitals"
               />
             </div>
@@ -167,9 +167,9 @@ export function HospitalsDirectoryView() {
       </section>
 
       {/* Emergency dispatch CTA banner */}
-      <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-hairline bg-paper p-6">
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-hairline bg-brand-soft p-6 sm:p-8">
         <div className="space-y-1">
-          <h2 className="font-semibold text-ink">Need an ambulance immediately?</h2>
+          <h2 className="text-2xl text-ink">Need an ambulance immediately?</h2>
           <p className="text-sm text-slate">
             Request an ambulance to any partner hospital in seconds. 24/7 coverage.
           </p>
@@ -177,7 +177,7 @@ export function HospitalsDirectoryView() {
         <Button
           nativeButton={false}
           render={<Link href="/login" />}
-          className="bg-signal text-white hover:bg-signal/90"
+          className="h-11 px-6 bg-signal text-white hover:bg-signal/90"
         >
           <Siren className="h-4 w-4 mr-1" /> Request dispatch
         </Button>

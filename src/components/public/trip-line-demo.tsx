@@ -41,19 +41,55 @@ export function TripLineDemo() {
   const status = DEMO_FLOW[Math.min(step, DEMO_FLOW.length - 1)]
   const copy = DEMO_COPY[status]
 
+  const progress = Math.min(step, DEMO_FLOW.length - 1) / (DEMO_FLOW.length - 1)
+
   return (
-    <div className="bg-paper border border-hairline rounded-lg p-6 sm:p-8 space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <span className="text-xs font-medium text-slate">Live trip demo</span>
-        <span className="text-xs text-slate tabular-nums">
-          {String(Math.min(step + 1, DEMO_FLOW.length))}/{DEMO_FLOW.length}
+    <div className="bg-paper border border-hairline rounded-3xl p-4 sm:p-5 space-y-5">
+      <div
+        className="relative overflow-hidden rounded-2xl border border-hairline bg-gauze"
+        role="img"
+        aria-label="Illustration of an ambulance following a route to a hospital"
+      >
+        <svg viewBox="0 0 400 200" className="block w-full h-auto" aria-hidden>
+          <path
+            d="M30 165 C 110 165, 120 60, 200 85 S 310 140, 370 35"
+            fill="none"
+            className="stroke-hairline"
+            strokeWidth="26"
+            strokeLinecap="round"
+          />
+          <path
+            d="M30 165 C 110 165, 120 60, 200 85 S 310 140, 370 35"
+            fill="none"
+            className="stroke-brand"
+            strokeWidth="3" strokeDasharray="7 8"
+            strokeLinecap="round"
+          />
+          <circle cx="30" cy="165" r="9" className="fill-oxygen" />
+          <circle cx="370" cy="35" r="9" className="fill-signal" />
+          <circle
+            r="11"
+            className="fill-brand stroke-paper"
+            strokeWidth="3"
+            style={{
+              offsetPath: "path('M30 165 C 110 165, 120 60, 200 85 S 310 140, 370 35')",
+              offsetDistance: `${progress * 100}%`,
+              transition: 'offset-distance 1.8s ease-in-out',
+            }}
+          />
+        </svg>
+        <span className="absolute left-3 top-3 rounded-full border border-amber/50 bg-paper px-2.5 py-0.5 text-xs font-semibold text-ink">
+          Demo
+        </span>
+        <span className="absolute right-3 bottom-3 rounded-full bg-paper px-3 py-1 text-xs font-medium tabular-nums text-slate border border-hairline">
+          Step {Math.min(step + 1, DEMO_FLOW.length)} of {DEMO_FLOW.length}
         </span>
       </div>
 
       <TripLine status={status} />
 
-      <div className="min-h-16">
-        <p className="font-semibold text-ink">{copy.title}</p>
+      <div className="min-h-14 px-1">
+        <p className="font-heading text-xl text-ink">{copy.title}</p>
         <p className="text-sm text-slate">{copy.note}</p>
       </div>
     </div>
