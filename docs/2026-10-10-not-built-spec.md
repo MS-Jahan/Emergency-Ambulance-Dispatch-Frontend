@@ -185,7 +185,8 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 - **Effort:** 8 hours.
 
 ### C.4 Forgot password and reset password
-- **Blocked on:** an email provider (Resend, SendGrid, Amazon SES or SMTP) and a verified sender address. Without it the link cannot be delivered.
+- **Status:** being built so that it works as soon as `RESEND_API_KEY` and `EMAIL_FROM` are set on the backend (no code change needed). Full plug-in steps, variable names and behaviour without keys are in `docs/2026-10-10-email-sms-integrations.md`. The "Forgot password?" link stays hidden until the backend reports email as configured.
+- **Original blocker:** an email provider and a verified sender address. Without keys the link cannot be delivered, so the endpoint answers the generic message and sends nothing.
 - **Data model:** `PasswordResetToken { id, userId, tokenHash (sha256, unique), expiresAt, usedAt?, createdAt }`, index on `userId`.
 - **API:**
   - `POST /auth/forgot-password { email }` always answers `200` with the same message (no account enumeration). If the user exists and has a password, create a token (32 random bytes, store only the hash, expiry 30 minutes) and email `FRONTEND_URL/reset-password?token=...`. Limiter: 5 per hour per client (see B.1).
@@ -196,7 +197,8 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 - **Effort:** 4 hours plus provider setup.
 
 ### C.5 Notifications (SMS or push)
-- **Blocked on:** a provider (Twilio, a Bangladesh SMS gateway, or Web Push with VAPID keys).
+- **Status:** email and SMS (Twilio or a generic webhook bridge for local gateways) are being built behind environment variables, with patient preferences and an admin test card; see `docs/2026-10-10-email-sms-integrations.md`. Web Push (service worker, VAPID keys, `PushSubscription` table) is still not built.
+- **Original blocker:** a provider (Twilio, a Bangladesh SMS gateway, or Web Push with VAPID keys).
 - **Design:** one `notify(userId, event, payload)` service called from `request.service.ts` on assign, picked up, completed and cancelled; provider selected by env; failures are logged and never fail the request. Preferences: `User.notifyBySms Boolean @default(false)` (additive) edited on the profile page, with phone required. Web Push adds a `PushSubscription { id, userId, endpoint unique, p256dh, auth, createdAt }` table, a service worker `public/sw.js`, and an "Enable notifications" button on the profile.
 - **Templates:** short, no medical data ("Your ambulance DHK-2002 is on the way", "Your trip is complete, pay at <link>").
 - **Tests:** called once per transition, not called when preference is off, provider failure does not break the status update.
@@ -290,8 +292,8 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 | C.1 patient extras | open |
 | C.2 driver applications | open |
 | C.3 live tracking | open |
-| C.4 forgot and reset password | blocked on email provider |
-| C.5 notifications | blocked on provider |
+| C.4 forgot and reset password | code in progress; works once Resend keys are added |
+| C.5 notifications | email and SMS code in progress; works once keys are added; web push not built |
 | C.6 Google sign-in UI | open |
 | C.7 Bangla and English | open |
 | C.8 admin and data features | open |
