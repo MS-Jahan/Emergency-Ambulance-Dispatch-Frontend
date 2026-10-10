@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card } from '@/components/ui/card'
 import { ChangePasswordCard } from '@/components/auth/change-password-card'
+import { NotificationPreferencesCard } from '@/components/profile/notification-preferences-card'
+import { Toggle } from '@/components/shared/toggle'
 import { useLogout, useMe, useUpdateProfile } from '@/lib/hooks'
 import { useUI } from '@/lib/store'
 import { ApiError } from '@/lib/api'
@@ -35,38 +37,6 @@ function initials(name: string): string {
     .slice(0, 2)
     .map((part) => part[0]!.toUpperCase())
     .join('')
-}
-
-/** Small toggle switch (no shadcn switch installed; hand-rolled, same contract). */
-function Toggle({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean
-  onChange: (v: boolean) => void
-  label: string
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={cn(
-        'relative h-7 w-12 flex-shrink-0 rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
-        checked ? 'bg-brand' : 'border-2 border-slate bg-muted',
-      )}
-    >
-      <span
-        className={cn(
-          'absolute top-0.5 h-6 w-6 rounded-full shadow transition-transform',
-          checked ? 'translate-x-[22px] bg-white' : 'translate-x-0 bg-slate',
-        )}
-      />
-    </button>
-  )
 }
 
 export default function ProfilePage() {
@@ -198,6 +168,8 @@ export default function ProfilePage() {
           />
         </div>
       </Card>
+
+      <NotificationPreferencesCard />
 
       <ChangePasswordCard />
 
