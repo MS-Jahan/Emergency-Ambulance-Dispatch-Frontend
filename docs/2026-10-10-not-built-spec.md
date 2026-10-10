@@ -48,15 +48,8 @@ One-click demo login for all three roles, public hospitals and stats, patient tr
 
 ## Part B. Risks and defects that are not fixed
 
-### B.1 Rate limits are probably shared by every visitor (HIGH, fix before grading)
-- **What:** all browser traffic reaches the API through the Next proxy (`src/app/api/proxy/[...path]/route.ts`, `src/app/api/auth/*`), so the backend sees the frontend's server address, not the visitor's. `src/app.ts` does not set `trust proxy`, and `authLimiter` (30 per 15 min), `globalLimiter` (300 per 15 min) and `contactLimiter` (5 per hour, keyed on `x-forwarded-for` or `req.ip`) all key on that one address. On Vercel the backend receives a forwarded header that Vercel rewrites, so a header sent by the frontend cannot be trusted as is.
-- **Impact:** a grader pressing the three demo-login buttons, plus a few other visitors, can exhaust the 30-login window for everybody ("Too many requests"). Five contact submissions per hour is a site-wide cap, not per person.
-- **Fix:**
-  1. In the Next proxy and auth routes, forward the visitor address in a dedicated header, e.g. `x-client-ip: <first value of x-forwarded-for from the incoming request>`, plus a shared secret header `x-proxy-secret: <PROXY_SHARED_SECRET>` (new env var set on both Vercel projects).
-  2. In `src/middleware/rateLimiter.ts` add a `keyGenerator` that uses `x-client-ip` only when `x-proxy-secret` equals `env.PROXY_SHARED_SECRET` (constant-time compare), otherwise falls back to `req.ip`. Apply to all limiters.
-  3. Raise the demo-friendly limits slightly (auth 60 per 15 min) because demo logins are legitimate traffic.
-  4. Tests: header trusted only with the secret; two different client IPs get separate buckets.
-- **Effort:** 2 hours. Needs two Vercel env additions and two redeploys.
+### B.1 Rate limits shared by every visitor (FIXED, see `docs/2026-10-10-rate-limiting.md`)
+The Next proxy now forwards the visitor address with a shared secret (`PROXY_SHARED_SECRET`, set on both Vercel projects) and the API keys all limiters on it; the spoofable `x-forwarded-for` key of the contact limiter is removed. Verified live. **Remaining:** counters are in each API instance's memory (best effort on serverless); a shared Redis store (Upstash) would make them exact and can be added behind optional environment variables.
 
 ### B.2 Stripe checkout shows another business name (MEDIUM, owner action)
 The hosted checkout and its back link say "Team Hunt LLC" because that is the Stripe account's public business name. Change it under Stripe Dashboard, Settings, Business, Public details (set RapidAid). Optionally set `payment_intent_data.description` in `src/modules/payments/payment.service.ts` so the Stripe dashboard shows "RapidAid ambulance trip".
@@ -281,7 +274,7 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 | Fares endpoint and hook | done; literals still in three pages (B.8) |
 | Receipts | done (backend 00c4a64, frontend 3fedb86, wording a77eb5f) |
 | Hospital drawer, session-expiry redirect | done (frontend 3fedb86) |
-| B.1 shared rate-limit key | open, high |
+| B.1 shared rate-limit key | fixed (backend fb847ef, f58fd75; frontend 7682c2c); optional shared Redis store still open |
 | B.2 Stripe business name | owner action |
 | B.3 test data | open, owner decision |
 | B.4 maintenance audit row | open |
