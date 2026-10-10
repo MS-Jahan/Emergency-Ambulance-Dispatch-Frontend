@@ -1,7 +1,7 @@
 # Decisions & Rulings Log
 
 Date: 2026-10-04
-Covers: all implementation phases (commits f958c69..fd460c1). Each ruling names
+Covers: all implementation phases (commits f958c69..fcccf8c). Each ruling names
 what was decided, why, and what it costs if wrong.
 
 ## Currency display (৳ vs USD)

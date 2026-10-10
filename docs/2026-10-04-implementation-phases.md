@@ -11,7 +11,7 @@
 
 Goal: Login, session management, role-based routing.
 
-- [x] Scaffold Next.js 16, shadcn/ui, TanStack Query, Zustand, Recharts, Sonnet
+- [x] Scaffold Next.js 16, shadcn/ui, TanStack Query, Zustand, Recharts, Sonner
 - [x] Color palette (signal red, oxygen teal, amber, slate); Schibsted Grotesk typeface
 - [x] Types & API types (User, roles, requests, payments, ambulances, hospitals)
 - [x] Zustand stores: auth, UI state, request wizard draft

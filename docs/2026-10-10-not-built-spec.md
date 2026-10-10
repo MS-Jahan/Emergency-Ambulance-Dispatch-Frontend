@@ -271,16 +271,16 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 | Item | Status |
 |---|---|
 | Profile menu crash (Base UI error 31) | fixed |
-| Public pages bounced logged-out visitors to /login (side effect of the session-expiry redirect) | fixed (frontend 50c4589); the 401 redirect now applies only under /dashboard, /driver, /admin |
-| Trip not-found card | done (frontend b705bf4) |
-| Hospital coordinates in request responses and Navigate link | done (backend 30baf75, frontend f443107) |
-| Request ambulance type and patient details | done (backend 39ea824, frontend 97fcfd4) |
-| Contact messages and admin tab | done (backend ee5f570, frontend 866c4f3) |
-| Change password | done (backend 363833d, fba634b; frontend 813119e) |
+| Public pages bounced logged-out visitors to /login (side effect of the session-expiry redirect) | fixed (frontend 5ddfaa1); the 401 redirect now applies only under /dashboard, /driver, /admin |
+| Trip not-found card | done (frontend baedb6d) |
+| Hospital coordinates in request responses and Navigate link | done (backend 30baf75, frontend 2352f97) |
+| Request ambulance type and patient details | done (backend 39ea824, frontend e62f98d) |
+| Contact messages and admin tab | done (backend ee5f570, frontend c29b9e7) |
+| Change password | done (backend 363833d, fba634b; frontend b31634e) |
 | Ambulance maintenance toggle | done without audit row (B.4) |
 | Fares endpoint and hook | done; literals still in three pages (B.8) |
-| Receipts | done (backend 00c4a64, frontend dce9e79, wording a05ff03) |
-| Hospital drawer, session-expiry redirect | done (frontend dce9e79) |
+| Receipts | done (backend 00c4a64, frontend 3fedb86, wording a77eb5f) |
+| Hospital drawer, session-expiry redirect | done (frontend 3fedb86) |
 | B.1 shared rate-limit key | open, high |
 | B.2 Stripe business name | owner action |
 | B.3 test data | open, owner decision |
@@ -293,8 +293,8 @@ Each item: purpose, why it is not built, data model, API contract, backend work,
 | C.1 patient extras | open |
 | C.2 driver applications | open |
 | C.3 live tracking | open |
-| C.4 forgot and reset password | built (backend a782990, frontend 94a9bab); works once Resend keys are added |
-| C.5 notifications | email and SMS built (backend 8c11dc9, 52330a1, 9aacfce, 3831c14, 46fbcc0, hardening 3c3e8f1; frontend 4770862, edd0e39, 1d09a5a); works once keys are added; web push not built |
+| C.4 forgot and reset password | built (backend a782990, frontend 4e6cc6c); works once Resend keys are added |
+| C.5 notifications | email and SMS built (backend 8c11dc9, 52330a1, 9aacfce, 3831c14, 46fbcc0, hardening 3c3e8f1; frontend f01a28f, c8c5a3f, 3f3c04f); works once keys are added; web push not built |
 | C.6 Google sign-in UI | open |
 | C.7 Bangla and English | open |
 | C.8 admin and data features | open |
