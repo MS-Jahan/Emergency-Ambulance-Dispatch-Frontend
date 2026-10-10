@@ -54,15 +54,16 @@ export function HospitalsDirectoryView() {
   // If backend returns hospitals, use them; otherwise provide the demo network
   const sourceHospitals = liveItems.length > 0 ? liveItems : DEMO_HOSPITALS
 
-  // Distinct districts
+  // District filter: demo hospitals carry a district; live ones only an address,
+  // so offer the district names that actually occur in a live address.
   const districts = useMemo(() => {
-    const list = Array.from(
-      new Set(
-        DEMO_HOSPITALS.map((h) => h.district).filter(Boolean),
-      ),
-    ).sort()
-    return ['ALL', ...list]
-  }, [])
+    const all = Array.from(new Set(DEMO_HOSPITALS.map((h) => h.district))).sort()
+    if (liveItems.length === 0) return ['ALL', ...all]
+    const present = all.filter((d) =>
+      liveItems.some((h) => h.address.toLowerCase().includes(d.toLowerCase())),
+    )
+    return ['ALL', ...present]
+  }, [liveItems])
 
   const filteredHospitals = useMemo(() => {
     return sourceHospitals.filter((h) => {

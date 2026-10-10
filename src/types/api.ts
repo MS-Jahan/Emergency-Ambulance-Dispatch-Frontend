@@ -172,3 +172,38 @@ export interface AuditLog {
   createdAt: string
   actor: { id: string; name: string; role: Role }
 }
+
+// Backend: GET /driver/me/stats
+export interface DriverStats {
+  completedTrips: number
+  activeTrips: number
+  averageRating: number | null
+  ratingCount: number
+  fareTotal: number
+}
+
+// Backend: GET /public/stats
+export interface PublicStats {
+  hospitals: number
+  ambulancesAvailable: number
+  requestsCompleted: number
+}
+
+// Backend: GET /admin/reports/summary
+export interface ReportSummary {
+  total: number
+  perDay: { date: string; requests: number; avgResponseMinutes: number | null }[]
+  byPriority: { CRITICAL: number; HIGH: number; NORMAL: number }
+  byAmbulanceType: { BASIC: number; ICU: number; CARDIAC: number }
+  cancellationReasons: { reason: string; count: number }[]
+}
+
+// Backend: GET /admin/feedback
+export interface AdminFeedbackItem {
+  id: string
+  rating: number
+  comment: string | null
+  createdAt: string
+  requestId: string
+  driver: { id: string; name: string }
+}

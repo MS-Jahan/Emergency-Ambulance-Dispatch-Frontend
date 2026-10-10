@@ -3,7 +3,11 @@ import { useRouter } from 'next/navigation'
 import { api } from './api'
 import { useAuth } from './store'
 import type {
+  AdminFeedbackItem,
   AdminUser,
+  DriverStats,
+  PublicStats,
+  ReportSummary,
   Ambulance,
   AuditLog,
   DashboardStats,
@@ -232,14 +236,55 @@ export function useUpdateDriverLocation() {
   })
 }
 
-export function useMyAssignedRequests(page = 1, limit = 20) {
+export function useMyAssignedRequests(
+  page = 1,
+  limit = 20,
+  filters: { status?: string; q?: string; from?: string; to?: string } = {},
+) {
+  const params = new URLSearchParams({ page: String(page), limit: String(limit) })
+  for (const [k, v] of Object.entries(filters)) if (v) params.set(k, v)
   return useQuery({
-    queryKey: ['requests', 'assigned', page, limit],
+    queryKey: ['requests', 'assigned', page, limit, filters],
     queryFn: () =>
-      api.get<PaginatedData<EmergencyRequest>>(
-        `/requests/my-assigned?page=${page}&limit=${limit}`,
-      ),
+      api.get<PaginatedData<EmergencyRequest>>(`/requests/my-assigned?${params.toString()}`),
     refetchInterval: 5000,
+  })
+}
+
+export function useDriverStats() {
+  return useQuery({
+    queryKey: ['driver', 'stats'],
+    queryFn: () => api.get<{ stats: DriverStats }>('/driver/me/stats').then((d) => d.stats),
+  })
+}
+
+export function usePublicStats() {
+  return useQuery({
+    queryKey: ['public', 'stats'],
+    queryFn: () => api.get<{ stats: PublicStats }>('/public/stats').then((d) => d.stats),
+    staleTime: 60_000,
+    retry: false,
+  })
+}
+
+export function useReportSummary(from?: string, to?: string) {
+  const params = new URLSearchParams()
+  if (from) params.set('from', from)
+  if (to) params.set('to', to)
+  return useQuery({
+    queryKey: ['admin', 'report-summary', from, to],
+    queryFn: () =>
+      api
+        .get<{ summary: ReportSummary }>(`/admin/reports/summary?${params.toString()}`)
+        .then((d) => d.summary),
+  })
+}
+
+export function useAdminFeedback(page = 1, limit = 5) {
+  return useQuery({
+    queryKey: ['admin', 'feedback', page, limit],
+    queryFn: () =>
+      api.get<PaginatedData<AdminFeedbackItem>>(`/admin/feedback?page=${page}&limit=${limit}`),
   })
 }
 

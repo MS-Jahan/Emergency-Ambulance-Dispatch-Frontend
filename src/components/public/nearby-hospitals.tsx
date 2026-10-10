@@ -6,6 +6,17 @@ import { ArrowRight, BedDouble, Building2, LocateFixed, MapPin, Phone, Siren } f
 import { Button } from '@/components/ui/button'
 import { DEMO_HOSPITALS } from '@/data/demo-hospitals'
 import { DHAKA, nearest, type Coords } from '@/lib/geo'
+import { useHospitals } from '@/lib/hooks'
+
+interface NearbyHospital extends Coords {
+  id: string
+  name: string
+  phone: string
+  district?: string
+  address?: string
+  beds?: number
+  icu?: boolean
+}
 
 type Origin = { coords: Coords; label: string; source: 'ip' | 'device' | 'default' }
 
@@ -18,6 +29,10 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
   const [origin, setOrigin] = useState<Origin>({ coords: DHAKA, label: 'Dhaka', source: 'default' })
   const [locating, setLocating] = useState(false)
   const [denied, setDenied] = useState(false)
+  const live = useHospitals()
+  const liveItems = live.data?.items ?? []
+  const isDemo = liveItems.length === 0
+  const source: NearbyHospital[] = isDemo ? DEMO_HOSPITALS : liveItems
 
   useEffect(() => {
     let cancelled = false
@@ -37,7 +52,7 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
     }
   }, [])
 
-  const ranked = useMemo(() => nearest(DEMO_HOSPITALS, origin.coords, limit), [origin, limit])
+  const ranked = useMemo(() => nearest(source, origin.coords, limit), [source, origin, limit])
 
   const useMyLocation = () => {
     if (!('geolocation' in navigator)) {
@@ -74,9 +89,11 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2 text-sm text-slate">
-          <span className="rounded-full border border-amber/50 bg-amber/10 px-2.5 py-0.5 text-xs font-semibold text-ink">
-            Demo data
-          </span>
+          {isDemo && (
+            <span className="rounded-full border border-amber/50 bg-amber/10 px-2.5 py-0.5 text-xs font-semibold text-ink">
+              Demo data
+            </span>
+          )}
           <span>{basis}</span>
         </div>
         <Button
@@ -113,13 +130,13 @@ export function NearbyHospitals({ limit = 5, showAllLink = true }: { limit?: num
             <div className="space-y-1">
               <h3 className="text-base leading-snug text-ink">{h.name}</h3>
               <p className="flex items-center gap-1 text-xs text-slate">
-                <MapPin className="h-3 w-3 shrink-0" /> {h.district}
+                <MapPin className="h-3 w-3 shrink-0" /> {h.district ?? h.address}
               </p>
             </div>
             <div className="mt-auto flex flex-wrap gap-x-3 gap-y-1 text-xs text-slate">
-              <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" />{h.beds}</span>
+              {h.beds != null && <span className="flex items-center gap-1"><BedDouble className="h-3 w-3" />{h.beds}</span>}
               {h.icu && <span className="flex items-center gap-1 rounded-full bg-oxygen/15 px-2 py-0.5 font-semibold text-ink"><Siren className="h-3 w-3" />ICU</span>}
-              <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{h.phone.slice(-8)}</span>
+              <span className="flex items-center gap-1"><Phone className="h-3 w-3" />{h.phone}</span>
             </div>
           </li>
         ))}

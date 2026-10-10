@@ -24,19 +24,20 @@ import { FeatureCard } from '@/components/public/feature-card'
 import { MotionCard } from '@/components/motion-card'
 import { Button } from '@/components/ui/button'
 import { NearbyHospitals } from '@/components/public/nearby-hospitals'
+import { LiveStats } from '@/components/public/live-stats'
+import { DemoCoverage } from '@/components/public/demo-coverage'
 import {
   PatientSpotlightPreview,
   DriverSpotlightPreview,
   DispatcherSpotlightPreview,
 } from '@/components/public/role-previews'
-import { DEMO_HOSPITALS } from '@/data/demo-hospitals'
 
 export const metadata: Metadata = {
   title: {
     absolute: 'RapidAid — Emergency Ambulance Dispatch Platform',
   },
   description:
-    'Instant emergency ambulance dispatch across Bangladesh. 3 taps to request, live GPS tracking, and post-trip digital payments.',
+    'Instant emergency ambulance dispatch across Bangladesh. one form to request, live GPS tracking, and post-trip digital payments.',
   openGraph: {
     title: 'RapidAid — Emergency Ambulance Dispatch Platform',
     description:
@@ -119,7 +120,7 @@ const ROLES = [
     role: 'For patients',
     headline: 'Request and track',
     benefits: [
-      'Ambulance in under 30 seconds to request',
+      'One short form to raise a request',
       'Live map with driver position and ETA',
       'Tap to call your driver any time',
       'Full trip history and digital receipts',
@@ -161,10 +162,10 @@ const ROLES = [
 ]
 
 const STATS = [
-  { value: '3 taps', label: 'to request emergency dispatch' },
-  { value: '4 steps', label: 'transparent live trip line' },
-  { value: '24/7', label: 'central dispatcher coverage' },
-  { value: '$0 advance', label: 'pay only after safe arrival' },
+  { value: '1 form', label: 'to raise an emergency request' },
+  { value: '6 stages', label: 'live trip line, from pending to completed' },
+  { value: '3 types', label: 'basic, ICU and cardiac ambulances' },
+  { value: '$0 advance', label: 'pay only after the trip completes' },
 ]
 
 const AMBULANCE_TYPES = [
@@ -213,7 +214,6 @@ const FIRST_AID = [
   },
 ]
 
-const DISTRICTS = Array.from(new Set(DEMO_HOSPITALS.map((h) => h.district)))
 
 function HospitalsSection() {
   return (
@@ -243,7 +243,7 @@ export default function Home() {
             <MotionCard className="space-y-6">
               <span className="inline-flex items-center gap-2 rounded-full bg-oxygen/10 px-3 py-1 text-xs font-semibold text-ink">
                 <span className="h-2 w-2 rounded-full bg-oxygen" aria-hidden />
-                Dispatch desk open 24/7
+                Live dispatch board
               </span>
               <h1 className="text-5xl sm:text-6xl lg:text-7xl text-ink leading-[1.02]">
                 Help, on its way in minutes.
@@ -292,6 +292,7 @@ export default function Home() {
               </div>
             ))}
           </dl>
+          <LiveStats />
         </section>
 
         <HospitalsSection />
@@ -437,16 +438,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Coverage */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-6">
-          <h2 className="text-3xl sm:text-4xl text-ink">Covering districts nationwide</h2>
-          <p className="text-slate max-w-2xl">Demo network spans {DISTRICTS.length} districts across Bangladesh, from Dhaka to Chattogram, Sylhet, and Khulna.</p>
-          <ul className="flex flex-wrap gap-2">
-            {DISTRICTS.map((d) => (
-              <li key={d} className="rounded-full border border-hairline bg-paper px-4 py-1.5 text-sm text-ink">{d}</li>
-            ))}
-          </ul>
-        </section>
+        <DemoCoverage />
 
         {/* First aid */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 grid lg:grid-cols-[1fr_1.4fr] gap-8 lg:gap-12">
@@ -477,7 +469,7 @@ export default function Home() {
           <div className="flex flex-col gap-6 rounded-3xl bg-brand p-8 sm:p-12 text-brand-foreground sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-2">
               <h2 className="text-3xl sm:text-4xl">Be ready before you need us.</h2>
-              <p className="opacity-90">No credit card. No subscription. Available 24/7.</p>
+              <p className="opacity-90">No credit card. No subscription.</p>
             </div>
             <Button
               nativeButton={false}

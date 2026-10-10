@@ -11,7 +11,7 @@ import {
   FileText,
   MapPin,
   Search,
-  TrendingUp,
+  Star,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -26,7 +26,7 @@ import {
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ListSkeleton } from '@/components/shared/skeletons'
-import { useMyAssignedRequests } from '@/lib/hooks'
+import { useDriverStats, useMyAssignedRequests } from '@/lib/hooks'
 import type { EmergencyRequest } from '@/types/api'
 
 // Fares mirror TRIP_RATES in the backend (src/lib/stripe.ts), in USD. The
@@ -45,6 +45,7 @@ function EarningsContent() {
   const priorityFilter = searchParams.get('priority') ?? 'ALL'
 
   const { data, isLoading } = useMyAssignedRequests(1, 100)
+  const stats = useDriverStats()
   const allRequests = useMemo(() => data?.items ?? [], [data?.items])
 
   const completedRequests = useMemo(
@@ -107,13 +108,13 @@ function EarningsContent() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="p-5 border-hairline bg-paper gap-1">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Fares completed</span>
+            <span>Fares paid</span>
             <Banknote className="h-4 w-4 text-oxygen" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            ${totalEarnings.toLocaleString()}
+            ${(stats.data?.fareTotal ?? totalEarnings).toLocaleString()}
           </p>
-          <p className="text-xs text-slate">Sum of fares on completed trips</p>
+          <p className="text-xs text-slate">Paid fares on your trips</p>
         </Card>
 
         <Card className="p-5 border-hairline bg-paper gap-1">
@@ -122,7 +123,7 @@ function EarningsContent() {
             <CheckCircle2 className="h-4 w-4 text-oxygen" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            {completedRequests.length}
+            {stats.data?.completedTrips ?? completedRequests.length}
           </p>
           <p className="text-xs text-slate">
             {allRequests.length} total assigned dispatches
@@ -135,23 +136,24 @@ function EarningsContent() {
             <Clock className="h-4 w-4 text-amber" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            {allRequests.filter((r) => r.status !== 'COMPLETED' && r.status !== 'CANCELLED').length}
+            {stats.data?.activeTrips ?? allRequests.filter((r) => r.status !== 'COMPLETED' && r.status !== 'CANCELLED').length}
           </p>
           <p className="text-xs text-slate">Assigned and not yet completed</p>
         </Card>
 
         <Card className="p-5 border-hairline bg-paper gap-1">
           <div className="flex items-center justify-between text-slate text-xs">
-            <span>Avg. trip fare</span>
-            <TrendingUp className="h-4 w-4 text-oxygen" />
+            <span>Average rating</span>
+            <Star className="h-4 w-4 text-amber" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            $
-            {completedRequests.length > 0
-              ? Math.round(totalEarnings / completedRequests.length)
-              : 0}
+            {stats.data?.averageRating != null ? stats.data.averageRating.toFixed(1) : '—'}
           </p>
-          <p className="text-xs text-slate">By ambulance type</p>
+          <p className="text-xs text-slate">
+            {stats.data?.ratingCount
+              ? `${stats.data.ratingCount} patient rating${stats.data.ratingCount === 1 ? '' : 's'}`
+              : 'No ratings yet'}
+          </p>
         </Card>
       </div>
 

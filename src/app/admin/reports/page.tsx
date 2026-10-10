@@ -29,6 +29,7 @@ import { PriorityBadge } from '@/components/shared/priority-badge'
 import { StatusBadge } from '@/components/shared/status-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ListSkeleton } from '@/components/shared/skeletons'
+import { ReportInsights } from '@/components/admin/report-insights'
 import {
   useAdminRequests,
   useAuditLogs,
@@ -192,6 +193,8 @@ function ReportsContent() {
           <p className="text-xs text-slate">Units ready to dispatch</p>
         </Card>
       </div>
+
+      <ReportInsights />
 
       {/* Priority Distribution */}
       <div className="grid gap-4 sm:grid-cols-3">
