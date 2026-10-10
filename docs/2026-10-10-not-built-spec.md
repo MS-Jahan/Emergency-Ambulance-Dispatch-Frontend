@@ -219,18 +219,18 @@ After each item: `bun run typecheck && bun run lint && bun run test` in the back
 | Item | Status |
 |---|---|
 | 1.1 profile menu crash | fixed and pushed |
-| 1.1 not-yours trip empty state | done (fc16291) |
-| 1.2 hospital coordinates in request responses | done (backend 30baf75, frontend ea21fc9) |
+| 1.1 not-yours trip empty state | done (frontend b705bf4) |
+| 1.2 hospital coordinates in request responses | done (backend 30baf75, frontend f443107) |
 | 1.3 Stripe business name | owner action in Stripe dashboard |
-| 2 contact | done (backend ee5f570) |
+| 2 contact | done (backend ee5f570, frontend 866c4f3) |
 | 3 request fields | done (backend 39ea824, frontend 97fcfd4) |
 | 4 patient extras | open |
-| 5.1 change password | done (backend 363833d) |
+| 5.1 change password | done (backend 363833d + fba634b rate limit, frontend 813119e) |
 | 5.2 forgot/reset password | blocked on email provider |
 | 6 driver applications | open |
 | 7 realtime | open |
-| 8 receipts | done (backend 00c4a64) |
-| 9 fares | done (backend 363833d) |
-| 10 maintenance | done (backend 363833d) |
+| 8 receipts | done (backend 00c4a64, frontend dce9e79, wording fix a05ff03) |
+| 9 fares | done (backend 363833d, frontend 813119e) |
+| 10 maintenance | done (backend 363833d, frontend 813119e); audit-log row from spec not written |
 | 11 notifications | blocked on provider |
-| 12 small items | hospital drawer & session expiry done |
+| 12 small items | hospital drawer and session-expiry redirect done (frontend dce9e79); Google sign-in, Bangla, accessibility pass open |
