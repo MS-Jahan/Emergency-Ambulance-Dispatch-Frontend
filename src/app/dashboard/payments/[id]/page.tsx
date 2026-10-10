@@ -124,7 +124,7 @@ export default function PaymentReceiptPage() {
           )}
           <Button
             onClick={handlePrint}
-            className="h-9 gap-2 bg-brand text-white hover:bg-brand/90"
+            className="h-9 gap-2 bg-brand text-brand-foreground hover:bg-brand/90"
           >
             <Printer className="h-4 w-4" /> Print / Save PDF
           </Button>
