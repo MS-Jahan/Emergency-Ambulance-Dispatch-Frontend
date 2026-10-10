@@ -351,11 +351,21 @@ export default function RequestDetailPage() {
 
   if (request.isError || !request.data) {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-2xl mx-auto py-8">
         <EmptyState
-          icon={<X className="h-6 w-6 text-slate" />}
-          title="Request not found"
-          description="It may have been removed or you may not have access."
+          icon={<X className="h-8 w-8 text-slate" />}
+          title="Trip not found"
+          description="This emergency request either does not exist or belongs to another account."
+          action={
+            <Button
+              type="button"
+              onClick={() => router.push('/dashboard')}
+              className="gap-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to dashboard
+            </Button>
+          }
         />
       </div>
     )

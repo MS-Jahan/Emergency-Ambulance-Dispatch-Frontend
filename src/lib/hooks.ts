@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import { api } from './api'
+import { api, ApiError } from './api'
 import { useAuth } from './store'
 import type {
   AdminFeedbackItem,
@@ -143,6 +143,15 @@ export function useRequestDetail(
       api.get<{ request: EmergencyRequest }>(`/requests/${id}`).then((d) => d.request),
     enabled: !!id,
     refetchInterval: opts?.refetchInterval as never,
+    retry: (failureCount, error) => {
+      if (
+        error instanceof ApiError &&
+        (error.status === 401 || error.status === 403 || error.status === 404)
+      ) {
+        return false
+      }
+      return failureCount < 1
+    },
   })
 }
 

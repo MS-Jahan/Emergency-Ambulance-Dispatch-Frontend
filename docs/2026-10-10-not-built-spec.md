@@ -219,7 +219,7 @@ After each item: `bun run typecheck && bun run lint && bun run test` in the back
 | Item | Status |
 |---|---|
 | 1.1 profile menu crash | fixed and pushed |
-| 1.1 not-yours trip empty state | open |
+| 1.1 not-yours trip empty state | done (fc16291) |
 | 1.2 hospital coordinates in request responses | open |
 | 1.3 Stripe business name | owner action in Stripe dashboard |
 | 2 contact | open |
