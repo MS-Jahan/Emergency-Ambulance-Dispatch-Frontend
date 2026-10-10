@@ -7,6 +7,7 @@ import { AmbulancesTable } from '@/components/admin/ambulances-table'
 import { HospitalsTable } from '@/components/admin/hospitals-table'
 import { UsersTable } from '@/components/admin/users-table'
 import { AuditLogTable } from '@/components/admin/audit-log-table'
+import { ContactMessagesTable } from '@/components/admin/contact-messages-table'
 import { ListSkeleton } from '@/components/shared/skeletons'
 
 const TAB =
@@ -30,6 +31,7 @@ function ResourcesContent() {
         <TabsTrigger value="ambulances" className={TAB}>Ambulances</TabsTrigger>
         <TabsTrigger value="hospitals" className={TAB}>Hospitals</TabsTrigger>
         <TabsTrigger value="users" className={TAB}>Users</TabsTrigger>
+        <TabsTrigger value="messages" className={TAB}>Messages</TabsTrigger>
         <TabsTrigger value="audit" className={TAB}>Audit logs</TabsTrigger>
       </TabsList>
       <TabsContent value="ambulances">
@@ -40,6 +42,9 @@ function ResourcesContent() {
       </TabsContent>
       <TabsContent value="users">
         <UsersTable />
+      </TabsContent>
+      <TabsContent value="messages">
+        <ContactMessagesTable />
       </TabsContent>
       <TabsContent value="audit">
         <AuditLogTable />
@@ -54,7 +59,7 @@ export default function AdminResourcesPage() {
       <div>
         <h1>Resources</h1>
         <p className="mt-1 text-sm text-slate">
-          Ambulances, hospitals, users and the audit trail
+          Ambulances, hospitals, users, contact messages and the audit trail
         </p>
       </div>
       <Suspense fallback={<ListSkeleton rows={6} />}>

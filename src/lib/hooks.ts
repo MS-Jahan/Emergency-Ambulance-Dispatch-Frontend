@@ -11,6 +11,9 @@ import type {
   Ambulance,
   AmbulanceType,
   AuditLog,
+  ContactCategory,
+  ContactMessage,
+  ContactStatus,
   DashboardStats,
   DriverProfile,
   EmergencyRequest,
@@ -629,6 +632,51 @@ export function useSubmitFeedback() {
       api.post<Feedback>('/feedback', data),
     onSuccess: (_data, vars) => {
       queryClient.invalidateQueries({ queryKey: ['feedback', vars.requestId] })
+    },
+  })
+}
+
+// Contact messages
+export function useSendContact() {
+  return useMutation({
+    mutationFn: (data: {
+      name: string
+      email: string
+      phone?: string
+      category?: ContactCategory
+      message: string
+      website?: string
+    }) => api.post<{ id: string }>('/contact', data),
+  })
+}
+
+export function useAdminContactMessages(
+  page = 1,
+  filters?: { status?: string; q?: string },
+) {
+  const params = new URLSearchParams({
+    page: String(page),
+    limit: '20',
+    ...(filters?.status && filters.status !== 'all' && { status: filters.status }),
+    ...(filters?.q && { q: filters.q }),
+  })
+  return useQuery({
+    queryKey: ['admin', 'contact-messages', page, filters],
+    queryFn: () =>
+      api.get<PaginatedData<ContactMessage>>(
+        `/admin/contact-messages?${params.toString()}`,
+      ),
+  })
+}
+
+export function useUpdateContactMessageStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: ContactStatus }) =>
+      api.patch<ContactMessage>(`/admin/contact-messages/${id}`, { status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin', 'contact-messages'] })
     },
   })
 }

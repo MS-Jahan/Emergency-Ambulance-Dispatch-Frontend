@@ -222,8 +222,8 @@ After each item: `bun run typecheck && bun run lint && bun run test` in the back
 | 1.1 not-yours trip empty state | done (fc16291) |
 | 1.2 hospital coordinates in request responses | done (backend 30baf75, frontend ea21fc9) |
 | 1.3 Stripe business name | owner action in Stripe dashboard |
-| 2 contact | open |
-| 3 request fields | open |
+| 2 contact | done (backend ee5f570) |
+| 3 request fields | done (backend 39ea824, frontend 97fcfd4) |
 | 4 patient extras | open |
 | 5.1 change password | open |
 | 5.2 forgot/reset password | blocked on email provider |
