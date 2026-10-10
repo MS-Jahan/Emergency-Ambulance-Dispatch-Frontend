@@ -141,12 +141,9 @@ export default function PaymentReceiptPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="font-heading text-2xl text-brand">RapidAid</span>
-              <span className="rounded-full bg-signal/10 px-2 py-0.5 text-xs font-bold text-signal">
-                24/7 Dispatch
-              </span>
             </div>
             <p className="text-xs text-slate">Emergency Ambulance Dispatch Service</p>
-            <p className="text-xs text-slate">Dhaka, Bangladesh · Hotline: 999</p>
+            <p className="text-xs text-slate">Emergency hotline: 999</p>
           </div>
           <div className="text-right space-y-1">
             <span className="text-xs font-bold uppercase tracking-wider text-slate">
@@ -181,9 +178,7 @@ export default function PaymentReceiptPage() {
           </div>
           <div className="space-y-1.5 sm:text-right">
             <span className="font-bold uppercase tracking-wider text-slate">Service Provider</span>
-            <p className="text-sm font-bold text-ink">RapidAid Dispatch Network</p>
-            <p className="text-slate">Support: billing@rapidaid.org</p>
-            <p className="text-slate">Emergency Operations Command</p>
+            <p className="text-sm font-bold text-ink">RapidAid</p>
           </div>
         </div>
 
@@ -245,7 +240,7 @@ export default function PaymentReceiptPage() {
                 <td className="py-3 font-medium text-ink">
                   <div>Emergency Ambulance Transport ({ambulanceType})</div>
                   <div className="text-[11px] text-slate font-normal">
-                    Priority medical dispatch and patient transport
+                    Ambulance dispatch and patient transport
                   </div>
                 </td>
                 <td className="py-3 text-center text-slate">1</td>
@@ -256,17 +251,6 @@ export default function PaymentReceiptPage() {
                   ${payment.amount.toLocaleString()}
                 </td>
               </tr>
-              <tr>
-                <td className="py-3 font-medium text-ink">
-                  <div>Paramedic / EMT Medical Support</div>
-                  <div className="text-[11px] text-slate font-normal">
-                    Vital signs monitoring & emergency stabilization
-                  </div>
-                </td>
-                <td className="py-3 text-center text-slate">1</td>
-                <td className="py-3 text-right text-slate">Included</td>
-                <td className="py-3 text-right font-bold text-ink tabular-nums">$0.00</td>
-              </tr>
             </tbody>
           </table>
 
@@ -276,10 +260,6 @@ export default function PaymentReceiptPage() {
               <div className="flex justify-between text-slate">
                 <span>Subtotal</span>
                 <span className="font-mono text-ink">${payment.amount.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-slate">
-                <span>Taxes & Fees (0%)</span>
-                <span className="font-mono text-ink">$0.00</span>
               </div>
               <div className="flex justify-between border-t border-hairline pt-2 text-sm font-bold text-ink">
                 <span>Total Paid</span>
@@ -304,13 +284,7 @@ export default function PaymentReceiptPage() {
             )}
           </div>
           <p className="text-[11px] leading-relaxed">
-            This receipt confirms payment for emergency medical dispatch services provided by
-            RapidAid. Keep this document for your health insurance, Medicare, or corporate expense
-            reimbursement claims. For billing inquiries, contact support at{' '}
-            <a href="mailto:billing@rapidaid.org" className="text-brand underline">
-              billing@rapidaid.org
-            </a>
-            .
+            This receipt confirms payment for the ambulance trip above. Keep it for your records.
           </p>
         </div>
       </Card>

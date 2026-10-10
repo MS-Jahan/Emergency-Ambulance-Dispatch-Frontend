@@ -512,8 +512,7 @@ function NewRequestContent() {
               </div>
 
               <p className="text-xs text-slate">
-                Fare depends on ambulance type and distance — you pay only
-                after arrival.
+                Fare depends on the ambulance type, and you pay only after the trip is completed.
               </p>
             </div>
           )}
