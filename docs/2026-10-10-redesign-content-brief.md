@@ -219,3 +219,42 @@ Legend: **Exists** = built today. **New** = needs building. **Backend** = needs 
 
 ## 6. Fixes made while writing this spec
 - Nav items `/driver/history`, `/admin/ambulances`, `/admin/hospitals`, `/admin/users`, `/admin/audit` pointed at pages that do not exist (404). Removed the driver one and collapsed the admin ones into a single "Resources" link to `/admin/resources`.
+
+---
+
+# Part 3. Context from the assignment repo (B7A7) and backend, and gaps found
+
+Sources: `../B7A7` (README, project-requirements, timeline) and `../ph-l2-b7-asnmnt-6` (schema, routes, docs). Submission deadline in the README: **2026-10-10, 11:59 PM**.
+
+## Mandatory rules that constrain the redesign
+| Rule | Current state | Action |
+|---|---|---|
+| Real API only; no mock/hardcoded data for core workflows | Homepage and `/hospitals` use 20 demo hospitals (hospitals are not the request workflow; labelled "Demo data") | Keep as agreed, but add a public read-only `GET /hospitals/public` (or drop auth on the list) in the backend and switch the homepage to it. This also removes the grading risk. |
+| No placeholder content, no lorem ipsum | Stats strip values and coverage text are static marketing copy | Source from `GET /admin/dashboard-stats` equivalent public endpoint, or phrase as claims that are true of the demo |
+| URL state sync (`useSearchParams`) for all filters, sort, search, pagination | **Not implemented** in dashboards, dispatch board, resource tables, hospitals page (only payment pages read params) | Add `?page=&status=&priority=&q=` to: patient request list, payment list, admin dispatch, ambulances, hospitals, users, audit log, `/hospitals` |
+| Metadata API (title, description, Open Graph) on all public pages | Only root layout has metadata; home is a client component | Convert home/about/services/faq/contact/hospitals to Server Components with `export const metadata`; keep only interactive parts (`NearbyHospitals`, demo) as client islands |
+| Server Components by default, `loading.tsx` on every data page | `loading.tsx` exists for admin, driver, dashboard only; many pages are `use client` | Split; add `loading.tsx` for `/hospitals` and request detail |
+| Min 18 pages with category coverage | 19 `page.tsx` files, but the provider(driver) group has 1 page, admin has no reports page | Add driver `/driver/history`, `/driver/earnings`, `/driver/profile`; admin `/admin/reports` (and optionally split resources) |
+| Three roles, route guard + conditional UI | Done (`proxy.ts`, role shell) | Re-verify after redesign |
+| One-click demo login, 3 roles | Done, now working | Add captions per role; verify on production URL |
+| Multi-step wizard | Request wizard exists | Keep |
+| Form standards: React Hook Form + Zod | Verify every form (contact, profile, admin create dialogs) | Audit |
+| Optimistic UI updates | Not confirmed | Add to driver status toggle, assignment, cancel |
+| Recharts data viz on admin | Done | Keep |
+| Stripe test-mode flow with success and cancel pages | Done | Test on production |
+| 20+ meaningful commits | Check `git log` count | Keep committing per feature |
+| Deployment, demo credentials, video | Pending | Set `NEXT_PUBLIC_API_BASE_URL` on Vercel (now tolerant of a missing `/api/v1`), run the seed on the production DB |
+
+## Backend facts that shape the UI (from schema and routes)
+- Models: User, DriverProfile (licenseNumber, status, currentLat/Lng, ambulance), Ambulance (plate, type, status, homeHospital), Hospital (name, address, lat, lng, phone), EmergencyRequest (pickup address/lat/lng, priority, status, ambulance, driver, destinationHospital, cancelReason, requestedAt/assignedAt/completedAt), RequestStatusLog (actor, from, to, note), Payment (amount, currency, stripeSessionId, status), Feedback (rating 1-5, comment, one per request), RefreshToken.
+- **Not in the backend** (so my Part 2 items marked "Backend" truly need backend work): patient medical info, saved addresses, emergency contacts, patient age/condition notes, ambulance type chosen at request time (type is only on the ambulance), fare estimate, earnings, contact form, forgot password, driver application, public stats, realtime push, feedback list endpoint, receipts. Remove or defer these from the design if backend time is not available.
+- Endpoints available: auth (register, login, google, refresh-token, logout), users (me get/patch), hospitals (list/get authenticated; create/patch/delete admin), ambulances (list, nearby, get, create/patch/delete admin), requests (list, my-assigned, get, create PATIENT, assign ADMIN, status, cancel), driver (me, status, location), admin (create driver, users list, role patch, dashboard-stats, audit-logs), payments (initiate, my, get, callback success/cancel, Stripe webhook), feedback (create PATIENT, list per request).
+- Earnings page can be derived on the frontend from completed trips + payments only if payment amount is visible to the driver; otherwise show trips-completed and ratings, which the backend does support (feedback per driver).
+
+## Revised priority order (given the deadline)
+1. URL-synced filters and pagination on every list (mandatory, currently missing).
+2. Metadata on public pages and Server Component split for home/about/services/faq/contact.
+3. Missing driver pages (history, profile, earnings-as-trips-and-ratings) and `/admin/reports`.
+4. Public hospitals endpoint on the backend, then drop the demo-data label.
+5. Optimistic updates, form audit, role-specific mockups on the home page.
+6. Deploy, set env vars, seed production DB, record video.
