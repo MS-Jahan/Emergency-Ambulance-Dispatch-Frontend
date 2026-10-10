@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     success: true,
     message: 'Logged out',
     data: null,
-  })
+  }, req)
   clearAuthCookies(res)
   return res
 }

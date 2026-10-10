@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { env } from '@/env'
 import { ACCESS_COOKIE, REFRESH_COOKIE, setAuthCookies } from '@/lib/auth-cookies'
+import { clientHeaders } from '@/lib/backend'
 
 type Tokens = { accessToken: string; refreshToken: string }
 
@@ -16,6 +17,7 @@ function forward(
   return fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/${relPath}`, {
     method,
     headers: {
+      ...clientHeaders(req),
       ...(body !== undefined && {
         'Content-Type': req.headers.get('content-type') ?? 'application/json',
       }),
@@ -31,7 +33,7 @@ async function rotateRefreshToken(req: NextRequest): Promise<Tokens | null> {
 
   const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { ...clientHeaders(req), 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken }),
   })
   if (!res.ok) return null

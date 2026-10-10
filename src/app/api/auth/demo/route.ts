@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(credentials),
-  })
+  }, req)
   const payload = await upstream.json()
 
   if (!upstream.ok) {
