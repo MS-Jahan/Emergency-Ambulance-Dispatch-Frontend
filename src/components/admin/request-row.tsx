@@ -39,24 +39,28 @@ interface RequestRowProps {
   onClick: () => void
   /** Flash once — set after a dispatch action touched this row. */
   pulsing?: boolean
+  /** Highlighted as the board's current selection. */
+  selected?: boolean
 }
 
 /**
  * Compact board card: priority + patient + address | wait time |
  * assigned unit footer. Whole card is one click target for the detail sheet.
  */
-export function RequestRow({ request, now, onClick, pulsing }: RequestRowProps) {
+export function RequestRow({ request, now, onClick, pulsing, selected }: RequestRowProps) {
   const terminal = TERMINAL.includes(request.status)
 
   return (
     <Card
       role="button"
       tabIndex={0}
+      aria-pressed={selected}
       aria-label={`Request from ${request.patient?.name ?? 'Patient'}`}
       className={cn(
         'rounded-2xl border border-hairline bg-gauze p-4 text-left cursor-pointer',
         'transition-all hover:border-brand/40 hover:shadow-sm hover:-translate-y-0.5',
         'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
+        selected && 'border-brand ring-2 ring-brand/30',
         pulsing && 'row-pulse',
       )}
       onClick={onClick}

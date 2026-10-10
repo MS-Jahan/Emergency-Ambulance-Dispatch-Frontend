@@ -1,124 +1,141 @@
-'use client'
+"use client";
 
-import { Suspense, useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { AlertTriangle, RadioTower, Search } from 'lucide-react'
-import { Input } from '@/components/ui/input'
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { AlertTriangle, RadioTower, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { RequestRow, waitLabel } from '@/components/admin/request-row'
-import { RequestDetailSheet } from '@/components/admin/request-detail-sheet'
-import { CardSkeleton } from '@/components/shared/skeletons'
-import { EmptyState } from '@/components/shared/empty-state'
-import { useAdminRequests } from '@/lib/hooks'
-import type { EmergencyRequest, RequestPriority } from '@/types/api'
+} from "@/components/ui/select";
+import { RequestRow, waitLabel } from "@/components/admin/request-row";
+import { AssignPanel } from "@/components/admin/assign-panel";
+import { RequestDetailSheet } from "@/components/admin/request-detail-sheet";
+import { CardSkeleton } from "@/components/shared/skeletons";
+import { EmptyState } from "@/components/shared/empty-state";
+import { useAdminRequests } from "@/lib/hooks";
+import type { EmergencyRequest, RequestPriority } from "@/types/api";
 
-const IN_PROGRESS: EmergencyRequest['status'][] = [
-  'ASSIGNED',
-  'EN_ROUTE_PICKUP',
-  'PICKED_UP',
-  'EN_ROUTE_HOSPITAL',
-]
+const IN_PROGRESS: EmergencyRequest["status"][] = [
+  "ASSIGNED",
+  "EN_ROUTE_PICKUP",
+  "PICKED_UP",
+  "EN_ROUTE_HOSPITAL",
+];
 
-const CLOSED: EmergencyRequest['status'][] = ['COMPLETED', 'CANCELLED']
+const CLOSED: EmergencyRequest["status"][] = ["COMPLETED", "CANCELLED"];
 
-const PRIORITIES: ('ALL' | RequestPriority)[] = ['ALL', 'CRITICAL', 'HIGH', 'NORMAL']
+const PRIORITIES: ("ALL" | RequestPriority)[] = [
+  "ALL",
+  "CRITICAL",
+  "HIGH",
+  "NORMAL",
+];
 
 interface Column {
-  title: string
-  dot: string
-  rows: EmergencyRequest[]
+  title: string;
+  dot: string;
+  rows: EmergencyRequest[];
 }
 
 function DispatchBoardContent() {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const priorityFilter = searchParams.get('priority') ?? 'ALL'
-  const q = searchParams.get('q') ?? ''
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const priorityFilter = searchParams.get("priority") ?? "ALL";
+  const q = searchParams.get("q") ?? "";
 
   const board = useAdminRequests(
     1,
     100,
-    priorityFilter !== 'ALL' ? { priority: priorityFilter } : undefined,
+    priorityFilter !== "ALL" ? { priority: priorityFilter } : undefined,
     { refetchInterval: 5000 },
-  )
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [pulseId, setPulseId] = useState<string | null>(null)
+  );
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [sheetId, setSheetId] = useState<string | null>(null);
+  const [pulseId, setPulseId] = useState<string | null>(null);
 
   const pulseRow = (id: string) => {
-    setPulseId(id)
-    setTimeout(() => setPulseId((cur) => (cur === id ? null : cur)), 1000)
-  }
+    setPulseId(id);
+    setTimeout(() => setPulseId((cur) => (cur === id ? null : cur)), 1000);
+  };
 
   // Parent-owned clock: RequestRow re-renders its wait label on this tick
   // without owning timers itself.
-  const [now, setNow] = useState(() => Date.now())
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const timer = setInterval(() => setNow(Date.now()), 30_000)
-    return () => clearInterval(timer)
-  }, [])
+    const timer = setInterval(() => setNow(Date.now()), 30_000);
+    return () => clearInterval(timer);
+  }, []);
 
   const setPriority = (val: string | null) => {
-    const sp = new URLSearchParams(searchParams.toString())
-    if (!val || val === 'ALL') {
-      sp.delete('priority')
+    const sp = new URLSearchParams(searchParams.toString());
+    if (!val || val === "ALL") {
+      sp.delete("priority");
     } else {
-      sp.set('priority', val)
+      sp.set("priority", val);
     }
-    router.push(`/admin/dispatch?${sp.toString()}`)
-  }
+    router.push(`/admin/dispatch?${sp.toString()}`);
+  };
 
   const setQuery = (val: string) => {
-    const sp = new URLSearchParams(searchParams.toString())
+    const sp = new URLSearchParams(searchParams.toString());
     if (val.trim()) {
-      sp.set('q', val)
+      sp.set("q", val);
     } else {
-      sp.delete('q')
+      sp.delete("q");
     }
-    router.replace(`/admin/dispatch?${sp.toString()}`)
-  }
+    router.replace(`/admin/dispatch?${sp.toString()}`);
+  };
 
-  const allItems = board.data?.items ?? []
-  const needle = q.trim().toLowerCase()
+  const allItems = board.data?.items ?? [];
+  const needle = q.trim().toLowerCase();
   const items = needle
     ? allItems.filter(
         (r) =>
-          (r.patient?.name ?? '').toLowerCase().includes(needle) ||
+          (r.patient?.name ?? "").toLowerCase().includes(needle) ||
           r.pickupAddress.toLowerCase().includes(needle),
       )
-    : allItems
+    : allItems;
   // Real data only: critical requests that still have no ambulance.
   const unassignedCritical = allItems.filter(
-    (r) => r.status === 'PENDING' && r.priority === 'CRITICAL',
-  )
+    (r) => r.status === "PENDING" && r.priority === "CRITICAL",
+  );
   const oldestCritical = unassignedCritical.reduce<string | null>(
     (oldest, r) =>
       oldest === null || r.requestedAt < oldest ? r.requestedAt : oldest,
     null,
-  )
+  );
   const columns: Column[] = [
     {
-      title: 'Pending',
-      dot: 'bg-amber',
-      rows: items.filter((r) => r.status === 'PENDING'),
+      title: "Pending",
+      dot: "bg-amber",
+      rows: items.filter((r) => r.status === "PENDING"),
     },
     {
-      title: 'In progress',
-      dot: 'bg-oxygen',
+      title: "In progress",
+      dot: "bg-oxygen",
       rows: items.filter((r) => IN_PROGRESS.includes(r.status)),
     },
     {
-      title: 'Completed',
-      dot: 'bg-slate',
+      title: "Done",
+      dot: "bg-slate",
       rows: items.filter((r) => CLOSED.includes(r.status)),
     },
-  ]
-  const selected = selectedId ? items.find((r) => r.id === selectedId) : undefined
+  ];
+  const selected = selectedId
+    ? items.find((r) => r.id === selectedId)
+    : undefined;
+  const sheetRequest = sheetId
+    ? allItems.find((r) => r.id === sheetId)
+    : undefined;
+  // Pending rows feed the assign panel; any other row opens the detail sheet.
+  const selectRow = (r: EmergencyRequest) => {
+    if (r.status === "PENDING") setSelectedId(r.id);
+    else setSheetId(r.id);
+  };
 
   return (
     <div className="space-y-5">
@@ -144,15 +161,20 @@ function DispatchBoardContent() {
             />
           </div>
           <Select value={priorityFilter} onValueChange={setPriority}>
-            <SelectTrigger className="h-10 w-40 bg-paper border-hairline" aria-label="Filter by priority">
+            <SelectTrigger
+              className="h-10 w-40 bg-paper border-hairline"
+              aria-label="Filter by priority"
+            >
               <SelectValue>
-                {priorityFilter === 'ALL' ? 'All priorities' : priorityFilter.toLowerCase()}
+                {priorityFilter === "ALL"
+                  ? "All priorities"
+                  : priorityFilter.toLowerCase()}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {PRIORITIES.map((p) => (
                 <SelectItem key={p} value={p}>
-                  {p === 'ALL' ? 'All priorities' : p.toLowerCase()}
+                  {p === "ALL" ? "All priorities" : p.toLowerCase()}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -167,8 +189,8 @@ function DispatchBoardContent() {
         >
           <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden />
           {unassignedCritical.length} critical request
-          {unassignedCritical.length === 1 ? '' : 's'} unassigned, oldest waiting{' '}
-          {waitLabel(oldestCritical, now)}
+          {unassignedCritical.length === 1 ? "" : "s"} unassigned, oldest
+          waiting {waitLabel(oldestCritical, now)}
         </div>
       )}
 
@@ -185,50 +207,64 @@ function DispatchBoardContent() {
           description="Try refreshing the page."
         />
       ) : (
-        <div className="grid gap-4 lg:grid-cols-3 items-start">
-          {columns.map((col) => (
-            <section
-              key={col.title}
-              aria-label={`${col.title} requests`}
-              className="flex min-w-0 flex-col rounded-3xl border border-hairline bg-paper p-4"
-            >
-              <div className="flex items-center justify-between pb-2">
-                <h2 className="flex items-center gap-2 text-base font-extrabold text-ink">
-                  <span className={`h-2 w-2 rounded-full ${col.dot}`} aria-hidden />
-                  {col.title} · {col.rows.length}
-                </h2>
-              </div>
-              <div className="mt-1 max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto pr-1">
-                {col.rows.length === 0 ? (
-                  <p className="rounded-2xl border border-dashed border-hairline p-4 text-center text-sm text-slate">
-                    Empty
-                  </p>
-                ) : (
-                  col.rows.map((r) => (
-                    <RequestRow
-                      key={r.id}
-                      request={r}
-                      now={now}
-                      pulsing={r.id === pulseId}
-                      onClick={() => setSelectedId(r.id)}
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem] items-start">
+          <div className="grid gap-4 lg:grid-cols-3 items-start">
+            {columns.map((col) => (
+              <section
+                key={col.title}
+                aria-label={`${col.title} requests`}
+                className="flex min-w-0 flex-col rounded-3xl border border-hairline bg-paper p-4"
+              >
+                <div className="flex items-center justify-between pb-2">
+                  <h2 className="flex items-center gap-2 text-base font-extrabold text-ink">
+                    <span
+                      className={`h-2 w-2 rounded-full ${col.dot}`}
+                      aria-hidden
                     />
-                  ))
-                )}
-              </div>
-            </section>
-          ))}
+                    {col.title} · {col.rows.length}
+                  </h2>
+                </div>
+                <div className="mt-1 max-h-[calc(100vh-18rem)] space-y-3 overflow-y-auto pr-1">
+                  {col.rows.length === 0 ? (
+                    <p className="rounded-2xl border border-dashed border-hairline p-4 text-center text-sm text-slate">
+                      Empty
+                    </p>
+                  ) : (
+                    col.rows.map((r) => (
+                      <RequestRow
+                        key={r.id}
+                        request={r}
+                        now={now}
+                        pulsing={r.id === pulseId}
+                        selected={r.id === selectedId}
+                        onClick={() => selectRow(r)}
+                      />
+                    ))
+                  )}
+                </div>
+              </section>
+            ))}
+          </div>
+          <AssignPanel
+            request={selected}
+            onAssigned={(id) => {
+              pulseRow(id);
+              setSelectedId(null);
+            }}
+            onOpenDetails={setSheetId}
+          />
         </div>
       )}
 
-      {selected && (
+      {sheetRequest && (
         <RequestDetailSheet
-          request={selected}
-          onClose={() => setSelectedId(null)}
+          request={sheetRequest}
+          onClose={() => setSheetId(null)}
           onAction={pulseRow}
         />
       )}
     </div>
-  )
+  );
 }
 
 export default function DispatchBoardPage() {
@@ -244,5 +280,5 @@ export default function DispatchBoardPage() {
     >
       <DispatchBoardContent />
     </Suspense>
-  )
+  );
 }
