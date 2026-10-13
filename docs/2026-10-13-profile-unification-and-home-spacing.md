@@ -28,3 +28,15 @@ un-migrated backend produces an error toast instead of a false success.
 
 ## Rollout
 Backend first (migration + deploy), then frontend; see the backend doc.
+
+## Rollout log (2026-10-13)
+
+1. Backend `prisma migrate deploy` against Neon: only `20261013120000_user_avatar` was pending; applied.
+2. Backend pushed (`5aef8d3`); Vercel built it, but the production domain
+   `emergency-ambulance-dispatch-api.vercel.app` stayed on an older deployment
+   (the domain is pinned, so new production deployments are not served until it
+   is re-pointed). Fixed with `vercel alias set <new deployment> emergency-ambulance-dispatch-api.vercel.app`.
+   Remember this for every backend release: check `vercel inspect https://emergency-ambulance-dispatch-api.vercel.app`.
+3. Live check on the demo patient: invalid `avatarUrl` -> 400; data URL saved and
+   returned by `/users/me`; set back to `null`.
+4. Frontend pushed (`0c1b887`) and live on the production alias.
