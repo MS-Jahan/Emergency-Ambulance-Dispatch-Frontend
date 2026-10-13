@@ -14,8 +14,11 @@ export function setAuthCookies(
   res: NextResponse,
   tokens: { accessToken: string; refreshToken: string },
 ) {
-  // 15m matches backend JWT_ACCESS_EXPIRES_IN; 7d matches JWT_REFRESH_EXPIRES_IN
-  res.cookies.set(ACCESS_COOKIE, tokens.accessToken, { ...base, maxAge: 60 * 15 })
+  // The access JWT itself lives 15m (backend JWT_ACCESS_EXPIRES_IN) and the
+  // backend enforces that. The cookie outlives it, like the refresh cookie (7d),
+  // so proxy.ts can still read the role on page navigations; an expired token
+  // is renewed by /api/proxy on the first 401.
+  res.cookies.set(ACCESS_COOKIE, tokens.accessToken, { ...base, maxAge: 60 * 60 * 24 * 7 })
   res.cookies.set(REFRESH_COOKIE, tokens.refreshToken, {
     ...base,
     maxAge: 60 * 60 * 24 * 7,

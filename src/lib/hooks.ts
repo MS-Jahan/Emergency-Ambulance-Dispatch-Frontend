@@ -38,6 +38,25 @@ export function roleHome(role: Role): string {
   return '/dashboard'
 }
 
+// Where each role may go after signing in. A `next` link left over from another
+// account (for example /admin) must not carry a patient into the admin area.
+const AREA_BY_PREFIX: Array<[string, Role]> = [
+  ['/admin', 'ADMIN'],
+  ['/driver', 'DRIVER'],
+  ['/dashboard', 'PATIENT'],
+]
+
+export function postLoginTarget(redirectPath: string | null | undefined, role: Role): string {
+  if (!redirectPath || !redirectPath.startsWith('/') || redirectPath.startsWith('//')) {
+    return roleHome(role)
+  }
+  const area = AREA_BY_PREFIX.find(
+    ([prefix]) => redirectPath === prefix || redirectPath.startsWith(`${prefix}/`) || redirectPath.startsWith(`${prefix}?`),
+  )
+  if (area && area[1] !== role) return roleHome(role)
+  return redirectPath
+}
+
 export function useLogin(redirectPath?: string | null) {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
@@ -49,13 +68,11 @@ export function useLogin(redirectPath?: string | null) {
     onSuccess: (data) => {
       // Replace the cached 401 from the signed-out /users/me probe, or
       // SessionBootstrap reads it against the new user and logs them out.
+      // Drop everything the previous account fetched before seeding this one.
+      queryClient.clear()
       queryClient.setQueryData(['auth', 'me'], data.user)
       setUser(data.user)
-      const target =
-        redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
-          ? redirectPath
-          : roleHome(data.user.role)
-      router.push(target)
+      router.push(postLoginTarget(redirectPath, data.user.role))
     },
   })
 }
@@ -75,13 +92,11 @@ export function useRegister(redirectPath?: string | null) {
     onSuccess: (data) => {
       // Replace the cached 401 from the signed-out /users/me probe, or
       // SessionBootstrap reads it against the new user and logs them out.
+      // Drop everything the previous account fetched before seeding this one.
+      queryClient.clear()
       queryClient.setQueryData(['auth', 'me'], data.user)
       setUser(data.user)
-      const target =
-        redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
-          ? redirectPath
-          : roleHome(data.user.role)
-      router.push(target)
+      router.push(postLoginTarget(redirectPath, data.user.role))
     },
   })
 }
@@ -97,20 +112,17 @@ export function useDemoLogin(redirectPath?: string | null) {
     onSuccess: (data) => {
       // Replace the cached 401 from the signed-out /users/me probe, or
       // SessionBootstrap reads it against the new user and logs them out.
+      // Drop everything the previous account fetched before seeding this one.
+      queryClient.clear()
       queryClient.setQueryData(['auth', 'me'], data.user)
       setUser(data.user)
-      const target =
-        redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
-          ? redirectPath
-          : roleHome(data.user.role)
-      router.push(target)
+      router.push(postLoginTarget(redirectPath, data.user.role))
     },
   })
 }
 
 export function useLogout() {
   const logout = useAuth((s) => s.logout)
-  const router = useRouter()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -118,7 +130,10 @@ export function useLogout() {
     onSuccess: () => {
       logout()
       queryClient.clear()
-      router.push('/login')
+      // Full page load: also discards the client router cache, so pages of the
+      // account that just signed out cannot be shown to the next one.
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+      window.location.assign('/login')
     },
   })
 }

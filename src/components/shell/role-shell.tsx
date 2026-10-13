@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { LogOut, Menu, Phone, UserCircle } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -17,9 +17,19 @@ import {
 import { UserAvatar } from '@/components/profile/user-avatar'
 import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { useAuth } from '@/lib/store'
-import { useLogout } from '@/lib/hooks'
-import type { User } from '@/types/api'
+import { roleHome, useLogout, useMe } from '@/lib/hooks'
+import type { Role, User } from '@/types/api'
+import { Spinner } from '@/components/shared/loading'
 import { adminNav, driverNav, patientNav, type NavItem } from './nav-config'
+
+// Which role each shell is for. The signed-in role comes from /users/me (the
+// server's answer), so a wrong-area visit is turned around before any
+// page content, and its API calls, are mounted.
+const ROLE_BY_VARIANT: Record<keyof typeof NAV_BY_VARIANT, Role> = {
+  sidebar: 'PATIENT',
+  minimal: 'DRIVER',
+  rail: 'ADMIN',
+}
 
 const NAV_BY_VARIANT = {
   sidebar: patientNav,
@@ -223,7 +233,21 @@ interface RoleShellProps {
 export function RoleShell({ variant, children }: RoleShellProps) {
   const nav = NAV_BY_VARIANT[variant]
   const user = useAuth((s) => s.user)
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  // /users/me is the source of truth; the persisted store user can be stale.
+  const me = useMe()
+  const confirmedRole = me.data?.role
+  const claimedRole = confirmedRole ?? user?.role
+  const wrongArea = !!claimedRole && claimedRole !== ROLE_BY_VARIANT[variant]
+  useEffect(() => {
+    // Only redirect on the server's answer, so a stale stored role cannot bounce
+    // a signed-in user back and forth with proxy.ts.
+    if (confirmedRole && confirmedRole !== ROLE_BY_VARIANT[variant]) {
+      router.replace(roleHome(confirmedRole))
+    }
+  }, [confirmedRole, variant, router])
 
   const isRail = variant === 'rail'
   // Patient and driver shells use pill tabs in the top bar; admin keeps its rail.
@@ -274,7 +298,7 @@ export function RoleShell({ variant, children }: RoleShellProps) {
 
       <div className={isRail ? 'flex' : ''}>
         {isRail && (
-          <aside className="hidden lg:flex fixed inset-y-16 left-0 w-16 flex-col items-center bg-paper border-r border-hairline print:hidden">
+          <aside className="hidden lg:flex fixed bottom-0 left-0 top-16 w-16 flex-col items-center bg-paper border-r border-hairline print:hidden">
             <NavLinks items={nav} layout="rail" />
           </aside>
         )}
@@ -295,7 +319,15 @@ export function RoleShell({ variant, children }: RoleShellProps) {
         <main
           className={`min-w-0 flex-1 pb-24 lg:pb-8 print:p-0 print:pb-0 ${isRail ? 'lg:pl-16 print:pl-0' : ''}`}
         >
-          <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 print:max-w-none print:p-0 print:m-0">{children}</div>
+          <div className="max-w-6xl mx-auto px-4 py-6 sm:px-6 print:max-w-none print:p-0 print:m-0">
+            {wrongArea ? (
+              <div className="flex justify-center py-24">
+                <Spinner className="h-6 w-6" label="Taking you to your dashboard" />
+              </div>
+            ) : (
+              children
+            )}
+          </div>
         </main>
       </div>
 

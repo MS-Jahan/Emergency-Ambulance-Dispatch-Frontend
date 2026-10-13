@@ -7,6 +7,15 @@ const patientRoutes = ['/dashboard']
 const driverRoutes = ['/driver']
 const adminRoutes = ['/admin']
 
+// Reading the role here only decides which page to show. It is not a security
+// boundary: the token is not verified, and the backend enforces roles on every
+// API call.
+const HOME_BY_ROLE: Record<string, string> = {
+  PATIENT: '/dashboard',
+  DRIVER: '/driver',
+  ADMIN: '/admin',
+}
+
 function decodeToken(token: string): { role?: string } | null {
   try {
     // Token is JWT, we can peek at the payload without verification
@@ -62,16 +71,16 @@ export function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
-  // Has token: can't access auth routes
-  if (authRoutes.includes(pathname)) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-
   // Decode token to check role
   const decoded = decodeToken(accessToken)
   const role = decoded?.role as string | undefined
 
-  if (!role) {
+  // Signed-in visitors skip the auth pages, straight to their own area.
+  if (authRoutes.includes(pathname) && role && role in HOME_BY_ROLE) {
+    return NextResponse.redirect(new URL(HOME_BY_ROLE[role], request.url))
+  }
+
+  if (!role || !(role in HOME_BY_ROLE)) {
     // Token invalid, redirect to login
     const loginUrl = new URL('/login', request.url)
     const nextPath = pathname + request.nextUrl.search
@@ -86,13 +95,13 @@ export function proxy(request: NextRequest) {
 
   // Role-based routing
   if (patientRoutes.some((r) => pathname.startsWith(r)) && role !== 'PATIENT') {
-    return NextResponse.redirect(new URL(`/${role.toLowerCase()}`, request.url))
+    return NextResponse.redirect(new URL(HOME_BY_ROLE[role], request.url))
   }
   if (driverRoutes.some((r) => pathname.startsWith(r)) && role !== 'DRIVER') {
-    return NextResponse.redirect(new URL(`/${role === 'ADMIN' ? 'admin' : 'dashboard'}`, request.url))
+    return NextResponse.redirect(new URL(HOME_BY_ROLE[role], request.url))
   }
   if (adminRoutes.some((r) => pathname.startsWith(r)) && role !== 'ADMIN') {
-    return NextResponse.redirect(new URL(`/${role === 'DRIVER' ? 'driver' : 'dashboard'}`, request.url))
+    return NextResponse.redirect(new URL(HOME_BY_ROLE[role], request.url))
   }
 
   return NextResponse.next()

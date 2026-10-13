@@ -12,14 +12,14 @@ export async function POST(req: NextRequest) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),
-    }).catch(() => null)
+    }, req).catch(() => null)
   }
 
   const res = NextResponse.json({
     success: true,
     message: 'Logged out',
     data: null,
-  }, req)
+  })
   clearAuthCookies(res)
   return res
 }

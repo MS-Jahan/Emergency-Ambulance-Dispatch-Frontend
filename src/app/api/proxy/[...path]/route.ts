@@ -27,10 +27,31 @@ function forward(
   })
 }
 
-async function rotateRefreshToken(req: NextRequest): Promise<Tokens | null> {
-  const refreshToken = req.cookies.get(REFRESH_COOKIE)?.value
-  if (!refreshToken) return null
+// The backend rotates refresh tokens: a used token is revoked at once. When a
+// page fires several requests together after the access token expires, each
+// would try to rotate the same token and all but one would fail and bounce the
+// user to the login page. Share one rotation per refresh token on this server
+// and remember the result briefly for requests that arrive a moment later.
+const inflight = new Map<string, Promise<Tokens | null>>()
+const SHARE_MS = 15_000
 
+function rotateRefreshToken(req: NextRequest): Promise<Tokens | null> {
+  const refreshToken = req.cookies.get(REFRESH_COOKIE)?.value
+  if (!refreshToken) return Promise.resolve(null)
+
+  const existing = inflight.get(refreshToken)
+  if (existing) return existing
+
+  const attempt = callRefresh(req, refreshToken)
+  inflight.set(refreshToken, attempt)
+  void attempt.then((tokens) => {
+    // Failures are not worth sharing; successes are, for a few seconds.
+    setTimeout(() => inflight.delete(refreshToken), tokens ? SHARE_MS : 0)
+  })
+  return attempt
+}
+
+async function callRefresh(req: NextRequest, refreshToken: string): Promise<Tokens | null> {
   const res = await fetch(`${env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`, {
     method: 'POST',
     headers: { ...clientHeaders(req), 'Content-Type': 'application/json' },
