@@ -119,7 +119,11 @@ export default function AdminDashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <RequestsAreaChart items={recent.data?.items ?? []} />
+          <RequestsAreaChart
+            items={recent.data?.items ?? []}
+            loading={recent.isLoading}
+            failed={recent.isError}
+          />
         </div>
         <StatusDonutCard>
           {stats.data ? (

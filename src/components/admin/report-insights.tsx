@@ -3,6 +3,8 @@
 import { Star } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/shared/empty-state'
+import { ChartSkeleton, InlineLoading } from '@/components/shared/loading'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useAdminFeedback, useReportSummary } from '@/lib/hooks'
 
 function Bars({
@@ -46,35 +48,55 @@ export function ReportInsights() {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="gap-3 border-hairline bg-paper p-5">
           <h3 className="text-base text-ink">Requests per day</h3>
-          <Bars
-            items={days.map((d) => ({ label: label(d.date), value: d.requests }))}
-            format={(v) => String(v)}
-          />
+          {summary.isLoading ? (
+            <ChartSkeleton />
+          ) : (
+            <Bars
+              items={days.map((d) => ({ label: label(d.date), value: d.requests }))}
+              format={(v) => String(v)}
+            />
+          )}
         </Card>
         <Card className="gap-3 border-hairline bg-paper p-5">
           <h3 className="text-base text-ink">Response time (min)</h3>
-          <Bars
-            items={days.map((d) => ({ label: label(d.date), value: d.avgResponseMinutes }))}
-            format={(v) => v.toFixed(1)}
-          />
+          {summary.isLoading ? (
+            <ChartSkeleton />
+          ) : (
+            <Bars
+              items={days.map((d) => ({ label: label(d.date), value: d.avgResponseMinutes }))}
+              format={(v) => v.toFixed(1)}
+            />
+          )}
           <p className="text-xs text-slate">Request to assignment</p>
         </Card>
         <Card className="gap-3 border-hairline bg-paper p-5">
           <h3 className="text-base text-ink">Requests by ambulance type</h3>
-          <Bars
-            items={Object.entries(summary.data?.byAmbulanceType ?? {}).map(([k, v]) => ({
-              label: k,
-              value: v,
-            }))}
-            format={(v) => String(v)}
-          />
+          {summary.isLoading ? (
+            <ChartSkeleton />
+          ) : (
+            <Bars
+              items={Object.entries(summary.data?.byAmbulanceType ?? {}).map(([k, v]) => ({
+                label: k,
+                value: v,
+              }))}
+              format={(v) => String(v)}
+            />
+          )}
         </Card>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="gap-3 border-hairline bg-paper p-5">
           <h3 className="text-base text-ink">Cancellation reasons</h3>
-          {summary.data && summary.data.cancellationReasons.length > 0 ? (
+          {summary.isLoading ? (
+            <div className="space-y-2" aria-busy="true">
+              <InlineLoading label="Loading cancellations…" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-4/5" />
+            </div>
+          ) : summary.isError ? (
+            <p className="text-sm text-signal">Could not load cancellation reasons.</p>
+          ) : summary.data && summary.data.cancellationReasons.length > 0 ? (
             <ul className="space-y-2 text-sm">
               {summary.data.cancellationReasons.slice(0, 5).map((r) => (
                 <li key={r.reason} className="flex justify-between gap-3 text-ink">
@@ -89,7 +111,16 @@ export function ReportInsights() {
         </Card>
         <Card className="gap-3 border-hairline bg-paper p-5">
           <h3 className="text-base text-ink">Recent feedback</h3>
-          {feedback.data && feedback.data.items.length > 0 ? (
+          {feedback.isLoading ? (
+            <div className="space-y-3" aria-busy="true">
+              <InlineLoading label="Loading feedback…" />
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          ) : feedback.isError ? (
+            <p className="text-sm text-signal">Could not load feedback.</p>
+          ) : feedback.data && feedback.data.items.length > 0 ? (
             <ul className="space-y-3">
               {feedback.data.items.map((f) => (
                 <li key={f.id} className="space-y-0.5">

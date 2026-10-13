@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts'
 import { Card } from '@/components/ui/card'
+import { ChartSkeleton } from '@/components/shared/loading'
 import type { EmergencyRequest } from '@/types/api'
 
 const DAYS = 14
@@ -47,7 +48,15 @@ export function buildSeries(items: EmergencyRequest[], today: Date): DayPoint[] 
   }))
 }
 
-export function RequestsAreaChart({ items }: { items: EmergencyRequest[] }) {
+export function RequestsAreaChart({
+  items,
+  loading = false,
+  failed = false,
+}: {
+  items: EmergencyRequest[]
+  loading?: boolean
+  failed?: boolean
+}) {
   // today lives in state so render stays pure; the series derives from it.
   const [today] = useState(() => new Date())
   const series = useMemo(() => buildSeries(items, today), [items, today])
@@ -57,7 +66,13 @@ export function RequestsAreaChart({ items }: { items: EmergencyRequest[] }) {
     <Card className="p-5 border border-hairline">
       <h2 className="text-lg">Requests over time</h2>
       <p className="text-xs text-slate">Last 14 days</p>
-      {empty ? (
+      {loading ? (
+        <ChartSkeleton className="mt-4 h-56" />
+      ) : failed ? (
+        <div className="mt-6 flex h-56 items-center justify-center text-sm text-signal">
+          Could not load request activity. Refresh to try again.
+        </div>
+      ) : empty ? (
         <div className="mt-6 flex h-56 items-center justify-center text-sm text-slate">
           No requests in this window yet.
         </div>

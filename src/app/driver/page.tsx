@@ -13,6 +13,7 @@ import { PriorityBadge } from '@/components/shared/priority-badge'
 import { cn } from '@/lib/utils'
 import { CardSkeleton } from '@/components/shared/skeletons'
 import { EmptyState } from '@/components/shared/empty-state'
+import { InlineLoading } from '@/components/shared/loading'
 import {
   useMyAssignedRequests,
   useMyDriverProfile,
@@ -394,9 +395,13 @@ export default function DriverPage() {
       <details className="rounded-2xl border border-hairline bg-paper px-4 py-3">
         <summary className="cursor-pointer select-none text-sm font-semibold text-ink">
           Today&apos;s trips{' '}
-          <span className="font-normal text-slate">({past.length})</span>
+          {!assigned.isLoading && (
+            <span className="font-normal text-slate">({past.length})</span>
+          )}
         </summary>
-        {past.length === 0 ? (
+        {assigned.isLoading ? (
+          <InlineLoading label="Loading today's trips…" className="mt-3" />
+        ) : past.length === 0 ? (
           <p className="mt-3 text-sm text-slate">No trips completed today.</p>
         ) : (
           <div className="mt-3 space-y-2">

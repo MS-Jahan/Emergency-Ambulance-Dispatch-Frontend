@@ -137,7 +137,7 @@ export function HospitalsDirectoryView() {
     router.push(`/hospitals?${sp.toString()}`)
   }
 
-  const isDemo = liveItems.length === 0
+  const isDemo = !hospitalsQuery.isLoading && liveItems.length === 0
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null)
 
   return (

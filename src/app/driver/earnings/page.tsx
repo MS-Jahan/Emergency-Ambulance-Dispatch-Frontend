@@ -26,6 +26,7 @@ import {
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { EmptyState } from '@/components/shared/empty-state'
 import { ListSkeleton } from '@/components/shared/skeletons'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useDriverStats, useMyAssignedRequests } from '@/lib/hooks'
 import type { EmergencyRequest } from '@/types/api'
 
@@ -112,7 +113,11 @@ function EarningsContent() {
             <Banknote className="h-4 w-4 text-oxygen" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            ${(stats.data?.fareTotal ?? totalEarnings).toLocaleString()}
+            {stats.isLoading ? (
+              <Skeleton className="mt-1 h-8 w-24" />
+            ) : (
+              `$${(stats.data?.fareTotal ?? totalEarnings).toLocaleString()}`
+            )}
           </p>
           <p className="text-xs text-slate">Paid fares on your trips</p>
         </Card>
@@ -123,7 +128,11 @@ function EarningsContent() {
             <CheckCircle2 className="h-4 w-4 text-oxygen" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            {stats.data?.completedTrips ?? completedRequests.length}
+            {stats.isLoading ? (
+              <Skeleton className="mt-1 h-8 w-12" />
+            ) : (
+              (stats.data?.completedTrips ?? completedRequests.length)
+            )}
           </p>
           <p className="text-xs text-slate">
             {allRequests.length} total assigned dispatches
@@ -136,7 +145,12 @@ function EarningsContent() {
             <Clock className="h-4 w-4 text-amber" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            {stats.data?.activeTrips ?? allRequests.filter((r) => r.status !== 'COMPLETED' && r.status !== 'CANCELLED').length}
+            {stats.isLoading ? (
+              <Skeleton className="mt-1 h-8 w-12" />
+            ) : (
+              (stats.data?.activeTrips ??
+                allRequests.filter((r) => r.status !== 'COMPLETED' && r.status !== 'CANCELLED').length)
+            )}
           </p>
           <p className="text-xs text-slate">Assigned and not yet completed</p>
         </Card>
@@ -147,13 +161,23 @@ function EarningsContent() {
             <Star className="h-4 w-4 text-amber" />
           </div>
           <p className="font-heading text-3xl font-normal text-ink tabular-nums">
-            {stats.data?.averageRating != null ? stats.data.averageRating.toFixed(1) : '—'}
+            {stats.isLoading ? (
+              <Skeleton className="mt-1 h-8 w-16" />
+            ) : stats.data?.averageRating != null ? (
+              stats.data.averageRating.toFixed(1)
+            ) : (
+              '—'
+            )}
           </p>
-          <p className="text-xs text-slate">
-            {stats.data?.ratingCount
-              ? `${stats.data.ratingCount} patient rating${stats.data.ratingCount === 1 ? '' : 's'}`
-              : 'No ratings yet'}
-          </p>
+          {stats.isLoading ? (
+            <Skeleton className="h-3 w-24" />
+          ) : (
+            <p className="text-xs text-slate">
+              {stats.data?.ratingCount
+                ? `${stats.data.ratingCount} patient rating${stats.data.ratingCount === 1 ? '' : 's'}`
+                : 'No ratings yet'}
+            </p>
+          )}
         </Card>
       </div>
 

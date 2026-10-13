@@ -31,6 +31,7 @@ import { StatusBadge } from '@/components/shared/status-badge'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { ListSkeleton } from '@/components/shared/skeletons'
 import { EmptyState } from '@/components/shared/empty-state'
+import { InlineLoading } from '@/components/shared/loading'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -238,6 +239,14 @@ function FeedbackForm({ requestId }: { requestId: string }) {
   })
 
   const currentRating = watch('rating')
+
+  if (existing.isLoading) {
+    return (
+      <Card className="p-5" aria-busy="true">
+        <InlineLoading label="Loading feedback…" />
+      </Card>
+    )
+  }
 
   if (alreadySubmitted) {
     const fb = existing.data![0]

@@ -24,6 +24,7 @@ import { QuickActionButton } from '@/components/quick-action-button'
 import { RequestWizardStep } from '@/components/request-wizard-step'
 import { PriorityBadge } from '@/components/shared/priority-badge'
 import { useCreateRequest, useFares, useHospitals } from '@/lib/hooks'
+import { InlineLoading } from '@/components/shared/loading'
 import { useRequestWizard } from '@/lib/store'
 import { ApiError } from '@/lib/api'
 import { cn } from '@/lib/utils'
@@ -499,6 +500,11 @@ function NewRequestContent() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">No hospital selected</SelectItem>
+                    {hospitals.isLoading && (
+                      <div className="px-3 py-2">
+                        <InlineLoading label="Loading hospitals…" />
+                      </div>
+                    )}
                     {(hospitals.data?.items ?? []).map((hospital) => (
                       <SelectItem key={hospital.id} value={hospital.id}>
                         {hospital.name}

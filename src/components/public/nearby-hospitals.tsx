@@ -4,6 +4,8 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight, BedDouble, Building2, LocateFixed, MapPin, Phone, Siren } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { InlineLoading } from '@/components/shared/loading'
 import { DEMO_HOSPITALS } from '@/data/demo-hospitals'
 import { DHAKA, nearest, type Coords } from '@/lib/geo'
 import { useHospitals } from '@/lib/hooks'
@@ -39,9 +41,14 @@ export function NearbyHospitals({
   const [locating, setLocating] = useState(false)
   const [denied, setDenied] = useState(false)
   const live = useHospitals()
-  const liveItems = live.data?.items ?? []
-  const isDemo = liveItems.length === 0
-  const source: NearbyHospital[] = isDemo ? DEMO_HOSPITALS : liveItems
+  const liveItems = useMemo(() => live.data?.items ?? [], [live.data?.items])
+  const loading = live.isLoading
+  // Demo fallback only once the live list has really come back empty.
+  const isDemo = !loading && liveItems.length === 0
+  const source: NearbyHospital[] = useMemo(
+    () => (loading ? [] : isDemo ? DEMO_HOSPITALS : liveItems),
+    [loading, isDemo, liveItems],
+  )
 
   useEffect(() => {
     let cancelled = false
@@ -122,6 +129,14 @@ export function NearbyHospitals({
         </p>
       )}
 
+      {loading ? (
+        <div className="grid gap-3 lg:grid-cols-5 sm:grid-cols-2" aria-busy="true">
+          <InlineLoading label="Finding nearby hospitals…" className="col-span-full" />
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-28 rounded-2xl" />
+          ))}
+        </div>
+      ) : (
       <ol className="grid gap-3 lg:grid-cols-5 sm:grid-cols-2">
         {ranked.map(({ item: h, km }, i) => (
           <li
@@ -166,6 +181,7 @@ export function NearbyHospitals({
           </li>
         ))}
       </ol>
+      )}
 
       {showAllLink && (
         <Link href="/hospitals" className="inline-flex items-center gap-1 text-sm font-semibold text-brand hover:underline">
