@@ -218,7 +218,7 @@ const FIRST_AID = [
 
 function HospitalsSection() {
   return (
-    <section id="hospitals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-8">
+    <section id="hospitals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-8">
       <MotionCard className="max-w-2xl space-y-3">
         <h2 className="text-3xl sm:text-4xl text-ink">
           Nearest hospitals
@@ -240,7 +240,7 @@ export default function Home() {
       <main className="flex-1">
         {/* Hero */}
         <section className="border-b border-hairline">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 sm:py-20 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
             <MotionCard className="space-y-6">
               <span className="inline-flex items-center gap-2 rounded-full bg-oxygen/10 px-3 py-1 text-xs font-semibold text-ink">
                 <span className="h-2 w-2 rounded-full bg-oxygen" aria-hidden />
@@ -299,7 +299,7 @@ export default function Home() {
         <HospitalsSection />
 
         {/* Ambulance types */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 space-y-8">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16 space-y-8">
           <MotionCard className="max-w-2xl space-y-3">
             <h2 className="text-3xl sm:text-4xl text-ink">Choose the right ambulance</h2>
             <p className="text-slate">
@@ -333,7 +333,7 @@ export default function Home() {
 
         {/* How it works */}
         <section className="bg-paper border-y border-hairline">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-10">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10">
             <MotionCard className="max-w-2xl space-y-3">
               <h2 className="text-3xl sm:text-4xl text-ink">
                 How dispatch works
@@ -396,7 +396,7 @@ export default function Home() {
 
         {/* Role spotlights */}
         <section className="bg-paper border-y border-hairline">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-16">
             {ROLES.map((role, i) => (
               <MotionCard
                 key={role.role}
@@ -444,7 +444,7 @@ export default function Home() {
         <DemoCoverage />
 
         {/* First aid */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20 grid lg:grid-cols-[1fr_1.4fr] gap-8 lg:gap-12">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 grid lg:grid-cols-[1fr_1.4fr] gap-8 lg:gap-12">
           <div className="space-y-3">
             <h2 className="text-3xl sm:text-4xl text-ink">First aid while you wait</h2>
             <p className="text-slate max-w-sm">
@@ -468,7 +468,7 @@ export default function Home() {
         </section>
 
         {/* CTA */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16">
           <div className="flex flex-col gap-6 rounded-2xl bg-brand p-8 sm:p-12 text-brand-foreground sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-2">
               <h2 className="text-3xl sm:text-4xl">Be ready before you need us.</h2>

@@ -4,7 +4,8 @@ import { useRef, useState } from 'react'
 import { Camera, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
-import { useAvatars } from '@/lib/store'
+import { useUpdateProfile } from '@/lib/hooks'
+import { ApiError } from '@/lib/api'
 import { UserAvatar } from './user-avatar'
 
 const MAX_BYTES = 5 * 1024 * 1024
@@ -35,20 +36,36 @@ async function toSquareDataUrl(file: File): Promise<string> {
 }
 
 export function AvatarUpload({
-  userId,
+  avatarUrl,
   name,
+  ready,
 }: {
-  userId?: string
+  avatarUrl?: string | null
   name?: string
+  /** False until the profile has loaded. */
+  ready: boolean
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
-  const hasPhoto = useAvatars((s) => (userId ? !!s.byUser[userId] : false))
-  const setAvatar = useAvatars((s) => s.setAvatar)
-  const clearAvatar = useAvatars((s) => s.clearAvatar)
+  const updateProfile = useUpdateProfile()
+  const hasPhoto = !!avatarUrl
+
+  const save = async (next: string | null, done: string) => {
+    try {
+      const user = await updateProfile.mutateAsync({ avatarUrl: next })
+      // An older backend ignores the field; do not claim success then.
+      if ((user.avatarUrl ?? null) !== next) {
+        toast.error('The server did not save the photo. Please try again later.')
+        return
+      }
+      toast.success(done)
+    } catch (err) {
+      toast.error(err instanceof ApiError ? err.message : 'Could not save the photo')
+    }
+  }
 
   const onFile = async (file: File | undefined) => {
-    if (!file || !userId) return
+    if (!file || !ready) return
     if (!file.type.startsWith('image/')) {
       toast.error('Choose an image file (JPG, PNG or WebP)')
       return
@@ -59,8 +76,8 @@ export function AvatarUpload({
     }
     setBusy(true)
     try {
-      setAvatar(userId, await toSquareDataUrl(file))
-      toast.success('Profile photo updated')
+      const dataUrl = await toSquareDataUrl(file)
+      await save(dataUrl, 'Profile photo updated')
     } catch {
       toast.error('Could not read that image. Try another one.')
     } finally {
@@ -73,14 +90,14 @@ export function AvatarUpload({
     <div className="flex items-center gap-4">
       <div className="relative">
         <UserAvatar
-          userId={userId}
+          src={avatarUrl}
           name={name}
           className="h-20 w-20 text-2xl sm:h-24 sm:w-24 sm:text-3xl"
         />
         <button
           type="button"
           onClick={() => inputRef.current?.click()}
-          disabled={!userId || busy}
+          disabled={!ready || busy || updateProfile.isPending}
           aria-label="Upload profile photo"
           className="absolute right-0 bottom-0 flex h-8 w-8 items-center justify-center rounded-full border-2 border-paper bg-brand text-brand-foreground transition-colors hover:bg-brand/90 disabled:opacity-50"
         >
@@ -102,16 +119,17 @@ export function AvatarUpload({
             size="sm"
             variant="outline"
             onClick={() => inputRef.current?.click()}
-            disabled={!userId || busy}
+            disabled={!ready || busy || updateProfile.isPending}
           >
-            {busy ? 'Processing...' : hasPhoto ? 'Change photo' : 'Upload photo'}
+            {busy || updateProfile.isPending ? 'Saving...' : hasPhoto ? 'Change photo' : 'Upload photo'}
           </Button>
-          {hasPhoto && userId && (
+          {hasPhoto && (
             <Button
               type="button"
               size="sm"
               variant="ghost"
-              onClick={() => clearAvatar(userId)}
+              onClick={() => void save(null, 'Profile photo removed')}
+              disabled={updateProfile.isPending}
               className="text-signal hover:bg-signal/10"
             >
               <Trash2 className="h-3.5 w-3.5" aria-hidden /> Remove
@@ -119,7 +137,7 @@ export function AvatarUpload({
           )}
         </div>
         <p className="text-xs text-slate">
-          JPG, PNG or WebP up to 5 MB. Saved on this device.
+          JPG, PNG or WebP up to 5 MB. Saved to your account.
         </p>
       </div>
     </div>

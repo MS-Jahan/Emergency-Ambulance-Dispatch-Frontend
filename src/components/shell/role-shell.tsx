@@ -176,7 +176,7 @@ function UserMenu({ user }: { user: User | null }) {
             className="h-10 gap-2 rounded-full px-1.5 text-sm font-bold text-ink hover:bg-brand-soft md:pr-3"
           >
             <UserAvatar
-              userId={user?.id}
+              src={user?.avatarUrl}
               name={user?.name}
               className="h-8 w-8 text-sm"
             />
@@ -259,8 +259,8 @@ export function RoleShell({ variant, children }: RoleShellProps) {
             )}
           </div>
           <div className="flex shrink-0 items-center gap-2">
-            <EmergencyPill />
             <ThemeToggle />
+            <EmergencyPill />
             <UserMenu user={user} />
           </div>
         </div>

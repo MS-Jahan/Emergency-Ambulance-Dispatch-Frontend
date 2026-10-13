@@ -652,6 +652,7 @@ export function useUpdateProfile() {
       phone?: string
       notifySms?: boolean
       notifyEmail?: boolean
+      avatarUrl?: string | null
     }) => api.patch<{ user: User }>('/users/me', data).then((d) => d.user),
     onSuccess: (user) => {
       setUser(user)

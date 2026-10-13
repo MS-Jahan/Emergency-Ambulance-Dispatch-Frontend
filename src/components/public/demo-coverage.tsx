@@ -11,7 +11,7 @@ export function DemoCoverage() {
   if (isLoading || (data?.items.length ?? 0) > 0) return null
 
   return (
-    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-6">
+    <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-6">
       <h2 className="text-3xl sm:text-4xl text-ink">Covering districts nationwide</h2>
       <p className="text-slate max-w-2xl">
         Demo network spans {DISTRICTS.length} districts across Bangladesh, from Dhaka to

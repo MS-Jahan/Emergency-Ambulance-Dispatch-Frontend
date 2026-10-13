@@ -1,6 +1,3 @@
-'use client'
-
-import { useAvatars } from '@/lib/store'
 import { cn } from '@/lib/utils'
 
 export function initialsOf(name: string | undefined): string {
@@ -13,18 +10,16 @@ export function initialsOf(name: string | undefined): string {
   return letters || '?'
 }
 
-/** Round avatar: the user's photo when one is saved on this device, else initials. */
+/** Round avatar: the saved photo (a data URL from the API) or initials. */
 export function UserAvatar({
-  userId,
+  src,
   name,
   className,
 }: {
-  userId?: string
+  src?: string | null
   name?: string
   className?: string
 }) {
-  const photo = useAvatars((s) => (userId ? s.byUser[userId] : undefined))
-
   return (
     <span
       className={cn(
@@ -32,9 +27,9 @@ export function UserAvatar({
         className,
       )}
     >
-      {photo ? (
-        // eslint-disable-next-line @next/next/no-img-element -- local data URL, not optimisable
-        <img src={photo} alt="" className="h-full w-full object-cover" />
+      {src ? (
+        // eslint-disable-next-line @next/next/no-img-element -- data URL from the API, not optimisable
+        <img src={src} alt="" className="h-full w-full object-cover" />
       ) : (
         initialsOf(name)
       )}

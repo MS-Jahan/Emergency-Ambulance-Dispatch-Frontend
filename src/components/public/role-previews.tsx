@@ -22,14 +22,14 @@ export function PatientSpotlightPreview() {
             <Siren className="h-4 w-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">Your trip</p>
-            <p className="text-xs text-slate">Pickup address to hospital</p>
+            <p className="text-sm font-bold text-ink">Your trip</p>
+            <p className="text-sm text-slate">Pickup address to hospital</p>
           </div>
         </div>
         <IllustrationTag />
       </div>
 
-      <div className="space-y-2 text-xs">
+      <div className="space-y-2 text-sm">
         <div className="flex items-center justify-between gap-3 text-slate">
           <span>Assigned ambulance</span>
           <Bar className="w-24" />
@@ -43,9 +43,9 @@ export function PatientSpotlightPreview() {
       <div className="rounded-lg bg-gauze p-3 border border-hairline flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-signal" aria-hidden />
-          <span className="text-xs font-medium text-ink">EN_ROUTE_PICKUP</span>
+          <span className="text-sm font-medium text-ink">EN_ROUTE_PICKUP</span>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full border border-hairline px-3 py-1 text-xs text-ink">
+        <span className="inline-flex items-center gap-1 rounded-full border border-hairline px-3 py-1 text-sm text-ink">
           <Phone className="h-3 w-3 text-oxygen" aria-hidden /> Call driver
         </span>
       </div>
@@ -62,20 +62,20 @@ export function DriverSpotlightPreview() {
             <Ambulance className="h-4 w-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">Driver console</p>
-            <p className="text-xs text-slate">Assigned ambulance</p>
+            <p className="text-sm font-bold text-ink">Driver console</p>
+            <p className="text-sm text-slate">Assigned ambulance</p>
           </div>
         </div>
         <IllustrationTag />
       </div>
 
       <div className="p-3 bg-gauze rounded-lg border border-hairline space-y-2">
-        <p className="text-xs text-slate">Pickup address</p>
+        <p className="text-sm text-slate">Pickup address</p>
         <p className="flex items-center gap-1.5">
           <Navigation className="h-3.5 w-3.5 text-signal" aria-hidden />
           <Bar className="w-40" />
         </p>
-        <p className="text-xs font-semibold text-ink">ASSIGNED</p>
+        <p className="text-sm font-semibold text-ink">ASSIGNED</p>
       </div>
 
       <div
@@ -99,24 +99,24 @@ export function DispatcherSpotlightPreview() {
             <Radio className="h-4 w-4" aria-hidden />
           </span>
           <div>
-            <p className="text-xs font-bold text-ink">Dispatch board</p>
-            <p className="text-xs text-slate">Three columns</p>
+            <p className="text-sm font-bold text-ink">Dispatch board</p>
+            <p className="text-sm text-slate">Three columns</p>
           </div>
         </div>
         <IllustrationTag />
       </div>
 
-      <div className="grid grid-cols-3 gap-2 text-xs">
+      <div className="grid grid-cols-3 gap-2 text-sm">
         {BOARD_COLUMNS.map((c) => (
           <div key={c} className="rounded-lg bg-gauze p-2 border border-hairline space-y-2">
-            <p className="text-xs font-semibold uppercase text-slate">{c}</p>
+            <p className="text-sm font-semibold uppercase text-slate">{c}</p>
             <Bar />
             <Bar className="w-2/3" />
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-slate border-t border-hairline pt-2.5">
+      <p className="text-sm text-slate border-t border-hairline pt-2.5">
         Nearby ambulances are listed by distance, then assigned in a click.
       </p>
     </Card>

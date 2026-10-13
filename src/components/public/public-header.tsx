@@ -35,6 +35,7 @@ export function PublicHeader() {
           </nav>
         </div>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <a
             href="tel:999"
             aria-label="Call 999 emergency line"
@@ -42,7 +43,6 @@ export function PublicHeader() {
           >
             <Phone className="h-3.5 w-3.5" aria-hidden /> 999
           </a>
-          <ThemeToggle />
           <Button
             nativeButton={false}
             render={<Link href="/login" />}

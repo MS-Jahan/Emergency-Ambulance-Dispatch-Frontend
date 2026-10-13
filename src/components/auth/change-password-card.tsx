@@ -85,7 +85,7 @@ export function ChangePasswordCard() {
   const inputCls = 'mt-1 h-11 border-hairline px-4 text-ink bg-gauze'
 
   return (
-    <Card className="p-6 border-hairline bg-paper space-y-4">
+    <Card className="p-6">
       <div className="flex items-center gap-2">
         <KeyRound className="h-5 w-5 text-brand" />
         <h3 className="font-heading text-lg text-ink">Change password</h3>
@@ -144,13 +144,15 @@ export function ChangePasswordCard() {
           )}
         </div>
 
-        <Button
-          type="submit"
-          disabled={changePassword.isPending}
-          className="w-full h-11"
-        >
-          {changePassword.isPending ? 'Updating password...' : 'Update password'}
-        </Button>
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            disabled={changePassword.isPending}
+            className="h-10 px-6"
+          >
+            {changePassword.isPending ? 'Updating password...' : 'Update password'}
+          </Button>
+        </div>
       </form>
     </Card>
   )

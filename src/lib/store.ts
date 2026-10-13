@@ -51,30 +51,6 @@ export const useUI = create<UIState>()(
   ),
 )
 
-interface AvatarState {
-  /** Profile photos, keyed by user id. Data URLs, kept on this device only. */
-  byUser: Record<string, string>
-  setAvatar: (userId: string, dataUrl: string) => void
-  clearAvatar: (userId: string) => void
-}
-
-export const useAvatars = create<AvatarState>()(
-  persist(
-    (set) => ({
-      byUser: {},
-      setAvatar: (userId, dataUrl) =>
-        set((s) => ({ byUser: { ...s.byUser, [userId]: dataUrl } })),
-      clearAvatar: (userId) =>
-        set((s) => {
-          const rest = { ...s.byUser }
-          delete rest[userId]
-          return { byUser: rest }
-        }),
-    }),
-    { name: 'avatar-storage' },
-  ),
-)
-
 interface WizardState {
   pickupAddress: string
   pickupLat: number | null

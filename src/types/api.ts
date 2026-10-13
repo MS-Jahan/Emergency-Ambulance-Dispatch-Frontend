@@ -22,6 +22,7 @@ export interface User {
   isVerified: boolean
   notifySms?: boolean
   notifyEmail?: boolean
+  avatarUrl?: string | null
   createdAt: string
 }
 
