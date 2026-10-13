@@ -524,7 +524,7 @@ function NewRequestContent() {
                 <div className="flex h-32 w-full shrink-0 flex-col items-center justify-center gap-1 rounded-2xl sm:h-[160px] sm:w-[160px] border border-hairline bg-gauze text-slate">
                   <MapPin className="h-6 w-6 text-brand" aria-hidden />
                   {hasPin && (
-                    <span className="px-2 text-center text-[10px] tabular-nums">
+                    <span className="px-2 text-center text-xs tabular-nums">
                       {wizard.pickupLat!.toFixed(4)}, {wizard.pickupLng!.toFixed(4)}
                     </span>
                   )}

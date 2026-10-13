@@ -213,10 +213,10 @@ function ReportsContent() {
 
         <Card className="gap-1 border-l-4 border-l-amber border-hairline bg-paper p-5">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-amber-700 dark:text-amber-300 uppercase tracking-wider">
+            <span className="text-xs font-semibold text-amber-text uppercase tracking-wider">
               High
             </span>
-            <AlertTriangle className="h-4 w-4 text-amber-700 dark:text-amber-300" />
+            <AlertTriangle className="h-4 w-4 text-amber-text" />
           </div>
           <p className="font-heading text-2xl text-ink tabular-nums">
             {priorityCounts.HIGH} {priorityCounts.HIGH === 1 ? 'incident' : 'incidents'}
@@ -359,7 +359,7 @@ export default function AdminReportsPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1>Reports</h1>
+          <h1 className="title-page">Reports</h1>
           <p className="mt-1 text-sm text-slate">
             Incident volume, outcomes and exportable records.
           </p>

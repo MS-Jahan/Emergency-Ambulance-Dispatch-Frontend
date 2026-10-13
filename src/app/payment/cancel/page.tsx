@@ -15,7 +15,7 @@ function CancelInner() {
   return (
     <div className="w-full max-w-md bg-paper border border-hairline rounded-3xl p-8 text-center space-y-4">
       <Undo2 className="h-14 w-14 text-amber mx-auto" />
-      <h1 className="text-3xl text-ink">Checkout cancelled</h1>
+      <h1 className="title-page text-ink">Checkout cancelled</h1>
       <p className="text-sm text-slate">
         Nothing was charged. Start a new payment from your payment history
         whenever you&apos;re ready.

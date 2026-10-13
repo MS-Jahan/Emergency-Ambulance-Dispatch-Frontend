@@ -23,8 +23,8 @@ function KpiTile({
 }) {
   const toneClass = {
     ink: 'text-ink',
-    amber: 'text-amber-700 dark:text-amber-300',
-    oxygen: 'text-oxygen dark:text-emerald-400',
+    amber: 'text-amber-text',
+    oxygen: 'text-oxygen-text',
     slate: 'text-slate',
   }[tone]
   return (
@@ -55,7 +55,7 @@ export default function AdminDashboardPage() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1>Overview</h1>
+          <h1 className="title-page">Overview</h1>
           <p className="mt-1 text-sm text-slate">
             Live fleet and request activity
           </p>

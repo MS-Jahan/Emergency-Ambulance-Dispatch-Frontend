@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card'
 
 function IllustrationTag() {
   return (
-    <span className="rounded-full border border-hairline bg-gauze px-2 py-0.5 text-[11px] font-semibold text-slate">
+    <span className="rounded-full border border-hairline bg-gauze px-2 py-0.5 text-xs font-semibold text-slate">
       Illustration
     </span>
   )
@@ -23,7 +23,7 @@ export function PatientSpotlightPreview() {
           </span>
           <div>
             <p className="text-xs font-bold text-ink">Your trip</p>
-            <p className="text-[11px] text-slate">Pickup address to hospital</p>
+            <p className="text-xs text-slate">Pickup address to hospital</p>
           </div>
         </div>
         <IllustrationTag />
@@ -63,7 +63,7 @@ export function DriverSpotlightPreview() {
           </span>
           <div>
             <p className="text-xs font-bold text-ink">Driver console</p>
-            <p className="text-[11px] text-slate">Assigned ambulance</p>
+            <p className="text-xs text-slate">Assigned ambulance</p>
           </div>
         </div>
         <IllustrationTag />
@@ -75,7 +75,7 @@ export function DriverSpotlightPreview() {
           <Navigation className="h-3.5 w-3.5 text-signal" aria-hidden />
           <Bar className="w-40" />
         </p>
-        <p className="text-[11px] font-semibold text-ink">ASSIGNED</p>
+        <p className="text-xs font-semibold text-ink">ASSIGNED</p>
       </div>
 
       <div
@@ -100,7 +100,7 @@ export function DispatcherSpotlightPreview() {
           </span>
           <div>
             <p className="text-xs font-bold text-ink">Dispatch board</p>
-            <p className="text-[11px] text-slate">Three columns</p>
+            <p className="text-xs text-slate">Three columns</p>
           </div>
         </div>
         <IllustrationTag />
@@ -109,7 +109,7 @@ export function DispatcherSpotlightPreview() {
       <div className="grid grid-cols-3 gap-2 text-xs">
         {BOARD_COLUMNS.map((c) => (
           <div key={c} className="rounded-lg bg-gauze p-2 border border-hairline space-y-2">
-            <p className="text-[10px] font-semibold uppercase text-slate">{c}</p>
+            <p className="text-xs font-semibold uppercase text-slate">{c}</p>
             <Bar />
             <Bar className="w-2/3" />
           </div>

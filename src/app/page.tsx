@@ -218,7 +218,7 @@ const FIRST_AID = [
 
 function HospitalsSection() {
   return (
-    <section id="hospitals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-8">
+    <section id="hospitals" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-8">
       <MotionCard className="max-w-2xl space-y-3">
         <h2 className="text-3xl sm:text-4xl text-ink">
           Nearest hospitals
@@ -246,7 +246,7 @@ export default function Home() {
                 <span className="h-2 w-2 rounded-full bg-oxygen" aria-hidden />
                 Live dispatch board
               </span>
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl text-ink leading-[1.02]">
+              <h1 className="title-display text-ink">
                 Help, on its way in minutes.
               </h1>
               <p className="text-lg text-slate max-w-prose">
@@ -284,7 +284,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
           <dl className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {STATS.map((st) => (
               <div key={st.label} className="rounded-2xl border border-hairline bg-paper p-5">
@@ -369,7 +369,7 @@ export default function Home() {
         </section>
 
         {/* Features */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 space-y-12">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
           <MotionCard className="max-w-2xl space-y-3">
             <h2 className="text-3xl sm:text-4xl text-ink">
               One system, three perspectives

@@ -110,7 +110,7 @@ function PatientDashboardContent() {
 
   return (
     <div className="space-y-6">
-      <h1>My requests</h1>
+      <h1 className="title-page">My requests</h1>
 
       {/* Active trip banner (only when a request is in progress) */}
       {activeRequest && (

@@ -70,7 +70,7 @@ export function RegisterForm() {
     <AuthLayout>
       <div className="space-y-6 rounded-3xl border border-hairline bg-paper p-6 shadow-sm sm:p-9">
         <div className="space-y-1">
-          <h1 className="text-4xl text-ink">Create account</h1>
+          <h1 className="title-page text-ink">Create account</h1>
           <p className="text-sm text-slate">
             Already registered?{' '}
             <Link href="/login" className="font-bold text-brand underline-offset-2 hover:underline">

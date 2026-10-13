@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Clock3, HeartPulse, MapPin, Radio, Siren } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 import { PublicFooter } from '@/components/public/public-footer'
+import { PageContainer } from '@/components/shared/page-container'
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
@@ -24,12 +25,12 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-5xl w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-12">
+      <main className="flex-1"><PageContainer width="default" className="py-12 sm:py-16 space-y-12">
         <section className="space-y-4">
           <span className="inline-flex rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
             About RapidAid
           </span>
-          <h1 className="text-4xl sm:text-5xl text-ink max-w-3xl">
+          <h1 className="title-hero text-ink max-w-3xl">
             Every minute belongs to the patient.
           </h1>
           <p className="text-slate leading-relaxed max-w-2xl">
@@ -100,7 +101,7 @@ export default function AboutPage() {
             <Siren className="h-4 w-4 mr-1" /> Get started
           </Button>
         </section>
-      </main>
+      </PageContainer></main>
       <PublicFooter />
     </div>
   )

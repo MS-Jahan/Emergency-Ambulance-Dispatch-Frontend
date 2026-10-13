@@ -44,7 +44,7 @@ function MiniTripLine({ status }: { status: EmergencyRequest['status'] }) {
               />
               <span
                 className={cn(
-                  'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-[9px] font-bold',
+                  'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold',
                   active
                     ? 'bg-oxygen text-white ring-4 ring-oxygen/20 trip-dot-active'
                     : done
@@ -67,7 +67,7 @@ function MiniTripLine({ status }: { status: EmergencyRequest['status'] }) {
             </div>
             <span
               className={cn(
-                'mt-1 text-center text-[10px] leading-tight',
+                'mt-1 text-center text-xs leading-tight',
                 active ? 'font-semibold text-ink' : 'text-slate',
               )}
             >

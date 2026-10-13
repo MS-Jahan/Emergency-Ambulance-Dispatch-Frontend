@@ -247,7 +247,7 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
                   </p>
                   {request.requestedAmbulanceType &&
                     request.ambulance.type !== request.requestedAmbulanceType && (
-                      <p className="mt-1 inline-block rounded bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+                      <p className="mt-1 inline-block rounded bg-amber/20 px-1.5 py-0.5 text-xs font-semibold text-amber">
                         Differs from requested ({request.requestedAmbulanceType})
                       </p>
                     )}
@@ -298,7 +298,7 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
                           <span className="ml-2 font-normal text-slate">{a.type}</span>
                           {request.requestedAmbulanceType &&
                             a.type !== request.requestedAmbulanceType && (
-                              <span className="ml-2 rounded bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+                              <span className="ml-2 rounded bg-amber/20 px-1.5 py-0.5 text-xs font-semibold text-amber">
                                 differs
                               </span>
                             )}

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { PublicHeader } from '@/components/public/public-header'
 import { PublicFooter } from '@/components/public/public-footer'
 import { Button } from '@/components/ui/button'
+import { PageContainer } from '@/components/shared/page-container'
 
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions',
@@ -54,9 +55,9 @@ export default function FaqPage() {
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-3xl w-full px-4 sm:px-6 py-12 sm:py-16 space-y-8">
+      <main className="flex-1"><PageContainer width="narrow" className="py-12 sm:py-16 space-y-8">
         <section className="space-y-3">
-          <h1 className="text-4xl sm:text-5xl text-ink">Questions</h1>
+          <h1 className="title-hero text-ink">Questions</h1>
           <p className="text-slate">
             Short answers about requests, priorities, and paying.
           </p>
@@ -90,7 +91,7 @@ export default function FaqPage() {
             Contact us
           </Button>
         </section>
-      </main>
+      </PageContainer></main>
       <PublicFooter />
     </div>
   )

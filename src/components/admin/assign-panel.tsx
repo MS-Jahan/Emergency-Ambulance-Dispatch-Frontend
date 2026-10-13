@@ -157,7 +157,7 @@ export function AssignPanel({ request, onAssigned, onOpenDetails }: AssignPanelP
                             <span className="font-mono">{a.plateNumber}</span>
                             <span className="ml-2 font-normal text-slate">{a.type}</span>
                             {mismatch && (
-                              <span className="ml-2 rounded bg-amber/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber">
+                              <span className="ml-2 rounded bg-amber/20 px-1.5 py-0.5 text-xs font-semibold text-amber">
                                 differs
                               </span>
                             )}

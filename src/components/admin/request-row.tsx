@@ -98,7 +98,7 @@ export function RequestRow({ request, now, onClick, pulsing, selected }: Request
           )}
           {request.ambulance && (
             <span className="flex items-center gap-1.5 min-w-0">
-              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand-soft text-[10px] font-bold text-brand">
+              <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand">
                 {driverInitials(request.driver?.name)}
               </span>
               <span className="truncate font-mono text-xs text-slate">

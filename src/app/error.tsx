@@ -18,7 +18,7 @@ export default function GlobalError({
     <main className="min-h-screen bg-gauze flex items-center justify-center px-4">
       <div className="text-center space-y-4 max-w-md">
         <Siren className="h-12 w-12 text-signal mx-auto" />
-        <h1 className="text-2xl font-bold text-ink">Something went wrong</h1>
+        <h1 className="title-page text-ink">Something went wrong</h1>
         <p className="text-sm text-slate">
           An unexpected error stopped this page. Trying again usually fixes it;
           if it keeps happening, the trip data is safe on the server.

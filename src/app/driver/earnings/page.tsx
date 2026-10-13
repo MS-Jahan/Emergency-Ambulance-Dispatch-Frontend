@@ -270,7 +270,7 @@ export default function DriverEarningsPage() {
     <div className="max-w-5xl mx-auto space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl sm:text-4xl">
+          <h1 className="title-page">
             Earnings
           </h1>
           <p className="text-sm text-slate">

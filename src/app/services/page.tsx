@@ -3,6 +3,7 @@ import { Activity, HeartPulse, Stethoscope } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 import { PublicFooter } from '@/components/public/public-footer'
 import { AmbulanceFareBadge } from '@/components/public/ambulance-fare-badge'
+import { PageContainer } from '@/components/shared/page-container'
 import type { AmbulanceType } from '@/types/api'
 
 export const metadata: Metadata = {
@@ -64,9 +65,9 @@ export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-5xl w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-10">
+      <main className="flex-1"><PageContainer width="default" className="py-12 sm:py-16 space-y-10">
         <section className="space-y-3">
-          <h1 className="text-4xl sm:text-5xl text-ink max-w-2xl">Three ambulances. One right choice.</h1>
+          <h1 className="title-hero text-ink max-w-2xl">Three ambulances. One right choice.</h1>
           <p className="text-slate leading-relaxed max-w-2xl">
             Three vehicle classes cover the range from stable transport to
             critical care. Requests marked CRITICAL skip the queue entirely.
@@ -114,7 +115,7 @@ export default function ServicesPage() {
             checkout.
           </p>
         </section>
-      </main>
+      </PageContainer></main>
       <PublicFooter />
     </div>
   )

@@ -22,7 +22,7 @@ function SuccessInner() {
       ) : payment.isError ? (
         <>
           <XCircle className="h-14 w-14 text-signal mx-auto" />
-          <h1 className="text-3xl text-ink">
+          <h1 className="title-page text-ink">
             We couldn&apos;t confirm that payment
           </h1>
           <p className="text-sm text-slate">
@@ -33,7 +33,7 @@ function SuccessInner() {
       ) : payment.data?.status === 'PAID' ? (
         <>
           <CheckCircle2 className="h-14 w-14 text-oxygen mx-auto" />
-          <h1 className="text-3xl text-ink">Payment received</h1>
+          <h1 className="title-page text-ink">Payment received</h1>
           <p className="text-sm text-slate">
             ${payment.data.amount.toLocaleString()} for trip{' '}
             <span className="tabular-nums">{payment.data.requestId.slice(0, 8)}</span>
@@ -43,7 +43,7 @@ function SuccessInner() {
       ) : (
         <>
           <Clock className="h-14 w-14 text-amber mx-auto" />
-          <h1 className="text-3xl text-ink">Confirming payment</h1>
+          <h1 className="title-page text-ink">Confirming payment</h1>
           <p className="text-sm text-slate">
             Stripe hasn&apos;t confirmed the charge yet. Refresh in a moment —
             don&apos;t pay again.

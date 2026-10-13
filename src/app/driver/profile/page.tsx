@@ -96,7 +96,7 @@ export default function DriverProfilePage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl sm:text-4xl">
+        <h1 className="title-page">
           Profile
         </h1>
         <p className="text-sm text-slate">
@@ -305,7 +305,7 @@ export default function DriverProfilePage() {
                 <p className="font-mono text-ink tabular-nums font-semibold">
                   {profile.currentLat.toFixed(5)}, {profile.currentLng.toFixed(5)}
                 </p>
-                <p className="text-[11px] text-slate pt-1">
+                <p className="text-xs text-slate pt-1">
                   Shared automatically while you are online.
                 </p>
               </div>

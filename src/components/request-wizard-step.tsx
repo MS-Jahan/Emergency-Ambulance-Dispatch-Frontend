@@ -48,7 +48,7 @@ export function RequestWizardStep({
         <p className="text-xs font-bold uppercase tracking-wide text-slate">
           Step {stepNumber} of {totalSteps}
         </p>
-        <h1 className="text-3xl text-ink sm:text-4xl">{heading}</h1>
+        <h1 className="title-page text-ink">{heading}</h1>
       </div>
 
       <div className="mt-6 flex-1">{children}</div>

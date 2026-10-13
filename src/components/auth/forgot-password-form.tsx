@@ -33,7 +33,7 @@ export function ForgotPasswordForm() {
     <AuthLayout>
       <div className="space-y-7 rounded-3xl border border-hairline bg-paper p-6 shadow-sm sm:p-9">
         <div className="space-y-1">
-          <h1 className="text-4xl text-ink">Reset your password</h1>
+          <h1 className="title-page text-ink">Reset your password</h1>
           <p className="text-sm text-slate">
             Enter the email address of your account and we will send you a link to choose a new
             password.

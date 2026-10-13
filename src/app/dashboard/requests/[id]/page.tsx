@@ -128,7 +128,7 @@ function TripLine({ request }: { request: EmergencyRequest }) {
               }`}
             />
             <span
-              className={`mt-2 block text-center text-[11px] leading-tight sm:text-xs ${
+              className={`mt-2 block text-center text-xs leading-tight ${
                 done || active ? 'font-bold text-ink' : 'text-slate'
               }`}
             >

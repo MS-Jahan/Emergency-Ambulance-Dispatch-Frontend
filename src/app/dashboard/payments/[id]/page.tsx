@@ -205,14 +205,14 @@ export default function PaymentReceiptPage() {
                 {req?.destinationHospital?.name || 'Emergency Receiving Hospital'}
               </p>
               {req?.destinationHospital?.address && (
-                <p className="text-[11px] text-slate line-clamp-1">
+                <p className="text-xs text-slate line-clamp-1">
                   {req.destinationHospital.address}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="flex items-center gap-4 border-t border-hairline/60 pt-2 text-[11px] text-slate">
+          <div className="flex items-center gap-4 border-t border-hairline/60 pt-2 text-xs text-slate">
             <span>
               <strong className="text-ink">Unit Type:</strong> {ambulanceType} Ambulance
             </span>
@@ -239,7 +239,7 @@ export default function PaymentReceiptPage() {
               <tr>
                 <td className="py-3 font-medium text-ink">
                   <div>Emergency Ambulance Transport ({ambulanceType})</div>
-                  <div className="text-[11px] text-slate font-normal">
+                  <div className="text-xs text-slate font-normal">
                     Ambulance dispatch and patient transport
                   </div>
                 </td>
@@ -278,12 +278,12 @@ export default function PaymentReceiptPage() {
               <strong>Payment Method:</strong> Stripe Card Payment
             </span>
             {payment.stripeSessionId && (
-              <span className="font-mono text-[11px]">
+              <span className="font-mono text-xs">
                 Session: {payment.stripeSessionId.slice(0, 20)}...
               </span>
             )}
           </div>
-          <p className="text-[11px] leading-relaxed">
+          <p className="text-xs leading-relaxed">
             This receipt confirms payment for the ambulance trip above. Keep it for your records.
           </p>
         </div>

@@ -63,7 +63,7 @@ type AmbulanceFormData = z.infer<typeof ambulanceSchema>
 // Brand palette: teal available, amber on trip, red maintenance.
 const STATUS_PILL: Record<string, string> = {
   AVAILABLE: 'bg-oxygen/10 text-oxygen border-oxygen/30',
-  ON_TRIP: 'bg-amber/10 text-amber-700 dark:text-amber-300 border-amber/30',
+  ON_TRIP: 'bg-amber/10 text-amber-text border-amber/30',
   MAINTENANCE: 'bg-signal/10 text-signal border-signal/30',
 }
 

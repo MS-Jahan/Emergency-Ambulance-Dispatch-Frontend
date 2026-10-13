@@ -8,7 +8,7 @@ export default function NotFound() {
         <p className="font-heading text-8xl sm:text-9xl leading-none text-brand" aria-hidden>
           404
         </p>
-        <h1 className="text-3xl sm:text-4xl text-ink">This road doesn&apos;t go anywhere.</h1>
+        <h1 className="title-page text-ink">This road doesn&apos;t go anywhere.</h1>
         <p className="text-slate max-w-md">
           The page you asked for does not exist or was moved. If you were
           mid-trip, your dashboard still has it.

@@ -26,6 +26,11 @@
   --slate: #6B5F50;
   --hairline: #D9C7A6;
 
+  /* Status colours as text: AA on the ground in each theme. */
+  --oxygen-text: #15803D;
+  --amber-text: #B45309;
+  --signal-text: #B91C1C;
+
   /* Brand (buttons, links, active nav). Terracotta ramp step 700 for AA text. */
   --brand: #8C491A;
   --brand-soft: #F1DCC8;
@@ -64,16 +69,21 @@
 
 :root[data-theme="dark"],
 .dark {
-  --gauze: #0F172A;
-  --paper: #1E293B;
-  --ink: #F1F5F9;
-  --console: #0A1020;
-  --slate: #94A3B8;
-  --hairline: #334155;
+  /* Same terracotta brand on an espresso ground: warm neutrals, no blue. */
+  --gauze: #17120E;
+  --paper: #231B15;
+  --ink: #F5EAD8;
+  --console: #0F0B08;
+  --slate: #B8A68E;
+  --hairline: #3B2F25;
 
-  --brand: #60A5FA;
-  --brand-soft: rgba(96, 165, 250, 0.16);
-  --brand-foreground: #0F172A;
+  --oxygen-text: #4ADE80;
+  --amber-text: #FBBF24;
+  --signal-text: #F87171;
+
+  --brand: #E0976A;
+  --brand-soft: rgba(224, 151, 106, 0.16);
+  --brand-foreground: #17120E;
 
   --background: var(--gauze);
   --foreground: var(--ink);
@@ -83,15 +93,15 @@
   --popover-foreground: var(--ink);
   --primary: var(--brand);
   --primary-foreground: var(--brand-foreground);
-  --secondary: rgba(255, 255, 255, 0.08);
+  --secondary: rgba(245, 234, 216, 0.08);
   --secondary-foreground: var(--ink);
-  --muted: rgba(255, 255, 255, 0.08);
+  --muted: rgba(245, 234, 216, 0.08);
   --muted-foreground: var(--slate);
   --accent: var(--brand-soft);
   --accent-foreground: var(--ink);
   --destructive: var(--signal);
   --border: var(--hairline);
-  --input: rgba(255, 255, 255, 0.06);
+  --input: rgba(245, 234, 216, 0.06);
   --ring: var(--brand);
 
   --chart-1: var(--signal);
@@ -110,6 +120,9 @@
   --color-signal: var(--signal);
   --color-oxygen: var(--oxygen);
   --color-amber: var(--amber);
+  --color-oxygen-text: var(--oxygen-text);
+  --color-amber-text: var(--amber-text);
+  --color-signal-text: var(--signal-text);
   --color-slate: var(--slate);
   --color-hairline: var(--hairline);
   --color-brand: var(--brand);
@@ -267,13 +280,27 @@ svg.lucide {
 }
 
 /* Status colours as TEXT need lighter tints on the dark ground to hold AA;
-   backgrounds keep the static values so white-on-colour labels stay legible. */
+   backgrounds keep the static values so white-on-colour labels stay legible.
+   Values come from --*-text tokens; new code should use text-*-text directly. */
 :root[data-theme="dark"] .text-oxygen,
-.dark .text-oxygen { color: #4ade80; }
+.dark .text-oxygen { color: var(--oxygen-text); }
 :root[data-theme="dark"] .text-amber,
-.dark .text-amber { color: #fbbf24; }
+.dark .text-amber { color: var(--amber-text); }
 :root[data-theme="dark"] .text-signal,
-.dark .text-signal { color: #f87171; }
+.dark .text-signal { color: var(--signal-text); }
+
+/* h1 scale: one of three levels per page (see docs/2026-10-13-theming-consistency-upgrade.md). */
+@utility title-display {
+  @apply text-5xl leading-[1.02] sm:text-6xl lg:text-7xl;
+}
+
+@utility title-hero {
+  @apply text-4xl sm:text-5xl;
+}
+
+@utility title-page {
+  @apply text-3xl sm:text-4xl;
+}
 
 @media print {
   @page {

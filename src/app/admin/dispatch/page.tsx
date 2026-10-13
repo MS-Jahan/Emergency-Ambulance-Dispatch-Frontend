@@ -141,7 +141,7 @@ function DispatchBoardContent() {
     <div className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1>Dispatch</h1>
+          <h1 className="title-page">Dispatch</h1>
           <p className="mt-1 text-sm text-slate">
             Live queue, refreshes every 5 seconds
           </p>

@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from 'lucide-react'
 import { PublicHeader } from '@/components/public/public-header'
 import { PublicFooter } from '@/components/public/public-footer'
 import { ContactForm } from '@/components/public/contact-form'
+import { PageContainer } from '@/components/shared/page-container'
 
 export const metadata: Metadata = {
   title: 'Contact Support & Inquiries',
@@ -22,9 +23,9 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gauze flex flex-col">
       <PublicHeader />
-      <main className="flex-1 mx-auto max-w-5xl w-full px-4 sm:px-6 lg:px-8 py-12 sm:py-16 space-y-8">
+      <main className="flex-1"><PageContainer width="default" className="py-12 sm:py-16 space-y-8">
         <section className="space-y-3">
-          <h1 className="text-4xl sm:text-5xl text-ink">Talk to us</h1>
+          <h1 className="title-hero text-ink">Talk to us</h1>
           <p className="text-slate max-w-2xl">
             Questions about the service, billing, fleet operations, or hospital
             partnerships — our support team is available around the clock.
@@ -58,7 +59,7 @@ export default function ContactPage() {
 
           <ContactForm />
         </section>
-      </main>
+      </PageContainer></main>
       <PublicFooter />
     </div>
   )

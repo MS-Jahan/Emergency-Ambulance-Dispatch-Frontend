@@ -46,7 +46,7 @@ type CreateDriverFormData = z.infer<typeof createDriverSchema>
 // Brand palette per role.
 const ROLE_PILL: Record<Role, string> = {
   PATIENT: 'bg-oxygen/10 text-oxygen border-oxygen/30',
-  DRIVER: 'bg-amber/10 text-amber-700 dark:text-amber-300 border-amber/30',
+  DRIVER: 'bg-amber/10 text-amber-text border-amber/30',
   ADMIN: 'bg-ink/5 text-ink border-hairline',
 }
 

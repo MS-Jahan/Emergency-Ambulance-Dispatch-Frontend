@@ -17,7 +17,7 @@ function Bars({
     <ul className="flex h-40 items-end gap-2" role="list">
       {items.map((i) => (
         <li key={i.label} className="flex min-w-0 flex-1 flex-col items-center justify-end gap-1.5 h-full">
-          <span className="text-[11px] tabular-nums text-slate">
+          <span className="text-xs tabular-nums text-slate">
             {i.value == null ? '—' : format(i.value)}
           </span>
           <span
@@ -25,7 +25,7 @@ function Bars({
             style={{ height: `${((i.value ?? 0) / max) * 100}%`, minHeight: i.value ? 4 : 0 }}
             aria-hidden
           />
-          <span className="text-[11px] text-slate">{i.label}</span>
+          <span className="text-xs text-slate">{i.label}</span>
         </li>
       ))}
     </ul>
