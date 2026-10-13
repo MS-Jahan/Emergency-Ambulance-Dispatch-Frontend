@@ -41,11 +41,15 @@ export function roleHome(role: Role): string {
 export function useLogin(redirectPath?: string | null) {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (data: { email: string; password: string }) =>
       api.authPost<{ user: User }>('/login', data),
     onSuccess: (data) => {
+      // Replace the cached 401 from the signed-out /users/me probe, or
+      // SessionBootstrap reads it against the new user and logs them out.
+      queryClient.setQueryData(['auth', 'me'], data.user)
       setUser(data.user)
       const target =
         redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
@@ -59,6 +63,7 @@ export function useLogin(redirectPath?: string | null) {
 export function useRegister(redirectPath?: string | null) {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (data: {
@@ -68,6 +73,9 @@ export function useRegister(redirectPath?: string | null) {
       phone?: string
     }) => api.authPost<{ user: User }>('/register', data),
     onSuccess: (data) => {
+      // Replace the cached 401 from the signed-out /users/me probe, or
+      // SessionBootstrap reads it against the new user and logs them out.
+      queryClient.setQueryData(['auth', 'me'], data.user)
       setUser(data.user)
       const target =
         redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
@@ -81,11 +89,15 @@ export function useRegister(redirectPath?: string | null) {
 export function useDemoLogin(redirectPath?: string | null) {
   const setUser = useAuth((s) => s.setUser)
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: (role: 'PATIENT' | 'DRIVER' | 'ADMIN') =>
       api.authPost<{ user: User }>('/demo', { role }),
     onSuccess: (data) => {
+      // Replace the cached 401 from the signed-out /users/me probe, or
+      // SessionBootstrap reads it against the new user and logs them out.
+      queryClient.setQueryData(['auth', 'me'], data.user)
       setUser(data.user)
       const target =
         redirectPath && redirectPath.startsWith('/') && !redirectPath.startsWith('//')
