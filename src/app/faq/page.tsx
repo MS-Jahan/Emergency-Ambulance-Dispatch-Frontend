@@ -80,7 +80,7 @@ export default function FaqPage() {
           ))}
         </section>
 
-        <section className="flex flex-col sm:flex-row items-center gap-4 justify-between bg-brand text-brand-foreground rounded-3xl p-6 sm:p-8">
+        <section className="flex flex-col sm:flex-row items-center gap-4 justify-between bg-brand text-brand-foreground rounded-2xl p-6 sm:p-8">
           <p className="font-heading text-xl">
             Question not covered here? Get in touch and we will answer.
           </p>

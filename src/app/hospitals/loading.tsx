@@ -20,7 +20,7 @@ export default function HospitalsLoading() {
             {Array.from({ length: 5 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-hairline bg-paper p-4 space-y-3"
+                className="rounded-2xl border border-hairline bg-paper p-4 space-y-3"
               >
                 <div className="flex justify-between">
                   <Skeleton className="h-6 w-6 rounded-full" />
@@ -46,7 +46,7 @@ export default function HospitalsLoading() {
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-paper border border-hairline rounded-xl p-5 space-y-3"
+                className="bg-paper border border-hairline rounded-2xl p-5 space-y-3"
               >
                 <Skeleton className="h-5 w-2/3" />
                 <Skeleton className="h-4 w-5/6" />

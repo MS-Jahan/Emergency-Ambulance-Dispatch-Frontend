@@ -26,13 +26,13 @@ export default function GlobalError({
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <button
             onClick={reset}
-            className="text-sm text-white bg-signal hover:bg-signal/90 px-4 py-2 rounded-md inline-flex items-center justify-center gap-2"
+            className="text-sm text-white bg-signal hover:bg-signal/90 px-4 py-2 rounded-lg inline-flex items-center justify-center gap-2"
           >
             <RefreshCcw className="h-4 w-4" /> Try again
           </button>
           <a
             href="/dashboard"
-            className="text-sm text-ink px-4 py-2 border border-hairline rounded-md bg-paper hover:bg-gauze inline-flex items-center justify-center"
+            className="text-sm text-ink px-4 py-2 border border-hairline rounded-lg bg-paper hover:bg-gauze inline-flex items-center justify-center"
           >
             Dashboard
           </a>

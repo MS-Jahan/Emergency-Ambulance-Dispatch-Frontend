@@ -19,7 +19,7 @@ export default function PaymentsLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-xl border border-hairline bg-paper p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            className="rounded-2xl border border-hairline bg-paper p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2">

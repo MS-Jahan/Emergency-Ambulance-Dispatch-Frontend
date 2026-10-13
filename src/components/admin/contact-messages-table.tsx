@@ -198,7 +198,7 @@ export function ContactMessagesTable() {
                 </div>
               </div>
 
-              <div className="rounded-xl bg-gauze border border-hairline p-3 text-sm text-ink whitespace-pre-wrap break-words">
+              <div className="rounded-lg bg-gauze border border-hairline p-3 text-sm text-ink whitespace-pre-wrap break-words">
                 {msg.message}
               </div>
             </Card>

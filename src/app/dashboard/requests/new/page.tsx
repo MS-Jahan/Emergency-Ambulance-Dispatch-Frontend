@@ -553,7 +553,7 @@ function NewRequestContent() {
                     </p>
                   )}
                   {wizard.notes && (
-                    <p className="rounded-xl bg-gauze p-2.5 text-xs text-ink line-clamp-3">
+                    <p className="rounded-lg bg-gauze p-2.5 text-xs text-ink line-clamp-3">
                       <span className="font-semibold text-slate">Notes: </span>
                       {wizard.notes}
                     </p>
@@ -579,7 +579,7 @@ export default function NewRequestPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-2xl h-96 w-full animate-pulse rounded-3xl border border-hairline bg-paper" />
+        <div className="mx-auto max-w-2xl h-96 w-full animate-pulse rounded-2xl border border-hairline bg-paper" />
       }
     >
       <NewRequestContent />

@@ -101,7 +101,7 @@ export function IntegrationsCard() {
   const testSms = useAdminTestSms()
 
   return (
-    <Card className="space-y-4 rounded-3xl border border-hairline p-6">
+    <Card className="space-y-4 rounded-2xl border border-hairline p-6">
       <div>
         <h2 className="text-xl text-ink">Integrations</h2>
         <p className="mt-1 text-sm text-slate">

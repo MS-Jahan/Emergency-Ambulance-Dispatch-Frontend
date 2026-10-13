@@ -78,7 +78,7 @@ export function RequestCard({
 
       {/* Optional map preview slot (dispatch board) */}
       {showMap && (
-        <div className="hidden lg:flex h-14 w-20 shrink-0 items-center justify-center rounded-xl border border-hairline bg-gauze text-slate">
+        <div className="hidden lg:flex h-14 w-20 shrink-0 items-center justify-center rounded-lg border border-hairline bg-gauze text-slate">
           <MapPin className="h-4 w-4" />
         </div>
       )}

@@ -139,7 +139,7 @@ function PaymentsContent() {
       ) : (
         <div className="space-y-3">
           {filtered.map((payment) => (
-            <Card key={payment.id} className="rounded-3xl border border-hairline px-5 py-3 sm:px-6">
+            <Card key={payment.id} className="rounded-2xl border border-hairline px-5 py-3 sm:px-6">
               <div className="flex items-center gap-3">
                 {/* Left: trip + date */}
                 <div className="min-w-0 flex-1">

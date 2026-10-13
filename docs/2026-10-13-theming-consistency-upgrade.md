@@ -129,3 +129,23 @@ push.
 
 Fonts (Figtree + Caprasimo), signal/oxygen/amber base colours, shadcn primitives
 in `components/ui`, shell layouts.
+
+## Outcome
+
+Implemented 2026-10-13 in two commits (tokens/type/containers, then radius).
+
+- `globals.css`: warm dark palette, `--oxygen-text/--amber-text/--signal-text`,
+  `title-display|hero|page` utilities.
+- 5 files moved off raw Tailwind palette classes; 27 `h1`s on the three utilities
+  (only exception: card heading in `dashboard/requests/[id]`, not a page title).
+- All sub-12px text raised to `text-xs`; the one `text-[0.8rem]` left lives in
+  `components/ui/button.tsx` (shadcn primitive, out of scope).
+- `PageContainer`/`Section` in `components/shared/page-container.tsx`; public
+  pages use it. `Section` is available but pages still use their own `<section>`
+  bands; adopt it when those pages are next touched.
+- Radius collapsed to `rounded-lg` / `rounded-2xl` / `rounded-full` outside
+  `components/ui`.
+- Checks: `tsc`, `bun run lint` (0 errors, 8 pre-existing warnings), `bun run build`
+  pass; all verification greps empty.
+- Not done: visual dark-mode screenshot pass (browser tooling unavailable this
+  session). Do a manual toggle check before the demo.

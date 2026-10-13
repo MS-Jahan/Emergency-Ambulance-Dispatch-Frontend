@@ -30,7 +30,7 @@ export function NotificationPreferencesCard() {
     })
 
   return (
-    <Card className="space-y-4 rounded-3xl border border-hairline p-6">
+    <Card className="space-y-4 rounded-2xl border border-hairline p-6">
       <div className="flex items-center gap-2">
         <Bell className="h-5 w-5 text-brand" aria-hidden />
         <h3 className="font-heading text-lg text-ink">Trip updates</h3>

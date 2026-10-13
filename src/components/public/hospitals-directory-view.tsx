@@ -278,19 +278,19 @@ export function HospitalsDirectoryView() {
                   </h4>
                   <div className="grid grid-cols-2 gap-2 text-xs">
                     {(selectedHospital as { district?: string }).district && (
-                      <div className="p-3 rounded-xl bg-gauze">
+                      <div className="p-3 rounded-lg bg-gauze">
                         <span className="block text-slate">District</span>
                         <span className="font-bold text-ink">{(selectedHospital as { district?: string }).district}</span>
                       </div>
                     )}
                     {(selectedHospital as { beds?: number }).beds != null && (
-                      <div className="p-3 rounded-xl bg-gauze">
+                      <div className="p-3 rounded-lg bg-gauze">
                         <span className="block text-slate">Bed Capacity</span>
                         <span className="font-bold text-ink">{(selectedHospital as { beds?: number }).beds} beds</span>
                       </div>
                     )}
                     {(selectedHospital as { icu?: boolean }).icu && (
-                      <div className="col-span-2 p-3 rounded-xl bg-oxygen/15 text-ink font-semibold flex items-center gap-2">
+                      <div className="col-span-2 p-3 rounded-lg bg-oxygen/15 text-ink font-semibold flex items-center gap-2">
                         <Siren className="h-4 w-4 text-oxygen" />
                         ICU & Critical Care Units Available
                       </div>
@@ -321,7 +321,7 @@ export function HospitalsDirectoryView() {
       </Sheet>
 
       {/* Emergency dispatch CTA banner */}
-      <section className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-hairline bg-brand-soft p-6 sm:p-8">
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-hairline bg-brand-soft p-6 sm:p-8">
         <div className="space-y-1">
           <h2 className="text-2xl text-ink">Need an ambulance immediately?</h2>
           <p className="text-sm text-slate">

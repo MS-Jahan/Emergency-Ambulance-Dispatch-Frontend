@@ -14,7 +14,7 @@ function SuccessInner() {
   const payment = usePaymentBySession(sessionId)
 
   return (
-    <div className="w-full max-w-md bg-paper border border-hairline rounded-3xl p-8 text-center space-y-4">
+    <div className="w-full max-w-md bg-paper border border-hairline rounded-2xl p-8 text-center space-y-4">
       {payment.isLoading ? (
         <div className="py-4">
           <ListSkeleton rows={3} />

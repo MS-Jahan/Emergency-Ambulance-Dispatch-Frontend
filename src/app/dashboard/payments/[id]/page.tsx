@@ -47,7 +47,7 @@ export default function PaymentReceiptPage() {
     return (
       <div className="mx-auto max-w-2xl space-y-4">
         <div className="h-10 w-32 animate-pulse rounded-full bg-gauze" />
-        <div className="h-[500px] w-full animate-pulse rounded-3xl border border-hairline bg-paper" />
+        <div className="h-[500px] w-full animate-pulse rounded-2xl border border-hairline bg-paper" />
       </div>
     )
   }
@@ -134,7 +134,7 @@ export default function PaymentReceiptPage() {
       {/* Printable Receipt Card */}
       <Card
         id="receipt-container"
-        className="rounded-3xl border border-hairline bg-paper p-6 shadow-sm sm:p-10 print:border-none print:p-0 print:shadow-none"
+        className="rounded-2xl border border-hairline bg-paper p-6 shadow-sm sm:p-10 print:border-none print:p-0 print:shadow-none"
       >
         {/* Receipt Header */}
         <div className="flex flex-wrap items-start justify-between gap-4 border-b border-hairline pb-6">

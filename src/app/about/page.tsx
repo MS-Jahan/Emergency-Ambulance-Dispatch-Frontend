@@ -87,7 +87,7 @@ export default function AboutPage() {
           </ol>
         </section>
 
-        <section className="flex flex-col sm:flex-row items-center gap-4 justify-between bg-brand text-brand-foreground rounded-3xl p-6 sm:p-8">
+        <section className="flex flex-col sm:flex-row items-center gap-4 justify-between bg-brand text-brand-foreground rounded-2xl p-6 sm:p-8">
           <div className="flex items-center gap-3">
             <Clock3 className="h-6 w-6" />
             <p className="font-heading text-xl">

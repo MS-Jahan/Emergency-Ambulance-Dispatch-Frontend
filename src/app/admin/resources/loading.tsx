@@ -10,10 +10,10 @@ export default function ResourcesLoading() {
 
       {/* Tabs list skeleton */}
       <div className="flex gap-2 border-b border-hairline pb-2">
-        <Skeleton className="h-9 w-28 rounded-md" />
-        <Skeleton className="h-9 w-28 rounded-md" />
-        <Skeleton className="h-9 w-28 rounded-md" />
-        <Skeleton className="h-9 w-28 rounded-md" />
+        <Skeleton className="h-9 w-28 rounded-lg" />
+        <Skeleton className="h-9 w-28 rounded-lg" />
+        <Skeleton className="h-9 w-28 rounded-lg" />
+        <Skeleton className="h-9 w-28 rounded-lg" />
       </div>
 
       {/* Filter and actions bar */}

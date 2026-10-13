@@ -44,7 +44,7 @@ export function TripLineDemo() {
   const progress = Math.min(step, DEMO_FLOW.length - 1) / (DEMO_FLOW.length - 1)
 
   return (
-    <div className="bg-paper border border-hairline rounded-3xl p-4 sm:p-5 space-y-5">
+    <div className="bg-paper border border-hairline rounded-2xl p-4 sm:p-5 space-y-5">
       <div
         className="relative overflow-hidden rounded-2xl border border-hairline bg-gauze"
         role="img"

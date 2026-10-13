@@ -13,7 +13,7 @@ function CancelInner() {
   const payment = usePaymentBySession(sessionId, 'cancel')
 
   return (
-    <div className="w-full max-w-md bg-paper border border-hairline rounded-3xl p-8 text-center space-y-4">
+    <div className="w-full max-w-md bg-paper border border-hairline rounded-2xl p-8 text-center space-y-4">
       <Undo2 className="h-14 w-14 text-amber mx-auto" />
       <h1 className="title-page text-ink">Checkout cancelled</h1>
       <p className="text-sm text-slate">

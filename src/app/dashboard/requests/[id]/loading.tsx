@@ -16,7 +16,7 @@ export default function RequestDetailLoading() {
       </div>
 
       {/* Status timeline / line skeleton */}
-      <div className="rounded-xl border border-hairline bg-paper p-6 space-y-4">
+      <div className="rounded-2xl border border-hairline bg-paper p-6 space-y-4">
         <div className="flex justify-between items-center">
           <Skeleton className="h-6 w-44" />
           <Skeleton className="h-6 w-24" />
@@ -32,19 +32,19 @@ export default function RequestDetailLoading() {
       {/* Map & details grid */}
       <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
-          <div className="rounded-xl border border-hairline bg-paper overflow-hidden">
+          <div className="rounded-2xl border border-hairline bg-paper overflow-hidden">
             <Skeleton className="h-72 w-full" />
           </div>
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-xl border border-hairline bg-paper p-5 space-y-3">
+          <div className="rounded-2xl border border-hairline bg-paper p-5 space-y-3">
             <Skeleton className="h-5 w-32" />
             <Skeleton className="h-4 w-48" />
             <Skeleton className="h-4 w-40" />
           </div>
 
-          <div className="rounded-xl border border-hairline bg-paper p-5 space-y-3">
+          <div className="rounded-2xl border border-hairline bg-paper p-5 space-y-3">
             <Skeleton className="h-5 w-28" />
             <Skeleton className="h-10 w-full" />
           </div>

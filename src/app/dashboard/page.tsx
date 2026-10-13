@@ -116,7 +116,7 @@ function PatientDashboardContent() {
       {activeRequest && (
         <section
           aria-label="Active trip"
-          className="flex flex-col gap-4 rounded-3xl bg-brand p-6 text-brand-foreground sm:flex-row sm:items-center sm:p-7"
+          className="flex flex-col gap-4 rounded-2xl bg-brand p-6 text-brand-foreground sm:flex-row sm:items-center sm:p-7"
         >
           <div className="min-w-0 flex-1">
             <p className="text-xs font-extrabold uppercase tracking-wide">

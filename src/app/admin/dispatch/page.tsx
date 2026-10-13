@@ -213,7 +213,7 @@ function DispatchBoardContent() {
               <section
                 key={col.title}
                 aria-label={`${col.title} requests`}
-                className="flex min-w-0 flex-col rounded-3xl border border-hairline bg-paper p-4"
+                className="flex min-w-0 flex-col rounded-2xl border border-hairline bg-paper p-4"
               >
                 <div className="flex items-center justify-between pb-2">
                   <h2 className="flex items-center gap-2 text-base font-extrabold text-ink">

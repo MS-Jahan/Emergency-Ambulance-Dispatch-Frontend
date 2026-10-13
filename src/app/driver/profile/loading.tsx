@@ -11,7 +11,7 @@ export default function DriverProfileLoading() {
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
           {/* Profile Card */}
-          <div className="p-6 border border-hairline rounded-xl bg-paper space-y-6">
+          <div className="p-6 border border-hairline rounded-2xl bg-paper space-y-6">
             <div className="flex justify-between items-start">
               <div className="flex items-center gap-3">
                 <Skeleton className="h-12 w-12 rounded-full" />
@@ -26,17 +26,17 @@ export default function DriverProfileLoading() {
             <div className="grid gap-4 sm:grid-cols-2 pt-2">
               <div className="space-y-1.5">
                 <Skeleton className="h-3 w-16" />
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-lg" />
               </div>
               <div className="space-y-1.5">
                 <Skeleton className="h-3 w-16" />
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-lg" />
               </div>
             </div>
           </div>
 
           {/* Assigned Ambulance */}
-          <div className="p-6 border border-hairline rounded-xl bg-paper space-y-4">
+          <div className="p-6 border border-hairline rounded-2xl bg-paper space-y-4">
             <div className="flex justify-between">
               <Skeleton className="h-5 w-48" />
               <Skeleton className="h-5 w-20 rounded-full" />
@@ -51,12 +51,12 @@ export default function DriverProfileLoading() {
 
         {/* Credentials Side Cards */}
         <div className="space-y-6">
-          <div className="p-5 border border-hairline rounded-xl bg-paper space-y-3">
+          <div className="p-5 border border-hairline rounded-2xl bg-paper space-y-3">
             <Skeleton className="h-4 w-32" />
             <Skeleton className="h-5 w-28" />
             <Skeleton className="h-4 w-40" />
           </div>
-          <div className="p-5 border border-hairline rounded-xl bg-paper space-y-3">
+          <div className="p-5 border border-hairline rounded-2xl bg-paper space-y-3">
             <Skeleton className="h-4 w-28" />
             <Skeleton className="h-4 w-48" />
           </div>

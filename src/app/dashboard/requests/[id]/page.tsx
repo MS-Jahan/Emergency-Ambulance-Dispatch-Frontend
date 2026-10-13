@@ -498,7 +498,7 @@ export default function RequestDetailPage() {
               </div>
             )}
             {req.notes && (
-              <div className="rounded-xl bg-gauze p-3 text-xs text-ink">
+              <div className="rounded-lg bg-gauze p-3 text-xs text-ink">
                 <p className="font-semibold text-slate mb-0.5">Notes / Symptoms</p>
                 <p className="whitespace-pre-wrap">{req.notes}</p>
               </div>

@@ -69,7 +69,7 @@ export function LoginForm() {
 
   return (
     <AuthLayout>
-      <div className="space-y-7 rounded-3xl border border-hairline bg-paper p-6 shadow-sm sm:p-9">
+      <div className="space-y-7 rounded-2xl border border-hairline bg-paper p-6 shadow-sm sm:p-9">
         <div className="space-y-1">
           <h1 className="title-page text-ink">Welcome back</h1>
           <p className="text-sm text-slate">

@@ -98,7 +98,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="grid gap-5 md:grid-cols-2 md:items-start">
-      <Card className="space-y-5 rounded-3xl border border-hairline p-6">
+      <Card className="space-y-5 rounded-2xl border border-hairline p-6">
         <p className="font-heading text-xl text-ink">Details</p>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           <div>
@@ -154,7 +154,7 @@ export default function ProfilePage() {
       </Card>
 
       <div className="space-y-5">
-      <Card className="space-y-4 rounded-3xl border border-hairline p-6">
+      <Card className="space-y-4 rounded-2xl border border-hairline p-6">
         <p className="font-heading text-xl text-ink">Preferences</p>
         <div className="flex items-center justify-between">
           <div>
@@ -173,7 +173,7 @@ export default function ProfilePage() {
 
       <ChangePasswordCard />
 
-      <Card className="space-y-4 rounded-3xl border border-hairline p-6">
+      <Card className="space-y-4 rounded-2xl border border-hairline p-6">
         <p className="text-sm text-slate">
           Logged in as{' '}
           <span className="font-medium text-ink">{me.data?.email ?? '—'}</span>

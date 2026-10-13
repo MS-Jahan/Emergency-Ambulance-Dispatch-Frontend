@@ -13,7 +13,7 @@ export default function DriverEarningsLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="p-4 border border-hairline rounded-xl bg-paper space-y-2"
+            className="p-4 border border-hairline rounded-2xl bg-paper space-y-2"
           >
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-7 w-20" />
@@ -36,7 +36,7 @@ export default function DriverEarningsLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="p-4 border border-hairline rounded-xl bg-paper flex flex-col sm:flex-row justify-between gap-4"
+            className="p-4 border border-hairline rounded-2xl bg-paper flex flex-col sm:flex-row justify-between gap-4"
           >
             <div className="space-y-2">
               <div className="flex items-center gap-2">

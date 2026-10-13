@@ -24,7 +24,7 @@ export function RequestWizardStep({
   footer,
 }: RequestWizardStepProps) {
   return (
-    <Card className="flex flex-col rounded-3xl border border-hairline p-6 sm:p-8">
+    <Card className="flex flex-col rounded-2xl border border-hairline p-6 sm:p-8">
       <div
         className="flex gap-2"
         role="progressbar"

@@ -57,7 +57,7 @@ export function AssignPanel({ request, onAssigned, onOpenDetails }: AssignPanelP
   return (
     <aside
       aria-label="Assign ambulance"
-      className="rounded-3xl border border-hairline bg-paper p-4 xl:sticky xl:top-4"
+      className="rounded-2xl border border-hairline bg-paper p-4 xl:sticky xl:top-4"
     >
       <h2 className="text-base font-extrabold text-ink">Assign</h2>
 
@@ -93,7 +93,7 @@ export function AssignPanel({ request, onAssigned, onOpenDetails }: AssignPanelP
               {request.pickupAddress || 'Pickup address on file'}
             </p>
             {request.notes && (
-              <p className="rounded-xl bg-gauze p-2 text-xs text-ink line-clamp-2">
+              <p className="rounded-lg bg-gauze p-2 text-xs text-ink line-clamp-2">
                 <span className="font-semibold text-slate">Notes: </span>
                 {request.notes}
               </p>

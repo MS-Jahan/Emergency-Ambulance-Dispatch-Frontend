@@ -432,7 +432,7 @@ export default function Home() {
                 </div>
 
                 <div
-                  className="rounded-3xl border border-hairline bg-gauze p-5 sm:p-8"
+                  className="rounded-2xl border border-hairline bg-gauze p-5 sm:p-8"
                 >
                   {role.preview}
                 </div>
@@ -469,7 +469,7 @@ export default function Home() {
 
         {/* CTA */}
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-20">
-          <div className="flex flex-col gap-6 rounded-3xl bg-brand p-8 sm:p-12 text-brand-foreground sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-6 rounded-2xl bg-brand p-8 sm:p-12 text-brand-foreground sm:flex-row sm:items-center sm:justify-between">
             <div className="space-y-2">
               <h2 className="text-3xl sm:text-4xl">Be ready before you need us.</h2>
               <p className="opacity-90">No credit card. No subscription.</p>

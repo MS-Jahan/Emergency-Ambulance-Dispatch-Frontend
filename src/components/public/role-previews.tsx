@@ -40,7 +40,7 @@ export function PatientSpotlightPreview() {
         </div>
       </div>
 
-      <div className="rounded-xl bg-gauze p-3 border border-hairline flex items-center justify-between gap-2">
+      <div className="rounded-lg bg-gauze p-3 border border-hairline flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-signal" aria-hidden />
           <span className="text-xs font-medium text-ink">EN_ROUTE_PICKUP</span>
@@ -69,7 +69,7 @@ export function DriverSpotlightPreview() {
         <IllustrationTag />
       </div>
 
-      <div className="p-3 bg-gauze rounded-xl border border-hairline space-y-2">
+      <div className="p-3 bg-gauze rounded-lg border border-hairline space-y-2">
         <p className="text-xs text-slate">Pickup address</p>
         <p className="flex items-center gap-1.5">
           <Navigation className="h-3.5 w-3.5 text-signal" aria-hidden />

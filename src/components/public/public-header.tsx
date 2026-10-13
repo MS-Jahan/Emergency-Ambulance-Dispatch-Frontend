@@ -17,7 +17,7 @@ export function PublicHeader() {
         <div className="flex items-center gap-8">
           <Link
             href="/"
-            className="font-heading text-2xl leading-none text-brand rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
+            className="font-heading text-2xl leading-none text-brand rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand"
           >
             RapidAid
           </Link>
