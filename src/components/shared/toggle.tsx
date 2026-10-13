@@ -22,13 +22,14 @@ export function Toggle({
       onClick={() => onChange(!checked)}
       className={cn(
         'relative h-7 w-12 flex-shrink-0 rounded-full transition-colors disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
-        checked ? 'bg-brand' : 'border-2 border-slate bg-muted',
+        'border-2',
+        checked ? 'border-transparent bg-brand' : 'border-slate bg-muted',
       )}
     >
       <span
         className={cn(
-          'absolute top-0.5 h-6 w-6 rounded-full shadow transition-transform',
-          checked ? 'translate-x-[22px] bg-white' : 'translate-x-0 bg-slate',
+          'absolute left-0.5 top-0.5 h-6 w-6 rounded-full shadow transition-transform',
+          checked ? 'translate-x-[18px] bg-white' : 'translate-x-0 bg-slate',
         )}
       />
     </button>

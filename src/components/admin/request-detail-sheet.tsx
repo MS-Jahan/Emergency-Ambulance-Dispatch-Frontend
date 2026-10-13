@@ -233,7 +233,7 @@ export function RequestDetailSheet({ request, onClose, onAction }: RequestDetail
 
           {/* Assigned unit — with reassign affordance */}
           {request.ambulance && !showNearby && (
-            <Card className="flex items-center justify-between gap-3 p-4">
+            <Card className="flex-row items-center justify-between gap-3 p-4">
               <div className="flex items-center gap-3 min-w-0">
                 <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-brand-soft text-xs font-bold text-brand">
                   {driverInitials(request.driver?.name)}

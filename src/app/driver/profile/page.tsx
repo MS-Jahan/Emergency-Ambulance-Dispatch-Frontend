@@ -21,6 +21,7 @@ import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { DetailSkeleton } from '@/components/shared/skeletons'
+import { AvatarUpload } from '@/components/profile/avatar-upload'
 import { ChangePasswordCard } from '@/components/auth/change-password-card'
 import {
   useMyDriverProfile,
@@ -109,10 +110,8 @@ export default function DriverProfilePage() {
         <div className="md:col-span-2 space-y-6">
           <Card className="p-6 border-hairline bg-paper gap-6">
             <div className="flex items-start justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-soft text-brand font-heading text-lg">
-                  {profile.user.name.slice(0, 2).toUpperCase()}
-                </div>
+              <div className="min-w-0 space-y-3">
+                <AvatarUpload userId={profile.user.id} name={profile.user.name} />
                 <div>
                   <h2 className="text-xl">
                     {profile.user.name}

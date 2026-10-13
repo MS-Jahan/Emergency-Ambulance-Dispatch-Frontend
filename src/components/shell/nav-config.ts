@@ -33,4 +33,5 @@ export const adminNav: NavItem[] = [
   { href: '/admin/dispatch', label: 'Dispatch', icon: Ambulance },
   { href: '/admin/resources', label: 'Resources', icon: Users },
   { href: '/admin/reports', label: 'Reports', icon: BarChart3 },
+  { href: '/admin/profile', label: 'Profile', icon: UserCircle },
 ]

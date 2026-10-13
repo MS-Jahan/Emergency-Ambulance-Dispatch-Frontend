@@ -257,10 +257,10 @@ export function HospitalsTable() {
           description="Add the first hospital so dispatches have a destination."
         />
       ) : (
-        <ul className="space-y-2">
+        <ul className="grid gap-3 md:grid-cols-2">
           {items.map((h) => (
-            <li key={h.id}>
-              <Card className="p-4 border border-hairline transition-colors hover:border-brand/40">
+            <li key={h.id} className="min-w-0">
+              <Card className="h-full p-4 border border-hairline transition-colors hover:border-brand/40">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-ink">{h.name}</p>

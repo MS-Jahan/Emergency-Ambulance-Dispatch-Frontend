@@ -11,7 +11,7 @@ import { ContactMessagesTable } from '@/components/admin/contact-messages-table'
 import { ListSkeleton } from '@/components/shared/skeletons'
 
 const TAB =
-  'h-9 flex-none rounded-full px-4 text-slate hover:text-ink data-active:bg-brand data-active:text-brand-foreground data-active:shadow-none'
+  'h-9 flex-none rounded-full px-4 text-slate hover:text-ink data-active:bg-brand data-active:text-brand-foreground data-active:shadow-none dark:data-active:border-transparent dark:data-active:bg-brand dark:data-active:text-brand-foreground'
 
 function ResourcesContent() {
   const router = useRouter()
@@ -27,7 +27,7 @@ function ResourcesContent() {
 
   return (
     <Tabs value={currentTab} onValueChange={onTabChange}>
-      <TabsList className="mb-4 h-auto flex-wrap gap-1 rounded-full bg-paper p-1 ring-1 ring-hairline">
+      <TabsList className="mb-4 w-fit max-w-full flex-wrap gap-1 group-data-horizontal/tabs:h-auto rounded-full bg-paper p-1 ring-1 ring-hairline">
         <TabsTrigger value="ambulances" className={TAB}>Ambulances</TabsTrigger>
         <TabsTrigger value="hospitals" className={TAB}>Hospitals</TabsTrigger>
         <TabsTrigger value="users" className={TAB}>Users</TabsTrigger>

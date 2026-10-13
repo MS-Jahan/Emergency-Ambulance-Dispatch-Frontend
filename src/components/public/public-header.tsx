@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from '@/components/shared/theme-toggle'
 
 const NAV = [
   { href: '/services', label: 'Services' },
@@ -41,6 +42,7 @@ export function PublicHeader() {
           >
             <Phone className="h-3.5 w-3.5" aria-hidden /> 999
           </a>
+          <ThemeToggle />
           <Button
             nativeButton={false}
             render={<Link href="/login" />}

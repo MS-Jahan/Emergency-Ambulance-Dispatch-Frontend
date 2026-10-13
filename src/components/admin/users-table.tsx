@@ -298,7 +298,7 @@ export function UsersTable() {
         <ul className="space-y-2">
           {items.map((u) => (
             <li key={u.id}>
-              <Card className="flex items-center justify-between gap-3 p-4 border border-hairline transition-colors hover:border-brand/40">
+              <Card className="flex-row items-center justify-between gap-3 p-4 border border-hairline transition-colors hover:border-brand/40">
                 <div className="min-w-0">
                   <p className="text-sm font-bold text-ink truncate">{u.name}</p>
                   <p className="truncate text-xs text-slate">

@@ -1,8 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { LogOut, Menu, Phone } from 'lucide-react'
+import { usePathname, useRouter } from 'next/navigation'
+import { LogOut, Menu, Phone, UserCircle } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { UserAvatar } from '@/components/profile/user-avatar'
+import { ThemeToggle } from '@/components/shared/theme-toggle'
 import { useAuth } from '@/lib/store'
 import { useLogout } from '@/lib/hooks'
 import type { User } from '@/types/api'
@@ -155,8 +157,15 @@ function NavLinks({
   )
 }
 
+function profileHref(role: User['role'] | undefined) {
+  if (role === 'ADMIN') return '/admin/profile'
+  if (role === 'DRIVER') return '/driver/profile'
+  return '/dashboard/profile'
+}
+
 function UserMenu({ user }: { user: User | null }) {
   const logoutMutation = useLogout()
+  const router = useRouter()
 
   return (
     <DropdownMenu>
@@ -166,9 +175,11 @@ function UserMenu({ user }: { user: User | null }) {
             variant="ghost"
             className="h-10 gap-2 rounded-full px-1.5 text-sm font-bold text-ink hover:bg-brand-soft md:pr-3"
           >
-            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand text-sm font-extrabold text-brand-foreground">
-              {(user?.name ?? '?').charAt(0).toUpperCase()}
-            </span>
+            <UserAvatar
+              userId={user?.id}
+              name={user?.name}
+              className="h-8 w-8 text-sm"
+            />
             <span className="hidden md:inline max-w-[160px] truncate">
               {user?.name ?? 'Account'}
             </span>
@@ -186,6 +197,10 @@ function UserMenu({ user }: { user: User | null }) {
           </DropdownMenuLabel>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => router.push(profileHref(user?.role))}>
+          <UserCircle className="w-4 h-4 mr-2 text-slate" />
+          Profile
+        </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => logoutMutation.mutate()}
           disabled={logoutMutation.isPending}
@@ -245,6 +260,7 @@ export function RoleShell({ variant, children }: RoleShellProps) {
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <EmergencyPill />
+            <ThemeToggle />
             <UserMenu user={user} />
           </div>
         </div>
